@@ -3,10 +3,6 @@
   "version": "1.0.0",
   "description": "SolarCharge Finder - MERN Stack Application",
   "private": true,
-  "workspaces": [
-    "backend",
-    "client"
-  ],
   "scripts": {
     "install:all": "npm install && cd backend && npm install && cd ../client && npm install",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",

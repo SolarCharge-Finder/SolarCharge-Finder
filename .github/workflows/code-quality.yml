@@ -29,8 +29,7 @@ jobs:
       
       - name: Backend - Run ESLint
         working-directory: ./backend
-        run: npm run lint
-        continue-on-error: true
+        run: npm run lint || true
       
       # Frontend code quality
       - name: Frontend - Install dependencies
@@ -39,8 +38,7 @@ jobs:
       
       - name: Frontend - Run ESLint
         working-directory: ./client
-        run: npm run lint
-        continue-on-error: true
+        run: npm run lint || true
       
       # SonarCloud Analysis (optional - requires SonarCloud account)
       # - name: SonarCloud Scan
