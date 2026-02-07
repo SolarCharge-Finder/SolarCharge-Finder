@@ -1,0 +1,57 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      
+      # Backend deployment
+      - name: Deploy Backend
+        working-directory: ./backend
+        run: |
+          npm ci
+          echo "Backend deployment would happen here"
+          # Add your deployment commands here
+          # Examples:
+          # - Deploy to Heroku: git push heroku main
+          # - Deploy to AWS: aws deploy ...
+          # - Deploy to Vercel: vercel --prod
+        env:
+          NODE_ENV: production
+          MONGODB_URI: ${{ secrets.MONGODB_PROD_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      
+      # Frontend deployment
+      - name: Build and Deploy Frontend
+        working-directory: ./client
+        run: |
+          npm ci
+          npm run build
+          echo "Frontend deployment would happen here"
+          # Add your deployment commands here
+          # Examples:
+          # - Deploy to Netlify: netlify deploy --prod
+          # - Deploy to Vercel: vercel --prod
+          # - Deploy to S3: aws s3 sync dist/ s3://bucket-name
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+      
+      - name: Notify deployment
+        run: |
+          echo "Deployment completed successfully!"
+          # Add notification logic here (Slack, Discord, Email, etc.)

@@ -1,0 +1,56 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      
+      # Backend code quality
+      - name: Backend - Install dependencies
+        working-directory: ./backend
+        run: npm ci
+      
+      - name: Backend - Run ESLint
+        working-directory: ./backend
+        run: npm run lint
+        continue-on-error: true
+      
+      # Frontend code quality
+      - name: Frontend - Install dependencies
+        working-directory: ./client
+        run: npm ci
+      
+      - name: Frontend - Run ESLint
+        working-directory: ./client
+        run: npm run lint
+        continue-on-error: true
+      
+      # SonarCloud Analysis (optional - requires SonarCloud account)
+      # - name: SonarCloud Scan
+      #   uses: SonarSource/sonarcloud-github-action@master
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      
+      # Check for TODOs and FIXMEs
+      - name: Check for TODOs
+        run: |
+          echo "Checking for TODO and FIXME comments..."
+          grep -r "TODO\|FIXME" backend/ client/ --exclude-dir=node_modules --exclude-dir=dist || echo "No TODOs or FIXMEs found"
