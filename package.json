@@ -25,7 +25,8 @@
     "docker:prod": "docker-compose -f docker-compose.prod.yml up",
     "docker:prod:build": "docker-compose -f docker-compose.prod.yml up --build",
     "docker:down": "docker-compose down",
-    "prepare": "husky install || true"
+    "prepare": "husky install || true",
+    "lint-staged": "lint-staged"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
