@@ -7,9 +7,9 @@ describe('App', () => {
     render(<App />);
     
     // Check for the main heading
-    expect(screen.getByRole('heading', { name: /SolarCharge Finder/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Find Solar-Powered Charging Stations Near You/i, level: 1 })).toBeInTheDocument();
     
     // Check for the description
-    expect(screen.getByText(/Find solar charging stations near you/i)).toBeInTheDocument();
+    expect(screen.getByText(/Discover affordable, eco-friendly charging stations powered by the sun/i)).toBeInTheDocument();
   });
 });
