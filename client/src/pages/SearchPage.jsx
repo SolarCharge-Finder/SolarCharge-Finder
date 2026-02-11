@@ -83,7 +83,9 @@ const SearchPage = () => {
             <div key={station._id} className="station-card">
                 <h3 className="station-name">{station.name}</h3>
                 <p className="station-location">{station.city}</p>
-                <p className={`station-status ${station.status.toLowerCase()}`}>{station.status}</p>
+                <p className={`station-status ${station.status.toLowerCase().replace(/\s+/g, "-")}`}>
+                    {station.status}
+                </p>
 
             </div>
             ))}
