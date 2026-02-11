@@ -1,10 +1,38 @@
+import { useEffect, useState } from "react";
+
+const heroSlides = [
+  "/herosection/1.jpeg",
+  "/herosection/2.jpeg",
+  "/herosection/3.jpg",
+  "/herosection/4.jpeg",
+  "/herosection/5.jpg",
+];
+
 function Hero() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const totalSlides = heroSlides.length;
+
+  useEffect(() => {
+    if (totalSlides === 0) return undefined;
+
+    const slideInterval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % totalSlides);
+    }, 5000);
+
+    return () => clearInterval(slideInterval);
+  }, [totalSlides]);
+
   return (
     <section className="hero" id="hero">
-      <div className="hero-bg-shapes">
-        <div className="shape shape-1"></div>
-        <div className="shape shape-2"></div>
-        <div className="shape shape-3"></div>
+      <div className="hero-bg-media" aria-hidden="true">
+        {heroSlides.map((image, index) => (
+          <div
+            key={image}
+            className={`hero-slide ${index === currentSlide ? "active" : ""}`}
+            style={{ backgroundImage: `url(${image})` }}
+          />
+        ))}
+        <div className="hero-bg-overlay"></div>
       </div>
       <div className="hero-container">
         <div className="hero-badge">🌱 Clean Energy Initiative</div>
