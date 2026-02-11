@@ -1,5 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { searchStations } from "../services/stationService";
+import SearchBar from '../components/SearchBar/SearchBar';
+import Navbar from "../components/Navbar/Navbar";
+import Footer from "../components/Footer/Footer";
+import '../styles/SearchPage.css';
 
 const SearchPage = () => {
     const [query, setQuery] = useState("");
@@ -9,17 +14,19 @@ const SearchPage = () => {
     const [connectorType, setConnectorType] = useState("");
     const [error, setError] = useState("");
 
-    const handleSearch = async () => {
+    const location = useLocation();
+
+    const handleSearch = async (filtersOverride = null) => {
         try {
             setError("");
 
-            const SearchFilters = {
-                search : query,
-                city,   
+            const SearchFilters = filtersOverride || {
+                search: query,
+                city,
                 status,
                 connectorType
             };
-            
+
             const data = await searchStations(SearchFilters);
             setStations(data);
 
@@ -28,63 +35,66 @@ const SearchPage = () => {
         }
     };
 
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+
+        const filters = {
+            search: params.get("search") || "",
+            city: params.get("city") || "",
+            status: params.get("status") || "",
+            connectorType: params.get("connectorType") || ""
+        };
+
+        setQuery(filters.search);
+        setCity(filters.city);
+        setStatus(filters.status);
+        setConnectorType(filters.connectorType);
+
+        if (
+            filters.search ||
+            filters.city ||
+            filters.status ||
+            filters.connectorType
+        ) {
+            handleSearch(filters);
+        }
+
+    }, [location.search]);
+
     return (
-        <div style={{ padding: "20px" }}>
-        <h2>Search Charging Stations</h2>
+    <div className="page-layout">
+      <Navbar />
+      <main className="page-content">
+        <div className="searchpage-container">
+        <h1 className="page-title">Searching For Charging Stations</h1>
 
-        <input
-            type="text"
-            placeholder="Search by city, name, connector type..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            style={{ padding: "8px", width: "300px" }}
-        />
+        <SearchBar />
 
-        <div style={{ marginTop: "15px" }}>
+        {error && <p className="error-message">{error}</p>}
 
-            {/* city filter */}
-            <select value={city} onChange={(e) => setCity(e.target.value)} style={{ padding: "8px", marginRight: "10px" }}>
-                <option value="">All Cities</option>
-                <option value="Colombo">Colombo</option>
-                <option value="Kandy">Kandy</option>
-                <option value="Galle">Galle</option>
-            </select>
+        {/* Display search results */}
 
-            {/* status filter */}
-            <select value={status} onChange={(e) => setStatus(e.target.value)} style={{ padding: "8px", marginRight: "10px" }}>
-                <option value="">All Status</option>
-                <option value="Open">Open</option>
-                <option value="Under Maintenance">Under Maintenance</option>
-                <option value="Closed">Closed</option>
-            </select>
+        <div className="stations-grid">
+            {stations.length === 0 && !error && (
+            <p className="no-results">No stations found. Try adjusting your search criteria.</p>
+            )}
 
-            {/* connector type filter */}
-            <select value={connectorType} onChange={(e) => setConnectorType(e.target.value)} style={{ padding: "8px" }}>
-                <option value="">All Connector Types</option>
-                <option value="Type 1">Type 1</option>
-                <option value="Type 2">Type 2</option>
-            </select>
-
-        </div>
-
-
-        <button onClick={handleSearch} style={{ marginLeft: "10px", padding: "8px", marginTop: "15px" }}>
-            Search
-        </button>
-
-        {error && <p style={{ color: "red" }}>{error}</p>}
-
-        <div style={{ marginTop: "20px" }}>
             {stations.map((station) => (
-            <div key={station._id} style={{ marginBottom: "15px", border: "1px solid #ccc", padding: "10px" }}>
-                <h3>{station.name}</h3>
-                <p>{station.city}, {station.district}</p>
-                <p>Status: {station.status}</p>
+            <div key={station._id} className="station-card">
+                <h3 className="station-name">{station.name}</h3>
+                <p className="station-location">{station.city}</p>
+                <p className={`station-status ${station.status.toLowerCase()}`}>{station.status}</p>
+
             </div>
             ))}
         </div>
+
         </div>
+      </main>
+      <Footer />
+    </div>
     );
+
 };
 
 export default SearchPage;
