@@ -96,6 +96,10 @@ html {
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .navbar-actions .btn-signin:hover {
@@ -174,65 +178,75 @@ html {
   position: relative;
   overflow: hidden;
   padding: 8rem 1.5rem 4rem;
-  background: linear-gradient(165deg, #f0fdf0 0%, #ecfdf5 30%, #f0f9ff 70%, #fff 100%);
+  background: linear-gradient(135deg, #d8f3ff 0%, #f5fff9 50%, #ffffff 100%);
   text-align: center;
+  isolation: isolate;
 }
 
-.hero-bg-shapes .shape {
+.hero-bg-media {
   position: absolute;
-  border-radius: 50%;
-  opacity: 0.12;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
 }
 
-.shape-1 {
-  width: 400px;
-  height: 400px;
-  background: #22c55e;
-  top: -100px;
-  right: -100px;
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.06);
+  transition: opacity 1.5s ease, transform 4s ease;
+  will-change: opacity, transform;
 }
 
-.shape-2 {
-  width: 300px;
-  height: 300px;
-  background: #facc15;
-  bottom: -60px;
-  left: -60px;
+.hero-slide.active {
+  opacity: 1;
+  transform: scale(1.02);
 }
 
-.shape-3 {
-  width: 200px;
-  height: 200px;
-  background: #38bdf8;
-  top: 40%;
-  left: 10%;
+.hero-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.25), transparent 45%),
+    linear-gradient(120deg, rgba(6, 95, 70, 0.75), rgba(15, 23, 42, 0.85));
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide {
+    transition: opacity 0.3s ease;
+  }
 }
 
 .hero-container {
   position: relative;
   max-width: 800px;
   margin: 0 auto;
+  z-index: 1;
 }
 
 .hero-badge {
   display: inline-block;
   padding: 0.4rem 1rem;
-  background: rgba(45, 157, 58, 0.1);
-  color: #15803d;
+  background: rgba(15, 23, 42, 0.65);
+  color: #e2f8e9;
   font-size: 0.85rem;
   font-weight: 600;
   border-radius: 50px;
   margin-bottom: 1.5rem;
-  border: 1px solid rgba(45, 157, 58, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.28);
 }
 
 .hero-title {
   font-size: 3.2rem;
   font-weight: 800;
-  color: #1a2e1a;
+  color: #f8fafc;
   line-height: 1.15;
   margin: 0 0 1.25rem;
   letter-spacing: -0.02em;
+  text-shadow: 0 14px 40px rgba(2, 6, 23, 0.65);
 }
 
 .highlight-green {
@@ -244,7 +258,7 @@ html {
 
 .hero-subtitle {
   font-size: 1.15rem;
-  color: #64748b;
+  color: #d7e3ff;
   line-height: 1.7;
   margin: 0 auto 2rem;
   max-width: 600px;
@@ -266,12 +280,12 @@ html {
 .stat-number {
   font-size: 1.6rem;
   font-weight: 800;
-  color: #1a2e1a;
+  color: #f1f5f9;
 }
 
 .stat-label {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: #cbd5f5;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -280,7 +294,7 @@ html {
 .stat-divider {
   width: 1px;
   height: 36px;
-  background: #e2e8f0;
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .hero-cta-group {
