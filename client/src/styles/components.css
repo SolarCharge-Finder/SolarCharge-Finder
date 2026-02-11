@@ -96,6 +96,10 @@ html {
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .navbar-actions .btn-signin:hover {
