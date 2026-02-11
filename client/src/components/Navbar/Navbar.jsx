@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -6,10 +7,10 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <a href="/" className="navbar-logo">
+        <Link to="/" className="navbar-logo" onClick={() => setMenuOpen(false)}>
           <span className="logo-icon">☀️</span>
           <span className="logo-text">SolarCharge <span className="logo-accent">Finder</span></span>
-        </a>
+        </Link>
 
         <button
           className="navbar-toggle"
@@ -27,7 +28,9 @@ function Navbar() {
         </ul>
 
         <div className="navbar-actions">
-          <button className="btn-signin">Sign In</button>
+          <Link to="/auth" className="btn-signin" onClick={() => setMenuOpen(false)}>
+            Sign Up
+          </Link>
         </div>
       </div>
     </nav>

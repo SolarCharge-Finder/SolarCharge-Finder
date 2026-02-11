@@ -3,6 +3,7 @@ import Home from './pages/Home'
 import Terms from './pages/Terms'
 import Privacy from './pages/privacy'
 import AboutUs from './pages/AboutUs'
+import AuthPage from './auth'
 import './App.css'
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/auth" element={<AuthPage />} />
         </Routes>
       </div>
     </Router>
@@ -21,4 +23,3 @@ function App() {
 }
 
 export default App
-
