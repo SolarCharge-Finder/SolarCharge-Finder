@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import './AuthPage.css'
 
 const socialProviders = [
@@ -179,6 +180,11 @@ function AuthPage() {
               </div>
             </div>
           </div>
+        </div>
+        <div className="auth-back-row">
+          <Link to="/" className="auth-back-link">
+            &larr; Back to Home Page
+          </Link>
         </div>
       </main>
     </div>
