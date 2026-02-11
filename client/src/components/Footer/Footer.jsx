@@ -17,7 +17,7 @@ function Footer() {
           <div className="footer-links-group">
             <div className="footer-col">
               <h4>Platform</h4>
-              <a href="#map">Find Stations</a>
+              <a href="/search">Find Stations</a>
               <a href="#cta">Share Station</a>
               <a href="#features">Features</a>
             </div>

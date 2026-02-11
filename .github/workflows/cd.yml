@@ -50,6 +50,7 @@ jobs:
           # - Deploy to S3: aws s3 sync dist/ s3://bucket-name
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          NPM_CONFIG_PRODUCTION: false
       
       - name: Notify deployment
         run: |
