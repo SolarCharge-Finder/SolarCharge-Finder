@@ -3,6 +3,12 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 
+//DNS issues xdd, i hecking love routing - kill me (adeesha)
+//there shouldnt be any issues, but delete this if mongodb connection issues come up for u guys
+import {setServers} from "node:dns/promises";
+setServers(["1.1.1.1", "8.8.8.8"]);
+//end
+
 // Load environment variables
 dotenv.config();
 
@@ -24,9 +30,10 @@ app.get('/', (req, res) => {
 
 // Import routes (uncomment when routes are created)
 // import authRoutes from './routes/auth.js';
-// import chargingStationRoutes from './routes/chargingStations.js';
+import stationRoutes from './src/routes/stationRoutes.js';
+
 // app.use('/api/auth', authRoutes);
-// app.use('/api/stations', chargingStationRoutes);
+app.use('/api/stations', stationRoutes);
 
 // Error handling middleware
 app.use((err, req, res, _next) => {
