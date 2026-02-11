@@ -7,6 +7,7 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import ManageUsers from './pages/admin/ManageUsers'
 import ManageStations from './pages/admin/ManageStations'
 import ManageReviews from './pages/admin/ManageReviews'
+import SearchStations from './pages/SearchStations'
 import AuthPage from './auth'
 import './App.css'
 
@@ -20,6 +21,7 @@ function App() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/search" element={<SearchStations />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<ManageUsers />} />
           <Route path="/admin/stations" element={<ManageStations />} />
