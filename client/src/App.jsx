@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './App.css'
+import SearchPage from './pages/SearchPage'
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
         <p>Find solar charging stations near you</p>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/search" element={<SearchPage />} />
         </Routes>
       </div>
     </Router>
