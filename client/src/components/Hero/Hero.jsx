@@ -62,7 +62,7 @@ function Hero() {
           </div>
         </div>
         <div className="hero-cta-group">
-          <a href="#map" className="btn-primary">
+          <a href="/search" className="btn-primary">
             <span>🗺️</span> Explore Stations
           </a>
           
