@@ -1,5 +1,9 @@
 name: CI Pipeline
 
+permissions:
+  contents: read
+  actions: read
+
 on:
   push:
     branches: [ main, develop ]
@@ -131,3 +135,18 @@ jobs:
         run: |
           npm audit --audit-level=moderate || true
           npm audit --audit-level=high
+
+  verify-artifact:
+    name: Verify Frontend Artifact
+    runs-on: ubuntu-latest
+    needs: frontend-ci
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: client-dist
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Inspect artifact contents
+        run: |
+          echo "Downloaded files:"
+          ls -R
