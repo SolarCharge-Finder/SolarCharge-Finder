@@ -40,7 +40,7 @@ export const createChargingStation = async (req, res, next) => {
         });
 
         return res.status(201).json({
-            message: "Charging station created success fully",
+            message: "Charging station created successfully",
             data: station,
         });
 
@@ -70,16 +70,98 @@ export const getChargingStationById = async (req, res, next) => {
     try {
         const station = await ChargingStationModel.findById(req.params.id);
 
-        if(!station){
-            return res.status(404).json({ message: "Charging station not found"});
+        if (!station) {
+            return res.status(404).json({ message: "Charging station not found" });
         }
 
-        return res.status(200).json({ data: station});
+        return res.status(200).json({ data: station });
 
     } catch (err) {
-        if(err.name === "CastError"){
-            return res.status(400).json({ message: "Invalid station id"});
+        if (err.name === "CastError") {
+            return res.status(400).json({ message: "Invalid station id" });
         }
         next(err);
     }
 }
+
+//Update station
+
+export const updateChargingStation = async (req, res, next) => {
+    try {
+        const stationId = req.params.id;
+
+        const {
+            latitude,
+            longitude,
+            connectors,
+            photos,
+            ...rest
+        } = req.body;
+
+        const updateData = { ...rest };
+
+        //if lat/lng provided - update location
+        if (latitude !== undefined && longitude !== undefined) {
+            updateData.location = {
+                type: "Point",
+                coordinates: [Number(longitude), Number(latitude)],
+            };
+        }
+
+        //if connecctors privided, replace connectors
+        if (connectors !== undefined) {
+            if (!Array.isArray(connectors) || connectors.length === 0) {
+                return res
+                    .status(400)
+                    .json({ message: "At least one connector is required" });
+            }
+
+            for (const c of connectors) {
+                if (c.totalSlots <= 0) {
+                    return res.status(400).json({ message: `totalSlots must be greater than 0 for ${c.type}` });
+                }
+                if(c.availableSlots < 0){
+                    return res.status(400).json({ message: `availableSlots cannot be negative for ${c.type}`});
+                }
+                if (c.availableSlots > c.totalSlots) {
+                    return res.status(400).json({
+                        message: `availableSlots cannot be greater than totalSlots for ${c.type}`,
+                    })
+                }
+            }
+
+            updateData.connectors = connectors;
+        }
+
+        //if photo provided, replace photos
+        if (photos !== undefined) {
+            updateData.photos = Array.isArray(photos) ? photos : [];
+        }
+
+        const updated = await ChargingStationModel.findByIdAndUpdate(
+            stationId,
+            updateData,
+            { new: true, runValidators: true }
+        );
+
+        if (!updated) {
+            return res.status(404).json({ message: "Charging station not found" });
+        }
+
+        return res.status(200).json({
+            message: "Charging station updated successfully",
+            data: updated,
+        });
+
+    } catch (err) {
+        if (err.name === "CastError") {
+            return res.status(400).json({ message: "Invalid station id" });
+        }
+
+        //out of bounds
+        if(err.message && err.message){
+            return res.status(400).json({ message: "Invalid location. Latitude must be between -90 and 90, longitude between -180 and 180"});
+        }
+        next(err);
+    }
+};
