@@ -165,3 +165,24 @@ export const updateChargingStation = async (req, res, next) => {
         next(err);
     }
 };
+
+//delete stations
+
+export const deleteChargingStation = async (req, res, next) => {
+    try{
+        const deleted = await ChargingStationModel.findByIdAndDelete(req.params.id);
+
+        if(!deleted){
+            return res.status(404).json({ message: "Charging station not found"});
+        }
+        return res.status(200).json({
+            message: "Charging staton deleted successfully.",
+        });
+
+    } catch(err){
+        if(err.name === "CastError"){
+            return res.status(400).josn({message: "Invalid station id"});
+        }
+
+    }
+}
