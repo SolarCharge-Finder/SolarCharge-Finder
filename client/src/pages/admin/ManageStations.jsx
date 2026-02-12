@@ -15,7 +15,7 @@ function ManageStations() {
       try {
         setLoading(true)
         const { data } = await axios.get('/api/stations')
-        setStations(data)
+        setStations(Array.isArray(data.data) ? data.data : [])
         setError('')
       } catch (err) {
         console.error('Failed to load stations', err)
@@ -42,7 +42,7 @@ function ManageStations() {
     if (!window.confirm('Delete this station?')) return
     try {
       await axios.delete(`/api/stations/${stationId}`)
-      setStations((prev) => prev.filter((station) => (station.id ?? station._id) !== stationId))
+      setStations((prev) => prev.filter((s) => (s._id ?? s.id) !== String(stationId)))
     } catch (err) {
       console.error('Delete failed', err)
       alert('Unable to delete station right now.')
