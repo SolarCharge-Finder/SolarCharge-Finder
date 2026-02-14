@@ -9,6 +9,9 @@ function ManageStations() {
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [ratingFilter, setRatingFilter] = useState('all')
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [editingStation, setEditingStation] = useState(null)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     const fetchStations = async () => {
@@ -50,7 +53,49 @@ function ManageStations() {
   }
 
   const handleEdit = (stationId) => {
-    alert(`Edit flow not yet implemented for station ${stationId}`)
+    setEditingStation({
+      _id: station._id,
+      name: station.name || "",
+      status: station.status || "ACTIVE",
+      latitude: station.location?.coordinates?.[1] ?? "",
+      longitude: station.location?.coordinates?.[0] ?? "",
+      connectors: station.connectors || []
+    })
+    setIsEditOpen(true)
+  }
+
+  const handleUpdate = async () => {
+    try {
+      setSaving(true)
+
+      const stationId = editingStation._id
+      const playload = {
+        name: editingStation.name,
+        status: editingStation.status,
+        connectors: editingStation.connectors,
+      }
+
+      //send lat/lng only if both provided
+      if (editingStation.latitude !== "" && editingStation.longitude !== "") {
+        playload.latitude = Number(editingStation.latitude)
+        playload.longitude = Number(editingStation.longitude)
+      }
+
+      const res = await axios.put(`api/stations/${stationId}`, playload)
+      const updatedStation = res.data?.data
+
+      setStations((prev) =>
+        prev.map((s) => (String(s._id) === String(stationId) ? updatedStation : s))
+      )
+      setIsEditOpen(false)
+      setEditingStation(null)
+
+    } catch (err) {
+      console.error('Update failed:', err)
+      alert('Failed to update station.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -117,6 +162,20 @@ function ManageStations() {
             )}
           </div>
         )}
+
+
+        {idEditOpen && editingStation && (
+          <div className="modal-backdrop">
+            <div className="modal">
+              <h2>Edit Station</h2>
+
+            </div>
+
+          </div>
+        )}
+
+
+
       </main>
     </div>
   )
