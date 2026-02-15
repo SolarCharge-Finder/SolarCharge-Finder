@@ -3,6 +3,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 
+import chargingStationRoutes from "./routes/chargingStationRoutes.js";
+
 // Load environment variables
 dotenv.config();
 
@@ -25,6 +27,7 @@ app.get('/', (req, res) => {
 // Import routes (uncomment when routes are created)
 // import authRoutes from './routes/auth.js';
 // import chargingStationRoutes from './routes/chargingStations.js';
+app.use("/api/stations", chargingStationRoutes);
 // app.use('/api/auth', authRoutes);
 // app.use('/api/stations', chargingStationRoutes);
 
