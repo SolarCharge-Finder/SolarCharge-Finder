@@ -30,8 +30,7 @@ app.get('/', (req, res) => {
 
 // Import routes (uncomment when routes are created)
 // import authRoutes from './routes/auth.js';
-import stationRoutes from './src/routes/stationRoutes.js';
-
+// import chargingStationRoutes from './routes/chargingStations.js';
 // app.use('/api/auth', authRoutes);
 app.use('/api/stations', stationRoutes);
 
