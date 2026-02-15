@@ -30,9 +30,9 @@ app.get('/', (req, res) => {
 
 // Import routes (uncomment when routes are created)
 // import authRoutes from './routes/auth.js';
-// import chargingStationRoutes from './routes/chargingStations.js';
+ import chargingStationRoutes from './src/routes/stationRoutes.js';
 // app.use('/api/auth', authRoutes);
-app.use('/api/stations', stationRoutes);
+app.use('/api/stations', chargingStationRoutes);
 
 // Error handling middleware
 app.use((err, req, res, _next) => {

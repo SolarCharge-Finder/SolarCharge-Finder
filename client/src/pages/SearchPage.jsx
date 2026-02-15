@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { searchStations } from "../services/stationService";
 import SearchBar from '../components/SearchBar/SearchBar';
+import SearchResults from "../components/SearchBar/SearchResults";
+import MapView from "../components/map/MapView";
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer";
 import '../styles/SearchPage.css';
@@ -66,30 +68,25 @@ const SearchPage = () => {
       <Navbar />
       <main className="page-content">
         <div className="searchpage-container">
-        <h1 className="page-title">Searching For Charging Stations</h1>
+            <h1 className="page-title">Searching For Charging Stations</h1>
 
-        <SearchBar />
+            <SearchBar />
 
-        {error && <p className="error-message">{error}</p>}
+            {error && <p className="error-message">{error}</p>}
 
-        {/* Display search results */}
+            {/* Display search results */}
+            <div className="search-page-layout">
+                {/* Search results displayed in the left side */}
+                <div className="search-results-panel">
+                    <SearchResults stations={stations} error={error} />
+                </div>
 
-        <div className="stations-grid">
-            {stations.length === 0 && !error && (
-            <p className="no-results">No stations found. Try adjusting your search criteria.</p>
-            )}
-
-            {stations.map((station) => (
-            <div key={station._id} className="station-card">
-                <h3 className="station-name">{station.name}</h3>
-                <p className="station-location">{station.city}</p>
-                <p className={`station-status ${station.status.toLowerCase().replace(/\s+/g, "-")}`}>
-                    {station.status}
-                </p>
-
+                {/* Map preview on the right side */}
+                <div className="map-preview-panel">
+                     <MapView />
+                </div>
+                
             </div>
-            ))}
-        </div> 
 
         </div>
       </main>

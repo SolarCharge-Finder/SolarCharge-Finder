@@ -76,6 +76,13 @@ const stationSchema = new mongoose.Schema({
         default: "Open"
     },
 
+    rating: {
+        type: Number,
+        min: 0,
+        max: 5,
+        default: 0
+    },
+
     connectors: [connectorSchema]
 
 }, { timestamps: true });

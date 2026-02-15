@@ -23,7 +23,7 @@ function App() {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/auth" element={<AuthPage />} />
-          <Route path="/search" element={<SearchStations />} />
+          <Route path="/oldsearch" element={<SearchStations />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<ManageUsers />} />
           <Route path="/admin/stations" element={<ManageStations />} />
