@@ -8,18 +8,17 @@ export const searchStations = async (req, res) => {
         const andConditions = [];
 
         if (!search || search.trim() !== "") {
-            const searchRegex = new RegExp(search, "i");
+            const searchRegex = new RegExp(search, "i"); //case-insensitive regex for partial matching
             andConditions.push({
                 $or: [
                     { name: searchRegex },
-                    { city: searchRegex },
-                    { district: searchRegex },
+                    { address: searchRegex },
                     { "connectors.type": searchRegex }
                 ]
             });
         }
 
-
+        //Filter by city, status, and connector type if provided
         if (city) {
             andConditions.push({ city: city });
         }

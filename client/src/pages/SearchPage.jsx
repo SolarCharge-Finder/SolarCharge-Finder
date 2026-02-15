@@ -8,7 +8,7 @@ import '../styles/SearchPage.css';
 
 const SearchPage = () => {
     const [query, setQuery] = useState("");
-    const [stations, setStations] = useState([]);
+    const [stations, setStations] = useState([]); //results from search 
     const [city, setCity] = useState("");
     const [status, setStatus] = useState("");
     const [connectorType, setConnectorType] = useState("");
@@ -89,7 +89,7 @@ const SearchPage = () => {
 
             </div>
             ))}
-        </div>
+        </div> 
 
         </div>
       </main>
