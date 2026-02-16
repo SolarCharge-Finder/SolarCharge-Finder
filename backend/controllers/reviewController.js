@@ -9,12 +9,37 @@ const parseRating = (value) => {
     return parsed;
 };
 
+const getUserId = (user) => {
+    if (!user) {
+        return null;
+    }
+
+    if (typeof user === "string") {
+        return user;
+    }
+
+    if (user.id) {
+        return user.id.toString();
+    }
+
+    if (user._id) {
+        return user._id.toString();
+    }
+
+    return null;
+};
+
 export const addReview = async (req, res, next) => {
     try {
         const { stationId, rating, comment } = req.body;
 
         if (!stationId) {
             return res.status(400).json({ message: "stationId is required" });
+        }
+
+        const userId = getUserId(req.user);
+        if (!userId) {
+            return res.status(401).json({ message: "Not authorized, invalid user context" });
         }
 
         if (rating === undefined) {
@@ -37,7 +62,7 @@ export const addReview = async (req, res, next) => {
 
         const existingReview = await Review.findOne({
             station: stationId,
-            user: req.user.id,
+            user: userId,
         });
 
         if (existingReview) {
@@ -46,7 +71,7 @@ export const addReview = async (req, res, next) => {
 
         const review = await Review.create({
             station: stationId,
-            user: req.user.id,
+            user: userId,
             rating: normalizedRating,
             comment,
         });
@@ -111,7 +136,12 @@ export const updateReview = async (req, res, next) => {
             return res.status(404).json({ message: "Review not found" });
         }
 
-        if (review.user.toString() !== req.user.id) {
+        const userId = getUserId(req.user);
+        if (!userId) {
+            return res.status(401).json({ message: "Not authorized, invalid user context" });
+        }
+
+        if (review.user.toString() !== userId) {
             return res.status(403).json({ message: "You are not allowed to update this review" });
         }
 
@@ -177,7 +207,12 @@ export const deleteReview = async (req, res, next) => {
             return res.status(404).json({ message: "Review not found" });
         }
 
-        if (review.user.toString() !== req.user.id) {
+        const userId = getUserId(req.user);
+        if (!userId) {
+            return res.status(401).json({ message: "Not authorized, invalid user context" });
+        }
+
+        if (review.user.toString() !== userId) {
             return res.status(403).json({ message: "You are not allowed to delete this review" });
         }
 
