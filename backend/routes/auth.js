@@ -1,7 +1,6 @@
 import express from 'express';
 import passport from '../config/passport.js';
 import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
 
 const router = express.Router();
 
@@ -23,7 +22,7 @@ router.get('/google/callback',
       const redirectUrl = `${process.env.FRONTEND_URL}/oauth/callback?token=${token}&user=${encodeURIComponent(JSON.stringify(userData))}`;
       res.redirect(redirectUrl);
     } catch (error) {
-      console.error('Google OAuth error:', error);
+      process.stderr.write(`Google OAuth error: ${error instanceof Error ? error.message : String(error)}\n`);
       res.redirect(`${process.env.FRONTEND_URL}/auth?error=auth_failed`);
     }
   }

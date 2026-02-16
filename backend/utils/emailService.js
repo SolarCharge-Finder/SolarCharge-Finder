@@ -1,6 +1,17 @@
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 
+const logInfo = (message) => {
+  if (process.env.NODE_ENV === 'development') {
+    process.stdout.write(`${message}\n`);
+  }
+};
+
+const logError = (message, error) => {
+  const detail = error instanceof Error ? error.message : String(error);
+  process.stderr.write(`${message}: ${detail}\n`);
+};
+
 // Create email transporter
 const createTransporter = () => {
   return nodemailer.createTransport({
@@ -26,8 +37,7 @@ export const sendVerificationEmail = async (user) => {
     const emailUser = 'nadeesf23@gmail.com';
     const emailPass = 'nictbifwbraxhvcn';
     
-    console.log('Attempting to send email to:', user.email);
-    console.log('Email user:', emailUser);
+    logInfo(`Attempting to send email to: ${user.email}`);
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -41,7 +51,7 @@ export const sendVerificationEmail = async (user) => {
     
     // Verify transporter configuration
     await transporter.verify();
-    console.log('Transporter verified successfully');
+    logInfo('Transporter verified successfully');
 
     const verificationToken = generateVerificationToken();
     const verificationUrl = `http://localhost:3000/verify-email/${verificationToken}`;
@@ -51,8 +61,7 @@ export const sendVerificationEmail = async (user) => {
     user.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
     await user.save();
 
-    console.log('Saved verification token:', verificationToken);
-    console.log('User email:', user.email);
+    logInfo(`Saved verification token for ${user.email}`);
 
     const mailOptions = {
       from: `"SolarCharge Finder" <${emailUser}>`,
@@ -82,13 +91,12 @@ export const sendVerificationEmail = async (user) => {
       `
     };
 
-    console.log('Sending email...');
+    logInfo('Sending verification email...');
     const result = await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully:', result.messageId);
+    logInfo(`Verification email sent successfully: ${result.messageId}`);
     return true;
   } catch (error) {
-    console.error('Error sending verification email:', error);
-    console.error('Error details:', error.message);
+    logError('Error sending verification email', error);
     // Don't throw error, just log it - registration should continue
     return true;
   }
@@ -99,7 +107,7 @@ export const sendWelcomeEmail = async (user) => {
   try {
     // Check if email credentials are configured
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      console.log('Email credentials not configured. Skipping welcome email.');
+      logInfo('Email credentials not configured. Skipping welcome email.');
       return true;
     }
 
@@ -141,18 +149,13 @@ export const sendWelcomeEmail = async (user) => {
     };
 
     await transporter.sendMail(mailOptions);
-    console.log(`Welcome email sent to ${user.email}`);
+    logInfo(`Welcome email sent to ${user.email}`);
     return true;
   } catch (error) {
-    console.error('Error sending welcome email:', error);
+    logError('Error sending welcome email', error);
     // Don't throw error, just log it
     return true;
   }
-};
-
-// Generate 6-digit reset code
-const generateResetCode = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
 // Send password reset email
@@ -162,8 +165,7 @@ export const sendPasswordResetEmail = async (user, resetCode) => {
     const emailUser = 'nadeesf23@gmail.com';
     const emailPass = 'nictbifwbraxhvcn';
     
-    console.log('Attempting to send password reset email to:', user.email);
-    console.log('Email user:', emailUser);
+    logInfo(`Attempting to send password reset email to: ${user.email}`);
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -208,10 +210,10 @@ export const sendPasswordResetEmail = async (user, resetCode) => {
     };
 
     await transporter.sendMail(mailOptions);
-    console.log(`Password reset email sent to ${user.email} with code: ${resetCode}`);
+    logInfo(`Password reset email sent to ${user.email} with code: ${resetCode}`);
     return true;
   } catch (error) {
-    console.error('Error sending password reset email:', error);
+    logError('Error sending password reset email', error);
     // Don't throw error, just log it
     return true;
   }
