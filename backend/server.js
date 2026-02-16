@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 
 import chargingStationRoutes from "./routes/chargingStationRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -28,6 +29,7 @@ app.get('/', (req, res) => {
 // import authRoutes from './routes/auth.js';
 // import chargingStationRoutes from './routes/chargingStations.js';
 app.use("/api/stations", chargingStationRoutes);
+app.use("/api/reviews", reviewRoutes);
 // app.use('/api/auth', authRoutes);
 // app.use('/api/stations', chargingStationRoutes);
 
