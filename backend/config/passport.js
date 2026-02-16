@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import passport from 'passport';
-import GoogleStrategy from 'passport-google-oauth20';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '../models/User.js';
 
 // Load environment variables
@@ -46,6 +46,7 @@ passport.use(new GoogleStrategy({
 }));
 
 passport.serializeUser((user, done) => {
+  // @ts-ignore
   done(null, user._id);
 });
 

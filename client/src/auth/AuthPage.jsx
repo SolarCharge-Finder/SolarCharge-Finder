@@ -294,7 +294,7 @@ function AuthPage() {
               </button>
               
               <div className="forgot-password-link">
-                <Link to="/forgot-password" onClick={() => setMenuOpen(false)}>
+                <Link to="/forgot-password">
                   Forgot Password?
                 </Link>
               </div>

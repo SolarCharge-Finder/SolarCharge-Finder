@@ -48,7 +48,7 @@ export const sendVerificationEmail = async (user) => {
 
     // Update user with verification token
     user.emailVerificationToken = verificationToken;
-    user.emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+    user.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
     await user.save();
 
     console.log('Saved verification token:', verificationToken);

@@ -6,7 +6,9 @@ import { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail } from 
 
 // Generate JWT token
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'fallback_secret', {
+  const secret = process.env.JWT_SECRET || 'fallback_secret';
+  // @ts-ignore
+  return jwt.sign({ id }, secret, {
     expiresIn: process.env.JWT_EXPIRE || '30d'
   });
 };
@@ -370,7 +372,7 @@ export const forgotPassword = async (req, res) => {
 
     // Save reset code and expiry to user
     user.passwordResetToken = resetCode;
-    user.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+    user.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
     await user.save();
 
     // Send password reset email
