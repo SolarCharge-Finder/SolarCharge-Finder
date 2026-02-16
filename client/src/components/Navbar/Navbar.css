@@ -1,0 +1,58 @@
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-greeting {
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  margin-right: 10px;
+}
+
+.btn-signout {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-signout:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+}
+
+.btn-signin {
+  background: #007bff;
+  color: white;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-signin:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .user-greeting {
+    font-size: 12px;
+    margin-right: 5px;
+  }
+  
+  .btn-signout,
+  .btn-signin {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
