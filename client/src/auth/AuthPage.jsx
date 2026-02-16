@@ -1,11 +1,10 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import './AuthPage.css'
 
 const socialProviders = [
-  { id: 'facebook', label: 'Continue with Facebook', text: 'f' },
   { id: 'google', label: 'Continue with Google', text: 'G' },
-  { id: 'linkedin', label: 'Continue with LinkedIn', text: 'in' },
 ]
 
 const validators = {
@@ -13,23 +12,55 @@ const validators = {
   email: (value) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Enter a valid email address.',
   password: (value) =>
-    value.length >= 8 ? '' : 'Password must be at least 8 characters long.',
+    value.length >= 6 ? '' : 'Password must be at least 6 characters long.',
 }
 
 function AuthPage() {
+  const navigate = useNavigate()
+  const { login, loading: authLoading } = useAuth()
   const [isActive, setIsActive] = useState(false)
   const [formValues, setFormValues] = useState({
     signup: { name: '', email: '', password: '' },
     signin: { email: '', password: '' },
   })
   const [formErrors, setFormErrors] = useState({ signup: {}, signin: {} })
+  const [loading, setLoading] = useState({ signup: false, signin: false })
+  const [message, setMessage] = useState({ type: '', text: '' })
+
+  // Show loading state while AuthContext is initializing
+  if (authLoading) {
+    return (
+      <div className="auth-page">
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          minHeight: '100vh',
+          fontSize: '18px',
+          color: '#666'
+        }}>
+          Loading authentication...
+        </div>
+      </div>
+    )
+  }
 
   const renderSocialButtons = () =>
     socialProviders.map((provider) => (
-      <button key={provider.id} type="button" className="social-btn" aria-label={provider.label}>
+      <button 
+        key={provider.id} 
+        type="button" 
+        className="social-btn" 
+        aria-label={provider.label}
+        onClick={() => handleGoogleLogin()}
+      >
         <span>{provider.text}</span>
       </button>
     ))
+
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:5001/api/auth/google';
+  }
 
   const handleToggle = (active) => () => setIsActive(active)
 
@@ -62,25 +93,127 @@ function AuthPage() {
     return Object.keys(nextErrors).length === 0
   }
 
-  const handleSubmit = (form) => (event) => {
+  const handleSubmit = (form) => async (event) => {
     event.preventDefault()
     const isValid = validateForm(form)
     if (!isValid) return
 
-    console.log(`${form} form submitted`, formValues[form])
+    setLoading(prev => ({ ...prev, [form]: true }))
+    setMessage({ type: '', text: '' })
+
+    try {
+      const API_BASE_URL = 'http://localhost:5001/api/users'
+      
+      if (form === 'signup') {
+        const response = await fetch(`${API_BASE_URL}/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formValues.signup.name,
+            email: formValues.signup.email,
+            password: formValues.signup.password
+          })
+        })
+
+        const data = await response.json()
+
+        if (response.ok) {
+          setMessage({
+            type: 'success',
+            text: 'Registration successful! Please check your email and click the verification link to activate your account.'
+          })
+          // Reset form
+          setFormValues(prev => ({
+            ...prev,
+            signup: { name: '', email: '', password: '' }
+          }))
+          // Switch to login form after successful registration
+          setTimeout(() => setIsActive(false), 3000)
+        } else {
+          setMessage({
+            type: 'error',
+            text: data.message || 'Registration failed. Please try again.'
+          })
+        }
+      } else if (form === 'signin') {
+        const response = await fetch(`${API_BASE_URL}/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formValues.signin.email,
+            password: formValues.signin.password
+          })
+        })
+
+        const data = await response.json()
+
+        if (response.ok) {
+          // Use AuthContext login function
+          login(data.data.token, data.data.user)
+          
+          setMessage({
+            type: 'success',
+            text: 'Login successful! Redirecting...'
+          })
+          
+          // Redirect all users to admin dashboard
+          setTimeout(() => {
+            navigate('/admin')
+          }, 1500)
+        } else {
+          setMessage({
+            type: 'error',
+            text: data.message || 'Login failed. Please check your credentials.'
+          })
+        }
+      }
+    } catch (error) {
+      console.error('Auth error:', error)
+      setMessage({
+        type: 'error',
+        text: 'Network error. Please check your connection and try again.'
+      })
+    } finally {
+      setLoading(prev => ({ ...prev, [form]: false }))
+    }
   }
 
   return (
     <div className="auth-page">
       <main className="auth-page__wrapper">
+        {/* Message Display */}
+        {message.text && (
+          <div 
+            className={`auth-message ${message.type === 'success' ? 'success' : 'error'}`}
+            style={{
+              position: 'fixed',
+              top: '20px',
+              right: '20px',
+              padding: '15px 20px',
+              borderRadius: '8px',
+              color: 'white',
+              fontWeight: '500',
+              zIndex: '1000',
+              maxWidth: '400px',
+              backgroundColor: message.type === 'success' ? '#28a745' : '#dc3545'
+            }}
+          >
+            {message.text}
+          </div>
+        )}
+        
         <div className={`container ${isActive ? 'active' : ''}`}>
           <div className="form-container sign-up-container">
             <form className="auth-form" onSubmit={handleSubmit('signup')} noValidate>
-              <h1>Create Account</h1>
+              <h1>Admin Account</h1>
               <div className="social-container" aria-label="Continue with social accounts">
                 {renderSocialButtons()}
               </div>
-              <span className="form-caption">or use your email for registration</span>
+              <span className="form-caption">or use your email for admin registration</span>
               <label className="input-field">
                 <span>Full Name</span>
                 <input
@@ -113,13 +246,13 @@ function AuthPage() {
                   placeholder="••••••••"
                   value={formValues.signup.password}
                   onChange={handleChange('signup', 'password')}
-                  minLength={8}
+                  minLength={6}
                   required
                 />
                 <small className="error-message">{formErrors.signup.password}</small>
               </label>
-              <button type="submit" className="primary-btn">
-                Sign Up
+              <button type="submit" className="primary-btn" disabled={loading.signup}>
+                {loading.signup ? 'Signing Up...' : 'Sign Up'}
               </button>
             </form>
           </div>
@@ -151,29 +284,35 @@ function AuthPage() {
                   placeholder="••••••••"
                   value={formValues.signin.password}
                   onChange={handleChange('signin', 'password')}
-                  minLength={8}
+                  minLength={6}
                   required
                 />
                 <small className="error-message">{formErrors.signin.password}</small>
               </label>
-              <button type="submit" className="primary-btn">
-                Login
+              <button type="submit" className="primary-btn" disabled={loading.signin}>
+                {loading.signin ? 'Logging In...' : 'Login'}
               </button>
+              
+              <div className="forgot-password-link">
+                <Link to="/forgot-password" onClick={() => setMenuOpen(false)}>
+                  Forgot Password?
+                </Link>
+              </div>
             </form>
           </div>
 
           <div className="overlay-container" aria-hidden="true">
             <div className="overlay">
               <div className="overlay-panel overlay-left">
-                <h2>Welcome Back!</h2>
-                <p>To keep connected with us please login with your personal info</p>
+                <h2>Welcome Admin!</h2>
+                <p>Access your admin dashboard to manage the solar charging station system</p>
                 <button type="button" className="ghost-btn" onClick={handleToggle(false)}>
                   Login
                 </button>
               </div>
               <div className="overlay-panel overlay-right">
-                <h2>Hello, Explorer!</h2>
-                <p>Start discovering nearby solar-powered charging stations in minutes.</p>
+                <h2>Admin Registration</h2>
+                <p>Create your admin account to manage the solar charging station platform</p>
                 <button type="button" className="ghost-btn" onClick={handleToggle(true)}>
                   Sign Up
                 </button>
