@@ -1,23 +1,6 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useState, useEffect } from 'react'
 
 const AuthContext = createContext()
-
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    console.error('useAuth must be used within an AuthProvider')
-    // Return fallback values instead of throwing error
-    return {
-      user: null,
-      token: null,
-      login: () => {},
-      logout: () => {},
-      loading: false,
-      isAuthenticated: false
-    }
-  }
-  return context
-}
 
  // eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {

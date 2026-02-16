@@ -4,6 +4,17 @@ import User from '../models/User.js';
 import { validationResult } from 'express-validator';
 import { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail } from '../utils/emailService.js';
 
+const logInfo = (message) => {
+  if (process.env.NODE_ENV === 'development') {
+    process.stdout.write(`${message}\n`);
+  }
+};
+
+const logError = (message, error) => {
+  const detail = error instanceof Error ? error.message : String(error);
+  process.stderr.write(`${message}: ${detail}\n`);
+};
+
 // Generate JWT token
 const generateToken = (id) => {
   const secret = process.env.JWT_SECRET || 'fallback_secret';
@@ -58,7 +69,7 @@ export const register = async (req, res) => {
     try {
       await sendVerificationEmail(user);
     } catch (emailError) {
-      console.error('Failed to send verification email:', emailError);
+      logError('Failed to send verification email', emailError);
       // Don't fail registration if email fails, but log it
     }
 
@@ -75,7 +86,7 @@ export const register = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Registration error:', error);
+    logError('Registration error', error);
     res.status(500).json({
       success: false,
       message: 'Server error during registration',
@@ -152,7 +163,7 @@ export const login = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Login error:', error);
+    logError('Login error', error);
     res.status(500).json({
       success: false,
       message: 'Server error during login',
@@ -189,7 +200,7 @@ export const getProfile = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get profile error:', error);
+    logError('Get profile error', error);
     res.status(500).json({
       success: false,
       message: 'Server error while fetching profile',
@@ -214,7 +225,7 @@ export const getAllUsers = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get all users error:', error);
+    logError('Get all users error', error);
     res.status(500).json({
       success: false,
       message: 'Server error while fetching users',
@@ -230,7 +241,7 @@ export const verifyEmail = async (req, res) => {
   try {
     const { token } = req.params;
 
-    console.log('Verifying email with token:', token);
+    logInfo(`Verifying email with token: ${token}`);
 
     // Find user with verification token
     const user = await User.findOne({
@@ -238,9 +249,9 @@ export const verifyEmail = async (req, res) => {
       emailVerificationExpires: { $gt: Date.now() }
     });
 
-    console.log('Found user:', user ? user.email : 'No user found');
-    console.log('User token:', user ? user.emailVerificationToken : 'No token');
-    console.log('Token expires:', user ? new Date(user.emailVerificationExpires).toISOString() : 'No expires');
+    logInfo(`Found user: ${user ? user.email : 'No user found'}`);
+    logInfo(`User token: ${user ? user.emailVerificationToken : 'No token'}`);
+    logInfo(`Token expires: ${user ? new Date(user.emailVerificationExpires).toISOString() : 'No expires'}`);
 
     if (!user) {
       return res.status(400).json({
@@ -255,14 +266,14 @@ export const verifyEmail = async (req, res) => {
     user.emailVerificationExpires = null;
     await user.save();
 
-    console.log('User verified successfully:', user.email);
-    console.log('User isEmailVerified:', user.isEmailVerified);
+    logInfo(`User verified successfully: ${user.email}`);
+    logInfo(`User isEmailVerified: ${user.isEmailVerified}`);
 
     // Send welcome email
     try {
       await sendWelcomeEmail(user);
     } catch (emailError) {
-      console.error('Failed to send welcome email:', emailError);
+      logError('Failed to send welcome email', emailError);
       // Don't fail verification if welcome email fails
     }
 
@@ -279,7 +290,7 @@ export const verifyEmail = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Email verification error:', error);
+    logError('Email verification error', error);
     res.status(500).json({
       success: false,
       message: 'Server error during email verification',
@@ -326,7 +337,7 @@ export const resendVerificationEmail = async (req, res) => {
       message: 'Verification email sent successfully. Please check your inbox.'
     });
   } catch (error) {
-    console.error('Resend verification error:', error);
+    logError('Resend verification error', error);
     res.status(500).json({
       success: false,
       message: 'Server error while resending verification email',
@@ -379,7 +390,7 @@ export const forgotPassword = async (req, res) => {
     try {
       await sendPasswordResetEmail(user, resetCode);
     } catch (emailError) {
-      console.error('Failed to send password reset email:', emailError);
+      logError('Failed to send password reset email', emailError);
       return res.status(500).json({
         success: false,
         message: 'Failed to send reset email. Please try again.'
@@ -391,7 +402,7 @@ export const forgotPassword = async (req, res) => {
       message: 'Password reset code sent to your email. Please check your inbox.'
     });
   } catch (error) {
-    console.error('Forgot password error:', error);
+    logError('Forgot password error', error);
     res.status(500).json({
       success: false,
       message: 'Server error during password reset request',
@@ -454,7 +465,7 @@ export const resetPassword = async (req, res) => {
       message: 'Password reset successfully. You can now login with your new password.'
     });
   } catch (error) {
-    console.error('Reset password error:', error);
+    logError('Reset password error', error);
     res.status(500).json({
       success: false,
       message: 'Server error during password reset',
