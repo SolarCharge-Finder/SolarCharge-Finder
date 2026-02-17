@@ -3,7 +3,7 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from "@jest/glo
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 //import app from "../server.js";   cooked, not exporting app from server.js </3
-import Station from "../src/models/Station.js";
+import Station from "../models/ChargingStationModel.js";
 
 let mongoServer;
 
@@ -12,7 +12,7 @@ const createTestApp = async () => {
     const express = await import('express');
     const app = express.default();
 
-    const stationRoutes = await import('../src/routes/stationRoutes.js');
+    const stationRoutes = await import('../routes/chargingStationRoutes.js');
     app.use('/api/stations', stationRoutes.default);
 
     return app;
@@ -42,8 +42,8 @@ beforeEach(async () => {
             location: { type: "Point", coordinates: [79.8612, 6.9271] },
             status: "Open",
             connectors: [
-                { type: "Type 1", totalSlots: 5, availableSlots: 3 },
-                { type: "Type 2", totalSlots: 4, availableSlots: 0 }
+                { type: "TYPE1", totalSlots: 5, availableSlots: 3, powerKW: 22 },
+                { type: "TYPE2", totalSlots: 4, availableSlots: 0, powerKW: 50 }
             ]
         },
         {
@@ -54,7 +54,7 @@ beforeEach(async () => {
             location: { type: "Point", coordinates: [80.6337, 7.2906] },
             status: "Closed",
             connectors: [
-                { type: "Type 2", totalSlots: 6, availableSlots: 2 }
+                { type: "TYPE2", totalSlots: 6, availableSlots: 2, powerKW: 50 }
             ]
         },
         {
@@ -65,7 +65,7 @@ beforeEach(async () => {
             location: { type: "Point", coordinates: [80.2189, 6.0320] },
             status: "Under Maintenance",
             connectors: [
-                { type: "Type 1", totalSlots: 3, availableSlots: 1 }
+                { type: "TYPE1", totalSlots: 3, availableSlots: 1, powerKW: 22 }
             ]
         }
     ]);
@@ -106,7 +106,7 @@ describe("Station Search API", () => {
         const app = await createTestApp();
         const res = await request(app)
             .get("/api/stations/search")
-            .query({ connectorType: "Type 1" });
+            .query({ connectorType: "TYPE1" });
 
         expect(res.statusCode).toBe(200);
         expect(res.body.length).toBe(2); // Colombo + Galle
@@ -130,7 +130,7 @@ describe("Station Search API", () => {
         const app = await createTestApp();
         const res = await request(app)
             .get("/api/stations/search")
-            .query({ city: "Colombo", connectorType: "Type 2" });
+            .query({ city: "Colombo", connectorType: "TYPE2" });
 
         expect(res.statusCode).toBe(200);
         expect(res.body.length).toBe(1);
@@ -141,7 +141,7 @@ describe("Station Search API", () => {
         const app = await createTestApp();
         const res = await request(app)
             .get("/api/stations/search")
-            .query({ status: "Open", connectorType: "Type 1" });
+            .query({ status: "Open", connectorType: "TYPE1" });
 
         expect(res.statusCode).toBe(200);
         expect(res.body.length).toBe(1);
@@ -152,7 +152,7 @@ describe("Station Search API", () => {
         const app = await createTestApp();
         const res = await request(app)
             .get("/api/stations/search")
-            .query({ city: "Kandy", status: "Open", connectorType: "Type 1" });
+            .query({ city: "Kandy", status: "Open", connectorType: "TYPE1" });
 
         expect(res.statusCode).toBe(200);
         expect(res.body.length).toBe(0);
