@@ -9,3 +9,8 @@ export const searchStations = async (SearchFilters) => {
 
     return response.data;
 };
+
+export const getTopRatedStations = async () => {
+    const response = await axios.get(`${API_URL}/top-rated`);
+    return response.data;
+}

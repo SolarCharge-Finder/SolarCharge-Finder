@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import PropTypes from 'prop-types';
 
 function FilterDropdown({
   city,
@@ -61,5 +62,16 @@ function FilterDropdown({
     </div>
   );
 }
+
+//prop types validation
+FilterDropdown.propTypes = {
+  city: PropTypes.string.isRequired,
+  setCity: PropTypes.func.isRequired,
+  status: PropTypes.string.isRequired,
+  setStatus: PropTypes.func.isRequired,
+  connectorType: PropTypes.string.isRequired,
+  setConnectorType: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+};
 
 export default FilterDropdown;

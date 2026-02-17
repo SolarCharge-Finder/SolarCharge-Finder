@@ -1,4 +1,4 @@
-
+import PropTypes from 'prop-types';
 
 const renderStars = (rating = 0) => {
     return Array.from({ length: 5 }, (_, idx) => {
@@ -53,6 +53,25 @@ const SearchResults = ({ stations, error }) => {
       })}
     </div>
   );
+};
+
+
+// PropTypes for type checking & final validation
+SearchResults.propTypes = {
+  stations: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      name: PropTypes.string,
+      address: PropTypes.string,
+      status: PropTypes.string,
+      rating: PropTypes.number,
+      distance: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number
+      ])
+    })
+  ).isRequired,
+  error: PropTypes.string
 };
 
 export default SearchResults;

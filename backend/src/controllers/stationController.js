@@ -1,4 +1,5 @@
-import Station from "../models/Station.js";
+//import Station from "../models/Station.js";
+import Station from "../../models/ChargingStationModel.js";
 
 export const searchStations = async (req, res) => {
     try {
@@ -43,5 +44,20 @@ export const searchStations = async (req, res) => {
     } catch (error) {
         console.error("Search error:", error);
         res.status(500).json({ message: "Server error during search" });
+    }
+};
+
+// top rated stations (5)
+export const getTopRatedStations = async (req, res) => {
+    try {
+        const topStations = await Station.find()
+            .sort({ rating: -1 })   // rating in descending order
+            .limit(5);              // top 5 limit
+
+        res.status(200).json(topStations);
+
+    } catch (error) {
+        console.error("Error fetching top rated stations:", error);
+        res.status(500).json({ message: "Server error while fetching top rated stations" });
     }
 };

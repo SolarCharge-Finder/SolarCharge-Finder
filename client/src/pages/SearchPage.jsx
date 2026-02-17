@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { searchStations } from "../services/stationService";
 import SearchBar from '../components/SearchBar/SearchBar';
@@ -18,50 +18,53 @@ const SearchPage = () => {
 
     const location = useLocation();
 
-    const handleSearch = async (filtersOverride = null) => {
-        try {
-            setError("");
+    const handleSearch = useCallback(
+        async (filtersOverride = null) => {
+            try {
+                setError("");
 
-            const SearchFilters = filtersOverride || {
-                search: query,
-                city,
-                status,
-                connectorType
-            };
+                const filters = filtersOverride ?? {
+                    search: query,
+                    city,
+                    status,
+                    connectorType,
+                };
 
-            const data = await searchStations(SearchFilters);
-            setStations(data);
+                const data = await searchStations(filters);
+                setStations(data);
 
-        } catch (err) {
-            setError("Error fetching stations");
-        }
-    };
+            } catch (err) {
+                console.error("Search failed:", err);
+                setError("Error fetching stations");
+            }
+        },
+        [query, city, status, connectorType]
+    );
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
 
         const filters = {
-            search: params.get("search") || "",
-            city: params.get("city") || "",
-            status: params.get("status") || "",
-            connectorType: params.get("connectorType") || ""
+            search: params.get("search") ?? "",
+            city: params.get("city") ?? "",
+            status: params.get("status") ?? "",
+            connectorType: params.get("connectorType") ?? "",
         };
 
+        // Sync state with URL
         setQuery(filters.search);
         setCity(filters.city);
         setStatus(filters.status);
         setConnectorType(filters.connectorType);
 
-        if (
-            filters.search ||
-            filters.city ||
-            filters.status ||
-            filters.connectorType
-        ) {
+        // Only search if at least one filter exists
+        const hasFilters = Object.values(filters).some(Boolean);
+
+        if (hasFilters) {
             handleSearch(filters);
         }
 
-    }, [location.search]);
+    }, [location.search, handleSearch]);
 
     return (
     <div className="page-layout">

@@ -1,4 +1,7 @@
-import StationCard from '../StationCard/StationCard';
+//import StationCard from '../StationCard/StationCard';
+import { useEffect, useState } from 'react';
+import SearchResults from '../SearchBar/SearchResults';
+import { getTopRatedStations } from '../../services/stationService';
 
 const sampleStations = [
   {
@@ -70,6 +73,25 @@ const sampleStations = [
 ];
 
 function MapSection() {
+
+  const [stations, setStations] = useState([]);
+  const [sortOption, setSortOption] = useState('rating');
+
+  const fetchTopRatedStations = async () => {
+    try {
+      const data = await getTopRatedStations();
+      setStations(data);
+    } catch (error) {
+      console.error("Error fetching top rated stations:", error);
+    } 
+  };
+
+  useEffect(() => {
+    if (sortOption === 'rating') {
+      fetchTopRatedStations();
+    }
+  }, [sortOption]);
+
   return (
     <section className="map-section" id="map">
       <div className="map-container">
@@ -117,16 +139,14 @@ function MapSection() {
           <div className="station-list">
             <div className="list-header">
               <h3>{sampleStations.length} stations found</h3>
-              <select className="sort-select">
-                <option>Sort by Rating</option>
-                <option>Sort by Distance</option>
-                <option>Sort by Name</option>
+              <select className="sort-select" value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
+                <option value="rating">Sort by Rating</option>
+                <option value="distance">Sort by Distance</option>
+                <option value="name">Sort by Name</option>
               </select>
             </div>
             <div className="cards-scroll">
-              {sampleStations.map((station) => (
-                <StationCard key={station.id} station={station} />
-              ))}
+              <SearchResults stations={stations} error={null} />
             </div>
           </div>
         </div>

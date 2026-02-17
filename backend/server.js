@@ -10,7 +10,9 @@ import passport from './config/passport.js';
 import {setServers} from "node:dns/promises";
 setServers(["1.1.1.1", "8.8.8.8"]);
 //end
-import chargingStationRoutes from "./routes/chargingStationRoutes.js";
+
+//import chargingStationRoutes from "./src/routes/stationRoutes.js"; (removed & moved to combined route page from (sachithra))
+import chargingStationRoutes from "./routes/chargingStationRoutes.js"; //combined route page for stations (adeesha & sachithra)
 import reviewRoutes from "./routes/reviewRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import debugRoutes from "./routes/debug.js";

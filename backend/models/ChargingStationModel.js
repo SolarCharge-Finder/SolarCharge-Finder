@@ -69,8 +69,8 @@ const chargingStationSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["ACTIVE", "MAINTENANCE", "INACTIVE"],
-        default: "ACTIVE",
+        enum: ["Open", "Under Maintenance", "Closed"],
+        default: "Open",
     },
 
     photos: [{

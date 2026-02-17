@@ -1,3 +1,5 @@
+//reduntant model: combined with ChargingStationModel.js
+
 import mongoose from "mongoose";
 
 //name, description, district, city, address, lat/long  

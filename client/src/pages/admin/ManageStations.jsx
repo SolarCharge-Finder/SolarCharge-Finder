@@ -14,8 +14,10 @@ function ManageStations() {
     const fetchStations = async () => {
       try {
         setLoading(true)
-        const { data } = await axios.get('/api/stations')
-        setStations(data)
+        //did this work before? u were treating it like an array instead of an object...
+        //i fixed it like this & it works, might be because u were using a different database ig (-adeesha)
+        const response = await axios.get('/api/stations')
+        setStations(response.data.data || []) //setStations(data)
         setError('')
       } catch (err) {
         console.error('Failed to load stations', err)
@@ -92,7 +94,8 @@ function ManageStations() {
           <div className="admin-card-grid">
             {filteredStations.map((station) => {
               const stationId = station.id ?? station._id
-              const ratingValue = Number(station.averageRating ?? 0)
+              const ratingValue = Number(station.rating ?? 0) // station.averageRating => station.rating
+              //model doesnt hv a field called averageRating bruh, gavindu will write the average into the model anyway (-adeesha)
               return (
                 <article key={stationId} className="admin-card">
                   <p className="admin-card__title">Station</p>

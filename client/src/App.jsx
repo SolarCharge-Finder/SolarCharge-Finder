@@ -7,6 +7,7 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import ManageUsers from './pages/admin/ManageUsers'
 import ManageStations from './pages/admin/ManageStations'
 import ManageReviews from './pages/admin/ManageReviews'
+import SearchPage from './pages/SearchPage' //new search page with filters (adeesha)
 import SearchStations from './pages/SearchStations'
 import AuthPage from './auth'
 import EmailVerification from './auth/EmailVerification'
@@ -15,7 +16,6 @@ import ResetPassword from './auth/ResetPassword'
 import OAuthCallback from './auth/OAuthCallback'
 import { AuthProvider } from './context/AuthContext'
 import './App.css'
-import SearchPage from './pages/SearchPage'
 
 function App() {
   return (
@@ -32,7 +32,8 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/oauth/callback" element={<OAuthCallback />} />
-            <Route path="/search" element={<SearchStations />} />
+            <Route path='/search' element={<SearchPage />} />
+            <Route path="/oldsearch" element={<SearchStations />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<ManageUsers />} />
             <Route path="/admin/stations" element={<ManageStations />} />
