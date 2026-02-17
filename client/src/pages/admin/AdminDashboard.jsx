@@ -1,4 +1,6 @@
 import AdminSidebar from '../../components/admin/AdminSidebar'
+import useAuth from '../../context/useAuth'
+import { useNavigate } from 'react-router-dom'
 import '../../styles/admin.css'
 
 const statCards = [
@@ -17,6 +19,14 @@ const insightStats = [
 ]
 
 function AdminDashboard() {
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/auth')
+  }
+
   return (
     <div className="admin-layout">
       <AdminSidebar />
@@ -32,10 +42,12 @@ function AdminDashboard() {
                 Welcome back,
               </p>
               <p className="admin-card__value" style={{ fontSize: '1.2rem', marginTop: '0.4rem' }}>
-                Sachithra Indrachapa
+                {user?.name || user?.email?.split('@')[0]}
               </p>
             </div>
-            <button className="admin-button admin-button--outline">Logout</button>
+            <button className="admin-button admin-button--outline" onClick={handleLogout}>
+              Logout
+            </button>
           </div>
         </header>
 
