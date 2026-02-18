@@ -76,13 +76,15 @@ function MapSection() {
 
   const [stations, setStations] = useState([]);
   const [sortOption, setSortOption] = useState('rating');
+  const [error, setError] = useState(null);
 
   const fetchTopRatedStations = async () => {
     try {
       const data = await getTopRatedStations();
       setStations(data);
-    } catch (error) {
-      console.error("Error fetching top rated stations:", error);
+    } catch (err) {
+      console.error("Error fetching top rated stations:", err);
+      setError(err);
     } 
   };
 
@@ -146,7 +148,13 @@ function MapSection() {
               </select>
             </div>
             <div className="cards-scroll">
-              <SearchResults stations={stations} error={null} />
+              {error ? (
+                <p className="no-results">Failed to load stations</p>
+              ) : stations.length === 0 ? (
+                <p className="no-results">No stations found. Try adjusting your search criteria.</p>
+              ) : (
+                <SearchResults stations={stations} error={error} /> 
+              )}
             </div>
           </div>
         </div>
