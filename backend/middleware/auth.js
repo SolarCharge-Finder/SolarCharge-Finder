@@ -58,6 +58,7 @@ export const protect = async (req, res, next) => {
 
 // Grant access to specific roles
 export const authorize = (...roles) => {
+  const normalizedRoles = roles.map(role => role?.toString().toLowerCase())
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ 
@@ -66,7 +67,9 @@ export const authorize = (...roles) => {
       });
     }
 
-    if (!roles.includes(req.user.role)) {
+    const userRole = req.user.role?.toLowerCase()
+
+    if (!normalizedRoles.includes(userRole)) {
       return res.status(403).json({ 
         success: false, 
         message: `Access denied. User role ${req.user.role} is not authorized.` 

@@ -1,9 +1,23 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './Navbar.css';
+import { useState, useMemo } from 'react'
+import { Link } from 'react-router-dom'
+import useAuth from '../../context/useAuth'
+import './Navbar.css'
 
 function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false)
+  const { user } = useAuth()
+
+  const userMeta = useMemo(() => {
+    if (!user) {
+      return null
+    }
+    const role = user.role?.toLowerCase()
+    const displayName = (user.name && user.name.trim()) || user.email?.split('@')[0] || 'Profile'
+    const initial = displayName.charAt(0).toUpperCase()
+    const target = role === 'admin' ? '/admin' : '/user'
+
+    return { displayName, initial, target }
+  }, [user])
 
   return (
     <nav className="navbar">
@@ -29,13 +43,26 @@ function Navbar() {
         </ul>
 
         <div className="navbar-actions">
-          <Link to="/auth" className="btn-signin" onClick={() => setMenuOpen(false)}>
-            Sign Up
-          </Link>
+          {userMeta ? (
+            <Link
+              to={userMeta.target}
+              className="navbar-user-link"
+              onClick={() => setMenuOpen(false)}
+            >
+              <span className="navbar-user-link__avatar" aria-hidden="true">
+                {userMeta.initial}
+              </span>
+              <span className="navbar-user-link__name">{userMeta.displayName}</span>
+            </Link>
+          ) : (
+            <Link to="/auth" className="btn-signin" onClick={() => setMenuOpen(false)}>
+              Sign Up
+            </Link>
+          )}
         </div>
       </div>
     </nav>
-  );
+  )
 }
 
-export default Navbar;
+export default Navbar

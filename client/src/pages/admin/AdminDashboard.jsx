@@ -1,6 +1,6 @@
 import AdminSidebar from '../../components/admin/AdminSidebar'
 import useAuth from '../../context/useAuth'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import '../../styles/admin.css'
 
 const statCards = [
@@ -32,7 +32,10 @@ function AdminDashboard() {
       <AdminSidebar />
       <main className="admin-content">
         <header className="admin-header">
-          <div>
+          <div className="admin-header__title">
+            <Link to="/" className="admin-back-link">
+              ← Home
+            </Link>
             <p className="admin-card__title">Admin Panel</p>
             <h1>Dashboard</h1>
           </div>
