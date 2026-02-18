@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import useAuth from '../context/useAuth'
 import './AuthPage.css'
@@ -17,7 +17,8 @@ const validators = {
 
 function AuthPage() {
   const navigate = useNavigate()
-  const { login, loading: authLoading } = useAuth()
+  const { login, logout, loading: authLoading, user } = useAuth()
+  const redirectGuardRef = useRef(false)
   const [isActive, setIsActive] = useState(false)
   const [formValues, setFormValues] = useState({
     signup: { name: '', email: '', password: '' },
@@ -26,6 +27,16 @@ function AuthPage() {
   const [formErrors, setFormErrors] = useState({ signup: {}, signin: {} })
   const [loading, setLoading] = useState({ signup: false, signin: false })
   const [message, setMessage] = useState({ type: '', text: '' })
+
+  const getRoleRedirectPath = (role = '') => {
+    return role?.toLowerCase() === 'admin' ? '/admin' : '/'
+  }
+
+  useEffect(() => {
+    if (authLoading || !user || redirectGuardRef.current) return
+    redirectGuardRef.current = true
+    navigate(getRoleRedirectPath(user.role), { replace: true })
+  }, [authLoading, user, navigate])
 
   // Show loading state while AuthContext is initializing
   if (authLoading) {
@@ -62,7 +73,13 @@ function AuthPage() {
     window.location.href = 'http://localhost:5001/api/auth/google';
   }
 
-  const handleToggle = (active) => () => setIsActive(active)
+  const handleToggle = (active) => () => {
+    if (active && user) {
+      logout()
+      redirectGuardRef.current = false
+    }
+    setIsActive(active)
+  }
 
   const handleChange = (form, field) => (event) => {
     const { value } = event.target
@@ -154,15 +171,16 @@ function AuthPage() {
         if (response.ok) {
           // Use AuthContext login function
           login(data.data.token, data.data.user)
-          
+
           setMessage({
             type: 'success',
             text: 'Login successful! Redirecting...'
           })
-          
-          // Redirect all users to admin dashboard
+
+          const redirectPath = getRoleRedirectPath(data?.data?.user?.role)
+          redirectGuardRef.current = true
           setTimeout(() => {
-            navigate('/admin')
+            navigate(redirectPath)
           }, 1500)
         } else {
           setMessage({

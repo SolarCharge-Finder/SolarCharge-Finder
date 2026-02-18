@@ -7,6 +7,8 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import ManageUsers from './pages/admin/ManageUsers'
 import ManageStations from './pages/admin/ManageStations'
 import ManageReviews from './pages/admin/ManageReviews'
+import ProtectedRoute from './components/routing/ProtectedRoute'
+import UserDashboard from './pages/User/UserDashboard'
 import SearchPage from './pages/SearchPage' //new search page with filters (adeesha)
 import SearchStations from './pages/SearchStations'
 import AuthPage from './auth'
@@ -34,10 +36,15 @@ function App() {
             <Route path="/oauth/callback" element={<OAuthCallback />} />
             <Route path='/search' element={<SearchPage />} />
             <Route path="/oldsearch" element={<SearchStations />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/users" element={<ManageUsers />} />
-            <Route path="/admin/stations" element={<ManageStations />} />
-            <Route path="/admin/reviews" element={<ManageReviews />} />
+            <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/users" element={<ManageUsers />} />
+              <Route path="/admin/stations" element={<ManageStations />} />
+              <Route path="/admin/reviews" element={<ManageReviews />} />
+            </Route>
+            <Route element={<ProtectedRoute allowedRoles={['user']} />}>
+              <Route path="/user" element={<UserDashboard />} />
+            </Route>
           </Routes>
         </div>
       </Router>

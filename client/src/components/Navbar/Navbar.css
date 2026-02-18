@@ -4,6 +4,36 @@
   gap: 10px;
 }
 
+.navbar-user-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.navbar-user-link:hover .navbar-user-link__name {
+  text-decoration: underline;
+}
+
+.navbar-user-link__avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #109867;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.navbar-user-link__name {
+  font-size: 0.95rem;
+}
+
 .user-greeting {
   color: #333;
   font-size: 14px;
@@ -54,5 +84,9 @@
   .btn-signin {
     padding: 6px 12px;
     font-size: 12px;
+  }
+
+  .navbar-user-link__name {
+    font-size: 0.9rem;
   }
 }

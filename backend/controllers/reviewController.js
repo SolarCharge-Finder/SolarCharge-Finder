@@ -97,6 +97,23 @@ export const addReview = async (req, res, next) => {
     }
 };
 
+export const getAllReviews = async (_req, res, next) => {
+    try {
+        const reviews = await Review.find({})
+            .populate("user", "name email")
+            .populate("station", "name")
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            count: reviews.length,
+            data: reviews,
+        });
+    } catch (error) {
+        return next(error);
+    }
+};
+
 export const getReviewsByStation = async (req, res, next) => {
     try {
         const { stationId } = req.params;
@@ -212,7 +229,9 @@ export const deleteReview = async (req, res, next) => {
             return res.status(401).json({ message: "Not authorized, invalid user context" });
         }
 
-        if (review.user.toString() !== userId) {
+        const isAdmin = req.user?.role === "admin";
+
+        if (!isAdmin && review.user.toString() !== userId) {
             return res.status(403).json({ message: "You are not allowed to delete this review" });
         }
 
