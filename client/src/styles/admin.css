@@ -789,3 +789,143 @@
   border-radius: 0.75rem;
   border: 1px dashed var(--admin-border);
 }
+
+/* Photo Slideshow Styles */
+.photo-slideshow {
+  width: 100%;
+  height: 160px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem 0.75rem 0 0;
+  background: linear-gradient(135deg, #f0f4f2 0%, #e8f0ec 100%);
+}
+
+.photo-slideshow--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--admin-muted);
+  font-size: 0.9rem;
+  background: linear-gradient(135deg, #f8faf9 0%, #f0f4f2 100%);
+}
+
+.photo-slideshow__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.photo-slideshow__indicators {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+}
+
+.photo-slideshow__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.photo-slideshow__dot:hover {
+  transform: scale(1.2);
+}
+
+.photo-slideshow__dot--active {
+  background: #fff;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Admin Card with Photo */
+.admin-card--with-photo {
+  padding: 0;
+  overflow: hidden;
+}
+
+.admin-card--with-photo .admin-card__content {
+  padding: 1.25rem;
+}
+
+/* ── Photo dropzone ─────────────────────────────────────────── */
+.photo-dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  background: #f8fafc;
+  margin-bottom: 1rem;
+  user-select: none;
+}
+
+.photo-dropzone:hover {
+  border-color: #6366f1;
+  background: #eef2ff;
+}
+
+.photo-dropzone--active {
+  border-color: #6366f1;
+  background: #eef2ff;
+}
+
+.photo-dropzone--uploading {
+  cursor: default;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.dropzone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.dropzone-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.dropzone-hint {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+/* Spinner */
+.upload-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid #e2e8f0;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* URL fallback section */
+.photo-url-section {
+  margin-bottom: 1rem;
+}
+
+.photo-url-section .photo-add-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.photo-url-section .photo-add-form input {
+  flex: 1;
+}
+

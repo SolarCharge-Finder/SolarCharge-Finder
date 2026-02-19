@@ -72,6 +72,50 @@ function RecenterMap({ center }) {
   return null
 }
 
+// Photo Slideshow component
+function PhotoSlideshow({ photos, interval = 3000 }) {
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  useEffect(() => {
+    if (!photos || photos.length <= 1) return
+
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % photos.length)
+    }, interval)
+
+    return () => clearInterval(timer)
+  }, [photos, interval])
+
+  if (!photos || photos.length === 0) {
+    return (
+      <div className="photo-slideshow photo-slideshow--empty">
+        <span>No Photos</span>
+      </div>
+    )
+  }
+
+  return (
+    <div className="photo-slideshow">
+      <img
+        src={photos[currentIndex]}
+        alt={`Station photo ${currentIndex + 1}`}
+        className="photo-slideshow__image"
+      />
+      {photos.length > 1 && (
+        <div className="photo-slideshow__indicators">
+          {photos.map((_, idx) => (
+            <span
+              key={idx}
+              className={`photo-slideshow__dot ${idx === currentIndex ? 'photo-slideshow__dot--active' : ''}`}
+              onClick={() => setCurrentIndex(idx)}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ManageStations() {
   const { token } = useAuth()
   const adminRequestConfig = useMemo(() => {
@@ -101,6 +145,8 @@ function ManageStations() {
   const [gpsLoading, setGpsLoading] = useState(false)
   const [gpsError, setGpsError] = useState('')
   const [newPhotoUrl, setNewPhotoUrl] = useState('')
+  const [isDragging, setIsDragging] = useState(false)
+  const [uploadingPhotos, setUploadingPhotos] = useState(false)
 
   // Fetch stations
   useEffect(() => {
@@ -278,6 +324,60 @@ function ManageStations() {
       ...prev,
       photos: prev.photos.filter((_, i) => i !== index)
     }))
+  }
+
+  // Drag & drop / file upload handlers
+  const handleFileUpload = async (files) => {
+    if (!files || files.length === 0) return
+    if (!adminRequestConfig) return
+    const imageFiles = Array.from(files).filter(f => f.type.startsWith('image/'))
+    if (imageFiles.length === 0) {
+      alert('Please select valid image files (JPG, PNG, GIF, WebP)')
+      return
+    }
+    setUploadingPhotos(true)
+    try {
+      const formPayload = new FormData()
+      imageFiles.forEach(f => formPayload.append('photos', f))
+      const response = await axios.post('/api/upload/photos', formPayload, {
+        headers: {
+          ...adminRequestConfig.headers,
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      if (response.data.success && response.data.urls) {
+        setFormData(prev => ({
+          ...prev,
+          photos: [...prev.photos, ...response.data.urls],
+        }))
+      }
+    } catch (err) {
+      console.error('Photo upload failed:', err)
+      alert(err.response?.data?.message || 'Photo upload failed. Please try again.')
+    } finally {
+      setUploadingPhotos(false)
+    }
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = (e) => {
+    e.preventDefault()
+    setIsDragging(false)
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+    setIsDragging(false)
+    handleFileUpload(e.dataTransfer.files)
+  }
+
+  const handleFileInputChange = (e) => {
+    handleFileUpload(e.target.files)
+    e.target.value = '' // reset so same file can be re-selected
   }
 
   // Search address using Nominatim
@@ -789,37 +889,72 @@ function ManageStations() {
               <h3 className="form-section-title">Photos</h3>
             </div>
 
-            <div className="photo-add-form">
+            {/* Drag & drop upload zone */}
+            <div
+              className={`photo-dropzone${isDragging ? ' photo-dropzone--active' : ''}${uploadingPhotos ? ' photo-dropzone--uploading' : ''}`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => !uploadingPhotos && document.getElementById('photo-file-input').click()}
+            >
               <input
-                type="text"
-                value={newPhotoUrl}
-                onChange={(e) => setNewPhotoUrl(e.target.value)}
-                placeholder="Enter photo URL (e.g., https://example.com/photo.jpg)"
-                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddPhoto())}
+                id="photo-file-input"
+                type="file"
+                accept="image/*"
+                multiple
+                style={{ display: 'none' }}
+                onChange={handleFileInputChange}
               />
-              <button 
-                type="button" 
-                onClick={handleAddPhoto}
-                className="admin-button admin-button--ghost"
-              >
-                + Add Photo
-              </button>
+              <div className="dropzone-content">
+                {uploadingPhotos ? (
+                  <>
+                    <div className="upload-spinner" />
+                    <p>Uploading photos…</p>
+                  </>
+                ) : (
+                  <>
+                    <span className="dropzone-icon">📷</span>
+                    <p>Drag &amp; drop photos here, or <strong>click to browse</strong></p>
+                    <span className="dropzone-hint">JPG, PNG, GIF, WebP · max 5 MB each · up to 10 photos</span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* URL fallback */}
+            <div className="photo-url-section">
+              <div className="photo-add-form">
+                <input
+                  type="text"
+                  value={newPhotoUrl}
+                  onChange={(e) => setNewPhotoUrl(e.target.value)}
+                  placeholder="Or paste a photo URL…"
+                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddPhoto())}
+                />
+                <button
+                  type="button"
+                  onClick={handleAddPhoto}
+                  className="admin-button admin-button--ghost"
+                >
+                  + Add URL
+                </button>
+              </div>
             </div>
 
             {formData.photos.length > 0 && (
               <div className="photos-grid">
                 {formData.photos.map((photo, index) => (
                   <div key={index} className="photo-item">
-                    <img 
-                      src={photo} 
+                    <img
+                      src={photo}
                       alt={`Station photo ${index + 1}`}
                       onError={(e) => {
                         e.target.onerror = null
                         e.target.src = 'https://via.placeholder.com/150?text=Invalid+URL'
                       }}
                     />
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={() => handleRemovePhoto(index)}
                       className="photo-remove"
                     >
@@ -830,8 +965,8 @@ function ManageStations() {
               </div>
             )}
 
-            {formData.photos.length === 0 && (
-              <p className="photos-empty">No photos added yet. Add photo URLs above.</p>
+            {formData.photos.length === 0 && !uploadingPhotos && (
+              <p className="photos-empty">No photos yet. Upload files above or paste a URL.</p>
             )}
           </div>
         </div>
@@ -902,32 +1037,35 @@ function ManageStations() {
               const stationId = station.id ?? station._id
               const ratingValue = Number(station.rating ?? 0)
               return (
-                <article key={stationId} className="admin-card">
-                  <p className="admin-card__title">Station</p>
-                  <h3 style={{ marginTop: '0.5rem' }}>{station.name}</h3>
-                  <p className="admin-card__title" style={{ marginTop: '0.25rem' }}>
-                    {station.city && station.district 
-                      ? `${station.city}, ${station.district}` 
-                      : station.address 
-                        ? station.address 
-                        : station.location?.coordinates 
-                          ? `📍 ${station.location.coordinates[1]?.toFixed(4)}, ${station.location.coordinates[0]?.toFixed(4)}`
-                          : 'No location'}
-                  </p>
-                  <p className="admin-card__title" style={{ marginTop: '0.25rem' }}>
-                    Status: <span style={{ 
-                      color: station.status === 'Open' ? '#109867' : 
-                             station.status === 'Closed' ? '#ef4444' : '#f59e0b'
-                    }}>{station.status || 'Open'}</span>
-                  </p>
-                  <div style={{ marginTop: '0.75rem', fontWeight: 600 }}>⭐ {ratingValue.toFixed(1)}</div>
-                  <div className="admin-table-actions" style={{ marginTop: '1rem' }}>
-                    <button onClick={() => openEditModal(station)} className="admin-button admin-button--ghost">
-                      Edit
-                    </button>
-                    <button onClick={() => handleDelete(stationId)} className="admin-button admin-button--danger">
-                      Delete
-                    </button>
+                <article key={stationId} className="admin-card admin-card--with-photo">
+                  <PhotoSlideshow photos={station.photos} />
+                  <div className="admin-card__content">
+                    <p className="admin-card__title">Station</p>
+                    <h3 style={{ marginTop: '0.5rem' }}>{station.name}</h3>
+                    <p className="admin-card__title" style={{ marginTop: '0.25rem' }}>
+                      {station.city && station.district 
+                        ? `${station.city}, ${station.district}` 
+                        : station.address 
+                          ? station.address 
+                          : station.location?.coordinates 
+                            ? `📍 ${station.location.coordinates[1]?.toFixed(4)}, ${station.location.coordinates[0]?.toFixed(4)}`
+                            : 'No location'}
+                    </p>
+                    <p className="admin-card__title" style={{ marginTop: '0.25rem' }}>
+                      Status: <span style={{ 
+                        color: station.status === 'Open' ? '#109867' : 
+                               station.status === 'Closed' ? '#ef4444' : '#f59e0b'
+                      }}>{station.status || 'Open'}</span>
+                    </p>
+                    <div style={{ marginTop: '0.75rem', fontWeight: 600 }}>⭐ {ratingValue.toFixed(1)}</div>
+                    <div className="admin-table-actions" style={{ marginTop: '1rem' }}>
+                      <button onClick={() => openEditModal(station)} className="admin-button admin-button--ghost">
+                        Edit
+                      </button>
+                      <button onClick={() => handleDelete(stationId)} className="admin-button admin-button--danger">
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </article>
               )
