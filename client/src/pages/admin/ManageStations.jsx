@@ -2,8 +2,20 @@ import { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
 import AdminSidebar from '../../components/admin/AdminSidebar'
 import '../../styles/admin.css'
+import useAuth from '../../context/useAuth'
+import { Link } from 'react-router-dom'
 
 function ManageStations() {
+  const { token } = useAuth()
+  const adminRequestConfig = useMemo(() => {
+    if (!token) return null
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  }, [token])
+
   const [stations, setStations] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -17,8 +29,10 @@ function ManageStations() {
     const fetchStations = async () => {
       try {
         setLoading(true)
-        const { data } = await axios.get('/api/stations')
-        setStations(Array.isArray(data.data) ? data.data : [])
+        //did this work before? u were treating it like an array instead of an object...
+        //i fixed it like this & it works, might be because u were using a different database ig (-adeesha)
+        const response = await axios.get('/api/stations')
+        setStations(response.data.data || []) //setStations(data)
         setError('')
       } catch (err) {
         console.error('Failed to load stations', err)
@@ -43,9 +57,14 @@ function ManageStations() {
 
   const handleDelete = async (stationId) => {
     if (!window.confirm('Delete this station?')) return
+
+    if (!adminRequestConfig) {
+      alert('Admin authentication required.')
+      return
+    }
     try {
-      await axios.delete(`/api/stations/${stationId}`)
-      setStations((prev) => prev.filter((s) => (s._id ?? s.id) !== String(stationId)))
+      await axios.delete(`/api/stations/${stationId}`, adminRequestConfig)
+      setStations((prev) => prev.filter((station) => (station.id ?? station._id) !== stationId))
     } catch (err) {
       console.error('Delete failed', err)
       alert('Unable to delete station right now.')
@@ -53,49 +72,11 @@ function ManageStations() {
   }
 
   const handleEdit = (stationId) => {
-    setEditingStation({
-      _id: station._id,
-      name: station.name || "",
-      status: station.status || "ACTIVE",
-      latitude: station.location?.coordinates?.[1] ?? "",
-      longitude: station.location?.coordinates?.[0] ?? "",
-      connectors: station.connectors || []
-    })
-    setIsEditOpen(true)
-  }
-
-  const handleUpdate = async () => {
-    try {
-      setSaving(true)
-
-      const stationId = editingStation._id
-      const playload = {
-        name: editingStation.name,
-        status: editingStation.status,
-        connectors: editingStation.connectors,
-      }
-
-      //send lat/lng only if both provided
-      if (editingStation.latitude !== "" && editingStation.longitude !== "") {
-        playload.latitude = Number(editingStation.latitude)
-        playload.longitude = Number(editingStation.longitude)
-      }
-
-      const res = await axios.put(`api/stations/${stationId}`, playload)
-      const updatedStation = res.data?.data
-
-      setStations((prev) =>
-        prev.map((s) => (String(s._id) === String(stationId) ? updatedStation : s))
-      )
-      setIsEditOpen(false)
-      setEditingStation(null)
-
-    } catch (err) {
-      console.error('Update failed:', err)
-      alert('Failed to update station.')
-    } finally {
-      setSaving(false)
+    if (!adminRequestConfig) {
+      alert('Admin authentication required.')
+      return
     }
+    alert(`Edit flow not yet implemented for station ${stationId}`)
   }
 
   return (
@@ -103,7 +84,10 @@ function ManageStations() {
       <AdminSidebar />
       <main className="admin-content">
         <header className="admin-header">
-          <div>
+          <div className="admin-header__title">
+            <Link to="/" className="admin-back-link">
+              ← Home
+            </Link>
             <p className="admin-card__title">Admin Panel</p>
             <h1>Manage Stations</h1>
           </div>
@@ -137,7 +121,8 @@ function ManageStations() {
           <div className="admin-card-grid">
             {filteredStations.map((station) => {
               const stationId = station.id ?? station._id
-              const ratingValue = Number(station.averageRating ?? 0)
+              const ratingValue = Number(station.rating ?? 0) // station.averageRating => station.rating
+              //model doesnt hv a field called averageRating bruh, gavindu will write the average into the model anyway (-adeesha)
               return (
                 <article key={stationId} className="admin-card">
                   <p className="admin-card__title">Station</p>

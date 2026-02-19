@@ -1,0 +1,155 @@
+/* ==================== Search Page Container ==================== */
+.searchpage-container {
+  
+  width: 100%;
+  max-width: 1400px;       
+  background: #fff;
+  border-radius: 20px;
+  margin: 0 auto;          
+  padding: 40px 20px;    
+  box-sizing: border-box;
+}
+
+/* Main split layout */
+.search-page-layout {
+  padding-top: 20px;
+  display: flex;
+  height: 100vh; /* full height screen */
+  width: 100%;
+  overflow: hidden;
+}
+
+/* LEFT SIDE - Results */
+.search-results-panel {
+  width: 35%;               /* percentage of screen view for search results*/
+  min-width: 320px;
+  max-width: 500px;
+  background: #ffffff;
+  border-right: 1px solid #eaeaea;
+  padding: 1.5rem;
+  overflow-y: auto;         /* scroll only results */
+}
+
+/* RIGHT SIDE - Map */
+.map-preview-panel {
+  flex: 1;                  /* takes remaining space */
+  height: 100%;
+}
+
+
+/* ==================== Page Title ==================== */
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #1c1c1e; 
+  text-align: center;
+  margin-bottom: 5%;
+}
+
+/* ==================== Error Message ==================== */
+.error-msg {
+  color: #ff3b30; 
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* ==================== Stations Grid ==================== */
+.stations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* No Stations Message */
+.no-stations {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #8e8e93; 
+}
+
+
+/* ==================== Station Card ==================== */
+.station-card {
+  border: 1.5px solid #34d399;
+  border-radius: 1.25rem;
+  padding-bottom: 1rem;
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  background: #fff;
+}
+
+.station-card--active {
+  border-color: #10b981;
+  transform: translateY(-2px);
+}
+
+.station-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.station-card__header h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.station-card__rating {
+  color: #fbbf24;
+}
+
+.star-filled {
+  color: #fbbf24;
+}
+
+.star-muted {
+  color: #d1d5db;
+}
+
+.station-card__address {
+  margin: 0.5rem 0;
+  color: #6b7280;
+}
+
+.station-card__distance {
+  margin: 0;
+  color: #10b981;
+  font-weight: 600;
+}
+
+.station-card__cta {
+  margin-top: 0.75rem;
+  border: 1px solid #10b981;
+  background: transparent;
+  color: #10b981;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.station-card__cta:hover {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+
+/* ==================== Station Status ==================== */
+.station-status {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.station-status.open {
+  color: #32d74b; 
+}
+
+.station-status.under-maintenance {
+  color: #ff9f0a; 
+}
+
+.station-status.closed {
+  color: #ff3b30; 
+}

@@ -69,8 +69,8 @@ const chargingStationSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["ACTIVE", "MAINTENANCE", "INACTIVE"],
-        default: "ACTIVE",
+        enum: ["Open", "Under Maintenance", "Closed"],
+        default: "Open",
     },
 
     photos: [{
@@ -83,6 +83,17 @@ const chargingStationSchema = new mongoose.Schema({
             validator: (arr) => Array.isArray(arr) && arr.length > 0,
             message: "At least one connector is required."
         },
+    },
+    rating: {
+        type: Number,
+        default: 0,
+        min: 0,
+        max: 5,
+    },
+    totalRatings: {
+        type: Number,
+        default: 0,
+        min: 0,
     },
 
     // later connect auth: createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }

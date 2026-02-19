@@ -46,7 +46,7 @@ export const createChargingStation = async (req, res, next) => {
 
     } catch (err) {
         next(err);
-    };
+    }
 
 };
 
@@ -168,7 +168,7 @@ export const updateChargingStation = async (req, res, next) => {
 
 //delete stations
 
-export const deleteChargingStation = async (req, res, next) => {
+export const deleteChargingStation = async (req, res, _next) => {
     try{
         const deleted = await ChargingStationModel.findByIdAndDelete(req.params.id);
 
