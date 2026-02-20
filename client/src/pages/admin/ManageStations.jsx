@@ -3,7 +3,7 @@ import axios from 'axios'
 import AdminSidebar from '../../components/admin/AdminSidebar'
 import '../../styles/admin.css'
 import useAuth from '../../context/useAuth'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -117,6 +117,7 @@ function PhotoSlideshow({ photos, interval = 3000 }) {
 }
 
 function ManageStations() {
+  const navigate = useNavigate()
   const { token } = useAuth()
   const adminRequestConfig = useMemo(() => {
     if (!token) return null
@@ -1037,7 +1038,11 @@ function ManageStations() {
               const stationId = station.id ?? station._id
               const ratingValue = Number(station.rating ?? 0)
               return (
-                <article key={stationId} className="admin-card admin-card--with-photo">
+                <article
+                  key={stationId}
+                  className="admin-card admin-card--with-photo admin-card--clickable"
+                  onClick={() => navigate(`/stations/${stationId}`)}
+                >
                   <PhotoSlideshow photos={station.photos} />
                   <div className="admin-card__content">
                     <p className="admin-card__title">Station</p>
@@ -1059,10 +1064,10 @@ function ManageStations() {
                     </p>
                     <div style={{ marginTop: '0.75rem', fontWeight: 600 }}>⭐ {ratingValue.toFixed(1)}</div>
                     <div className="admin-table-actions" style={{ marginTop: '1rem' }}>
-                      <button onClick={() => openEditModal(station)} className="admin-button admin-button--ghost">
+                      <button onClick={(e) => { e.stopPropagation(); openEditModal(station) }} className="admin-button admin-button--ghost">
                         Edit
                       </button>
-                      <button onClick={() => handleDelete(stationId)} className="admin-button admin-button--danger">
+                      <button onClick={(e) => { e.stopPropagation(); handleDelete(stationId) }} className="admin-button admin-button--danger">
                         Delete
                       </button>
                     </div>
