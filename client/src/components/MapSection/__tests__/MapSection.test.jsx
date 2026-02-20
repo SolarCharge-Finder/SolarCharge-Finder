@@ -6,7 +6,7 @@ import * as stationService from '../../../services/stationService';
 
 // Mock react-leaflet — jsdom lacks SVG APIs that Leaflet requires
 vi.mock('react-leaflet', () => ({
-  MapContainer: ({ children }) => <div data-testid="map-container">{children}</div>,
+  MapContainer: () => <div data-testid="map-container" />,
   TileLayer: () => null,
   Marker: () => null,
   Popup: () => null,
@@ -18,7 +18,7 @@ vi.mock('../../../services/stationService');
 
 // Provide a working navigator.geolocation so the component calls getNearbyStations
 const mockGeolocationSuccess = () => {
-  Object.defineProperty(global.navigator, 'geolocation', {
+  Object.defineProperty(window.navigator, 'geolocation', {
     value: {
       getCurrentPosition: vi.fn((success) => {
         success({ coords: { latitude: 7.9, longitude: 80.7 } });
