@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
+import PropTypes from 'prop-types'
 import { useParams, useNavigate } from 'react-router-dom'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import L from 'leaflet'
@@ -51,6 +52,13 @@ function StarRating({ value = 0, max = 5, interactive = false, onChange }) {
   )
 }
 
+StarRating.propTypes = {
+  value: PropTypes.number,
+  max: PropTypes.number,
+  interactive: PropTypes.bool,
+  onChange: PropTypes.func,
+}
+
 // ── Photo Slideshow ──
 function Slideshow({ photos }) {
   const [idx, setIdx] = useState(0)
@@ -96,6 +104,10 @@ function Slideshow({ photos }) {
   )
 }
 
+Slideshow.propTypes = {
+  photos: PropTypes.arrayOf(PropTypes.string),
+}
+
 // ── Review Item ──
 function ReviewItem({ review, currentUserId, onDelete }) {
   const name = review.user?.name || 'Anonymous'
@@ -121,6 +133,21 @@ function ReviewItem({ review, currentUserId, onDelete }) {
       </div>
     </div>
   )
+}
+
+ReviewItem.propTypes = {
+  review: PropTypes.shape({
+    _id: PropTypes.string,
+    rating: PropTypes.number,
+    comment: PropTypes.string,
+    createdAt: PropTypes.string,
+    user: PropTypes.shape({
+      _id: PropTypes.string,
+      name: PropTypes.string,
+    }),
+  }).isRequired,
+  currentUserId: PropTypes.string,
+  onDelete: PropTypes.func.isRequired,
 }
 
 // ── Main Page ──

@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -47,6 +48,14 @@ function FlyTo({ target }) {
   return null;
 }
 
+FlyTo.propTypes = {
+  target: PropTypes.shape({
+    location: PropTypes.shape({
+      coordinates: PropTypes.arrayOf(PropTypes.number),
+    }),
+  }),
+}
+
 // Recenter map to user location when it becomes known
 function RecenterUser({ userPos }) {
   const map = useMap();
@@ -58,6 +67,13 @@ function RecenterUser({ userPos }) {
     }
   }, [userPos, map]);
   return null;
+}
+
+RecenterUser.propTypes = {
+  userPos: PropTypes.shape({
+    lat: PropTypes.number,
+    lng: PropTypes.number,
+  }),
 }
 
 function MapSection() {

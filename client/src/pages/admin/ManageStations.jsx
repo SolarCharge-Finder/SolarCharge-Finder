@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from 'react'
+import PropTypes from 'prop-types'
 import axios from 'axios'
 import AdminSidebar from '../../components/admin/AdminSidebar'
 import '../../styles/admin.css'
@@ -61,6 +62,12 @@ function LocationMarker({ position, setPosition, onLocationSelect }) {
   return position ? <Marker position={position} /> : null
 }
 
+LocationMarker.propTypes = {
+  position: PropTypes.arrayOf(PropTypes.number),
+  setPosition: PropTypes.func.isRequired,
+  onLocationSelect: PropTypes.func.isRequired,
+}
+
 // Map recenter component
 function RecenterMap({ center }) {
   const map = useMap()
@@ -70,6 +77,10 @@ function RecenterMap({ center }) {
     }
   }, [center, map])
   return null
+}
+
+RecenterMap.propTypes = {
+  center: PropTypes.arrayOf(PropTypes.number).isRequired,
 }
 
 // Photo Slideshow component
@@ -114,6 +125,11 @@ function PhotoSlideshow({ photos, interval = 3000 }) {
       )}
     </div>
   )
+}
+
+PhotoSlideshow.propTypes = {
+  photos: PropTypes.arrayOf(PropTypes.string),
+  interval: PropTypes.number,
 }
 
 function ManageStations() {
