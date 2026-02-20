@@ -135,6 +135,27 @@
   background: rgba(16, 185, 129, 0.1);
 }
 
+.station-card__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.station-card__actions .station-card__cta {
+  flex: 1;
+  margin-top: 0;
+  text-align: center;
+}
+
+.station-card__cta--detail {
+  border-color: #3b82f6 !important;
+  color: #3b82f6 !important;
+}
+.station-card__cta--detail:hover {
+  background: rgba(59, 130, 246, 0.1) !important;
+}
+
 /* ==================== Slideshow ==================== */
 .station-card__slideshow {
   position: relative;

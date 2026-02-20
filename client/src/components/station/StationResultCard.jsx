@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function StationResultCard({ station, active, onSelect, onDirections }) {
+  const navigate = useNavigate()
   const photos = station.photos?.length ? station.photos : []
   const hasPhotos = photos.length > 0
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -135,13 +137,22 @@ function StationResultCard({ station, active, onSelect, onDirections }) {
           )}
         </div>
 
-        <button
-          type="button"
-          className="station-card__cta"
-          onClick={handleGetDirections}
-        >
-           Get Directions
-        </button>
+        <div className="station-card__actions">
+          <button
+            type="button"
+            className="station-card__cta"
+            onClick={handleGetDirections}
+          >
+             Directions
+          </button>
+          <button
+            type="button"
+            className="station-card__cta station-card__cta--detail"
+            onClick={(e) => { e.stopPropagation(); navigate(`/stations/${station._id ?? station.id}`) }}
+          >
+             Details
+          </button>
+        </div>
       </div>
     </article>
   )
