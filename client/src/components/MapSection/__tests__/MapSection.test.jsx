@@ -4,6 +4,14 @@ import MapSection from '../MapSection';
 import * as stationService from '../../../services/stationService';
 
 vi.mock('../../../services/stationService'); 
+vi.mock('../../../hooks/useGeoLocation', () => ({
+  default: () => ({
+    geolocation: { latitude: 6.9271, longitude: 79.8612 },
+    error: null,
+    loading: false,
+    getLocation: vi.fn(),
+  }),
+}));
 
 describe('MapSection Component', () => {
   beforeEach(() => {
@@ -12,7 +20,7 @@ describe('MapSection Component', () => {
 
   it('renders top rated stations', async () => {
     const mockStations = [
-      { _id: '1', name: 'Station 1', rating: 5, address: 'Colombo', status: 'Open', distance: '2km' },
+      { _id: '1', name: 'Station 1', rating: 5, address: 'Colombo', status: 'Open', location: { coordinates: [79.8271, 6.9151] } },
     ];
 
     stationService.getTopRatedStations.mockResolvedValue(mockStations);

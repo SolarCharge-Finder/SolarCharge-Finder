@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { calculateDistance } from '../../utils/distance';
 
 const renderStars = (rating = 0) => {
     return Array.from({ length: 5 }, (_, idx) => {
@@ -11,7 +12,7 @@ const renderStars = (rating = 0) => {
     })
 }
 
-const SearchResults = ({ stations, error }) => {
+const SearchResults = ({ stations, error, userLocation = null, loadingLocation = false }) => {
   if (stations.length === 0 && !error) {
     return (
       <p className="no-results">
@@ -23,8 +24,22 @@ const SearchResults = ({ stations, error }) => {
   return (
     <div className="stations-grid">
       {stations.map((station) => {
-        // Fallback values in case of backend response issue 
-        const distance = station.distance || "0.0 km";
+        let distance = station.distance;
+
+        if (!distance) {
+          if (loadingLocation) {
+            distance = "Calculating...";
+          } else if (userLocation && station.location) {
+            distance = calculateDistance(
+              [userLocation.latitude, userLocation.longitude],
+              station.location.coordinates
+            );
+          } else {
+            distance = "N/A"; //fallback value 
+          }
+        }
+
+        const distanceDisplay = typeof distance === 'number' ? `${distance.toFixed(1)} km` : distance;
 
         return (
           <div key={station._id} className="station-card">
@@ -43,7 +58,7 @@ const SearchResults = ({ stations, error }) => {
               {station.status}
             </p>
 
-            <p className="station-card__distance"> {distance} away</p>
+            <p className="station-card__distance"> {distanceDisplay} away</p>
 
             <button className="station-card__cta">
               Get Directions
@@ -68,10 +83,18 @@ SearchResults.propTypes = {
       distance: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number
-      ])
+      ]),
+      location: PropTypes.shape({
+        coordinates: PropTypes.arrayOf(PropTypes.number)
+      })
     })
   ).isRequired,
-  error: PropTypes.string
+  error: PropTypes.string,
+  userLocation: PropTypes.shape({
+    latitude: PropTypes.number,
+    longitude: PropTypes.number
+  }),
+  loadingLocation: PropTypes.bool
 };
 
 export default SearchResults;
