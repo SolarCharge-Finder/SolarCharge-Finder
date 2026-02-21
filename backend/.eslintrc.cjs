@@ -5,9 +5,8 @@ module.exports = {
     node: true,
     es2021: true,
     jest: true,
-    "vitest-globals/env": true
   },
-  extends: ['eslint:recommended'],
+  extends: ['eslint:recommended', 'plugin:vitest-globals/recommended'],
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
