@@ -1,6 +1,6 @@
+import 'dotenv/config'; // MUST be first — loads .env before any other module runs
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import session from 'express-session';
 import passport from './config/passport.js';
@@ -17,10 +17,7 @@ import reviewRoutes from "./routes/reviewRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import debugRoutes from "./routes/debug.js";
 import authRoutes from "./routes/auth.js";
-
-// Load environment variables
-dotenv.config();
-
+import uploadRoutes from './routes/uploadRoutes.js';
 // Initialize Express app
 const app = express();
 
@@ -58,6 +55,7 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/debug", debugRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/upload", uploadRoutes);
 
 // Error handling middleware
 app.use((err, req, res, _next) => {
