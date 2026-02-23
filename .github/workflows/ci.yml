@@ -124,20 +124,12 @@ jobs:
         with:
           node-version: '20.x'
       
-      - name: Install backend dependencies
-        working-directory: ./backend
-        run: npm ci
-
       - name: Backend security audit
         working-directory: ./backend
         run: |
           npm audit --audit-level=moderate || true
           npm audit --audit-level=high || true
       
-      - name: Install frontend dependencies
-        working-directory: ./client
-        run: npm ci
-
       - name: Frontend security audit
         working-directory: ./client
         run: |
