@@ -1,50 +1,23 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import MapSection from '../MapSection';
 import * as stationService from '../../../services/stationService';
 
-// Mock react-leaflet — jsdom lacks SVG APIs that Leaflet requires
-vi.mock('react-leaflet', () => ({
-  MapContainer: () => <div data-testid="map-container" />,
-  TileLayer: () => null,
-  Marker: () => null,
-  Popup: () => null,
-  Circle: () => null,
-  useMap: () => ({ flyTo: vi.fn() }),
-}));
-
-vi.mock('../../../services/stationService');
-
-// Provide a working navigator.geolocation so the component calls getNearbyStations
-const mockGeolocationSuccess = () => {
-  Object.defineProperty(window.navigator, 'geolocation', {
-    value: {
-      getCurrentPosition: vi.fn((success) => {
-        success({ coords: { latitude: 7.9, longitude: 80.7 } });
-      }),
-    },
-    writable: true,
-    configurable: true,
-  });
-};
-
-const renderWithRouter = (ui) => render(<MemoryRouter>{ui}</MemoryRouter>);
+vi.mock('../../../services/stationService'); 
 
 describe('MapSection Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGeolocationSuccess();
   });
 
-  it('renders stations', async () => {
+  it('renders top rated stations', async () => {
     const mockStations = [
-      { _id: '1', name: 'Station 1', rating: 5, address: 'Colombo', status: 'Open', distance: 2, location: { coordinates: [80.7, 7.9] } },
+      { _id: '1', name: 'Station 1', rating: 5, address: 'Colombo', status: 'Open', distance: '2km' },
     ];
 
-    stationService.getNearbyStations.mockResolvedValue(mockStations);
+    stationService.getTopRatedStations.mockResolvedValue(mockStations);
 
-    renderWithRouter(<MapSection />);
+    render(<MapSection />);
 
     await waitFor(() => {
       expect(screen.getByText('Station 1')).toBeInTheDocument();
@@ -54,9 +27,9 @@ describe('MapSection Component', () => {
   });
 
   it('handles no stations gracefully', async () => {
-    stationService.getNearbyStations.mockResolvedValue([]);
+    stationService.getTopRatedStations.mockResolvedValue([]);
 
-    renderWithRouter(<MapSection />);
+    render(<MapSection />);
 
     await waitFor(() => {
       expect(screen.getByText(/No stations found/i)).toBeInTheDocument();
@@ -64,12 +37,12 @@ describe('MapSection Component', () => {
   });
 
   it('handles errors gracefully', async () => {
-    stationService.getNearbyStations.mockRejectedValue(new Error('Network Error'));
+    stationService.getTopRatedStations.mockRejectedValue(new Error('Network Error'));
 
-    renderWithRouter(<MapSection />);
+    render(<MapSection />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Failed to load nearby stations/i)).toBeInTheDocument();
+      expect(screen.getByText(/Failed to load stations/i)).toBeInTheDocument();
     });
   });
 });

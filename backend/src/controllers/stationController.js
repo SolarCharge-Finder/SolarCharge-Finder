@@ -47,33 +47,6 @@ export const searchStations = async (req, res) => {
     }
 };
 
-// nearby stations — uses 2dsphere index on location
-export const getNearbyStations = async (req, res) => {
-    try {
-        const { lat, lng, radius = 50 } = req.query; // radius in km, default 50
-
-        if (!lat || !lng) {
-            return res.status(400).json({ message: 'lat and lng are required' });
-        }
-
-        const radiusInMeters = Number(radius) * 1000;
-
-        const stations = await Station.find({
-            location: {
-                $nearSphere: {
-                    $geometry: { type: 'Point', coordinates: [Number(lng), Number(lat)] },
-                    $maxDistance: radiusInMeters,
-                },
-            },
-        });
-
-        res.status(200).json(stations);
-    } catch (error) {
-        console.error('Nearby stations error:', error);
-        res.status(500).json({ message: 'Server error while fetching nearby stations' });
-    }
-};
-
 // top rated stations (5)
 export const getTopRatedStations = async (req, res) => {
     try {
