@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { searchStations } from "../services/stationService";
-import useGeolocation from '../hooks/useGeoLocation';
 import SearchBar from '../components/SearchBar/SearchBar';
 import SearchResults from "../components/SearchBar/SearchResults";
 import MapView from "../components/map/MapView";
@@ -18,8 +17,6 @@ const SearchPage = () => {
     const [error, setError] = useState("");
 
     const location = useLocation();
-
-    const { geolocation, loading, getLocation } = useGeolocation();
 
     const handleSearch = useCallback(
         async (filtersOverride = null) => {
@@ -44,11 +41,6 @@ const SearchPage = () => {
         [query, city, status, connectorType]
     );
 
-    //get location on search page load 
-    useEffect(() => {
-        getLocation();
-    }, [getLocation]);
-
     useEffect(() => {
         const params = new URLSearchParams(location.search);
 
@@ -66,16 +58,11 @@ const SearchPage = () => {
         setConnectorType(filters.connectorType);
 
         // Only search if at least one filter exists
-        /*
         const hasFilters = Object.values(filters).some(Boolean);
 
         if (hasFilters) {
             handleSearch(filters);
         }
-        */
-        
-        //to show all results regardless of filter with the same api endpoint 
-        handleSearch(filters);
 
     }, [location.search, handleSearch]);
 
@@ -94,9 +81,7 @@ const SearchPage = () => {
             <div className="search-page-layout">
                 {/* Search results displayed in the left side */}
                 <div className="search-results-panel">
-                    <SearchResults stations={stations} error={error} userLocation={geolocation} loadingLocation={loading}/>
-                    {/* distance calc works { latitude: 6.915, longitude: 79.857 } 
-                    - need to fix the issues with browser location requests </3*/}
+                    <SearchResults stations={stations} error={error} />
                 </div>
 
                 {/* Map preview on the right side */}
