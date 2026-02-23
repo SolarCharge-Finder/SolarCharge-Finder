@@ -4,18 +4,27 @@ import MapSection from '../MapSection';
 import * as stationService from '../../../services/stationService';
 
 vi.mock('../../../services/stationService'); 
+vi.mock('../../../hooks/useGeoLocation', () => ({
+  default: () => ({
+    geolocation: { latitude: 6.9271, longitude: 79.8612 },
+    error: null,
+    loading: false,
+    getLocation: vi.fn(),
+  }),
+}));
 
 describe('MapSection Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   it('renders top rated stations', async () => {
     const mockStations = [
-      { _id: '1', name: 'Station 1', rating: 5, address: 'Colombo', status: 'Open', distance: '2km' },
+      { _id: '1', name: 'Station 1', rating: 5, address: 'Colombo', status: 'Open', location: { coordinates: [79.8271, 6.9151] } },
     ];
 
-    stationService.getTopRatedStations.mockResolvedValue(mockStations);
+    vi.mocked(stationService.getTopRatedStations).mockResolvedValue(mockStations);
 
     render(<MapSection />);
 
@@ -27,7 +36,7 @@ describe('MapSection Component', () => {
   });
 
   it('handles no stations gracefully', async () => {
-    stationService.getTopRatedStations.mockResolvedValue([]);
+    vi.mocked(stationService.getTopRatedStations).mockResolvedValue([]);
 
     render(<MapSection />);
 
@@ -37,7 +46,7 @@ describe('MapSection Component', () => {
   });
 
   it('handles errors gracefully', async () => {
-    stationService.getTopRatedStations.mockRejectedValue(new Error('Network Error'));
+    vi.mocked(stationService.getTopRatedStations).mockRejectedValue(new Error('Network Error'));
 
     render(<MapSection />);
 

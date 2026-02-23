@@ -1,76 +1,9 @@
 //import StationCard from '../StationCard/StationCard';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import SearchResults from '../SearchBar/SearchResults';
 import { getTopRatedStations } from '../../services/stationService';
-
-const sampleStations = [
-  {
-    id: 1,
-    name: 'Downtown Solar Hub',
-    location: '123 Main St, New York, NY',
-    chargerType: 'Level 2',
-    rating: 4.5,
-    reviews: 128,
-    available: true,
-    lat: 40.7128,
-    lng: -74.006,
-  },
-  {
-    id: 2,
-    name: 'Green Valley Charger',
-    location: '456 Oak Ave, Brooklyn, NY',
-    chargerType: 'DC Fast',
-    rating: 4.8,
-    reviews: 95,
-    available: true,
-    lat: 40.6782,
-    lng: -73.9442,
-  },
-  {
-    id: 3,
-    name: 'SunPower Station #12',
-    location: '789 Park Blvd, Queens, NY',
-    chargerType: 'Level 1',
-    rating: 4.2,
-    reviews: 64,
-    available: false,
-    lat: 40.7282,
-    lng: -73.7949,
-  },
-  {
-    id: 4,
-    name: 'EcoCharge Campus',
-    location: '321 University Dr, Manhattan, NY',
-    chargerType: 'Level 2',
-    rating: 4.7,
-    reviews: 201,
-    available: true,
-    lat: 40.7831,
-    lng: -73.9712,
-  },
-  {
-    id: 5,
-    name: 'Solar Grid Point',
-    location: '555 Riverside Way, Hoboken, NJ',
-    chargerType: 'DC Fast',
-    rating: 4.0,
-    reviews: 42,
-    available: true,
-    lat: 40.744,
-    lng: -74.0324,
-  },
-  {
-    id: 6,
-    name: 'CleanWatt Station',
-    location: '900 Harbor Ln, Jersey City, NJ',
-    chargerType: 'Level 2',
-    rating: 4.6,
-    reviews: 87,
-    available: false,
-    lat: 40.7178,
-    lng: -74.0431,
-  },
-];
+import useGeolocation from '../../hooks/useGeoLocation';
+import { calculateDistance } from '../../utils/distance';
 
 function MapSection() {
 
@@ -78,21 +11,53 @@ function MapSection() {
   const [sortOption, setSortOption] = useState('rating');
   const [error, setError] = useState(null);
 
-  const fetchTopRatedStations = async () => {
+  const { geolocation, loading, getLocation } = useGeolocation();
+
+  //Fetch 5 highest rated stations - stations/top-rated api endpoint 
+  const fetchTopRatedStations = useCallback(async () => {
     try {
       const data = await getTopRatedStations();
       setStations(data);
     } catch (err) {
       console.error("Error fetching top rated stations:", err);
       setError(err);
-    } 
-  };
+    }
+  }, []);
 
+
+  // will implement sort by distance part soon (adeesha) o7 - done
+
+  //handle sort options - rating, distance
   useEffect(() => {
     if (sortOption === 'rating') {
       fetchTopRatedStations();
     }
-  }, [sortOption]);
+
+    if (sortOption === 'distance') {
+      // get user location - hooks/useGeoLocation.js
+      getLocation();
+    }
+  }, [sortOption, fetchTopRatedStations, getLocation]);
+
+  const displayedStations = useMemo(() => {
+    if (!stations.length) return [];
+
+    let sorted = [...stations];
+
+    if (sortOption === 'distance' && geolocation) {
+      sorted = sorted.map((station) => ({
+        ...station,
+        distance: calculateDistance(
+          geolocation.latitude,
+          geolocation.longitude,
+          station.location.coordinates[1], //latitude
+          station.location.coordinates[0]  //longitude - GeoJSON (lng 0, lat 1) format
+        ),
+      })).sort((a, b) => a.distance - b.distance);
+    }
+
+    return sorted;
+  }, [stations, sortOption, geolocation]);
 
   return (
     <section className="map-section" id="map">
@@ -111,13 +76,13 @@ function MapSection() {
               <div className="map-placeholder-inner">
                 <div className="map-grid">
                   {/* Simulated map with pin markers */}
-                  {sampleStations.map((station) => (
+                  {displayedStations.map((station, index) => (
                     <div
-                      key={station.id}
+                      key={station.id || station._id} // fallback to _id if id is not available (adeesha)
                       className={`map-pin ${station.available ? 'pin-available' : 'pin-busy'}`}
                       style={{
-                        left: `${15 + ((station.id - 1) % 3) * 30}%`,
-                        top: `${20 + Math.floor((station.id - 1) / 3) * 40}%`,
+                        left: `${15 + ((index) % 3) * 30}%`,
+                        top: `${20 + Math.floor((index) / 3) * 40}%`,
                       }}
                       title={station.name}
                     >
@@ -140,7 +105,7 @@ function MapSection() {
 
           <div className="station-list">
             <div className="list-header">
-              <h3>{sampleStations.length} stations found</h3>
+              <h3>{displayedStations.length} stations found</h3>
               <select className="sort-select" value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
                 <option value="rating">Sort by Rating</option>
                 <option value="distance">Sort by Distance</option>
@@ -150,10 +115,10 @@ function MapSection() {
             <div className="cards-scroll">
               {error ? (
                 <p className="no-results">Failed to load stations</p>
-              ) : stations.length === 0 ? (
+              ) : displayedStations.length === 0 ? (
                 <p className="no-results">No stations found. Try adjusting your search criteria.</p>
               ) : (
-                <SearchResults stations={stations} error={error} /> 
+                <SearchResults stations={displayedStations} error={error} userLocation={geolocation} loadingLocation={loading}/> 
               )}
             </div>
           </div>
