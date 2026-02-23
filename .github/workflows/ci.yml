@@ -128,13 +128,13 @@ jobs:
         working-directory: ./backend
         run: |
           npm audit --audit-level=moderate || true
-          npm audit --audit-level=high || true
+          npm audit --audit-level=high
       
       - name: Frontend security audit
         working-directory: ./client
         run: |
           npm audit --audit-level=moderate || true
-          npm audit --audit-level=high || true
+          npm audit --audit-level=high
 
   verify-artifact:
     name: Verify Frontend Artifact
