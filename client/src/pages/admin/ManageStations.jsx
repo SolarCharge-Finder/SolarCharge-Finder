@@ -3,7 +3,10 @@ import axios from 'axios'
 import AdminSidebar from '../../components/admin/AdminSidebar'
 import '../../styles/admin.css'
 import useAuth from '../../context/useAuth'
+import AddStations from "../../components/station/AddStations"
 import { Link } from 'react-router-dom'
+
+
 
 function ManageStations() {
   const { token } = useAuth()
@@ -21,6 +24,22 @@ function ManageStations() {
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [ratingFilter, setRatingFilter] = useState('all')
+
+  const [isAddOpen, setIsAddOpen] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [marker, setMarker] = useState(null)
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    address: "",
+    city: "",
+    district: "",
+    status: "Open",
+    latitude: "",
+    longitude: "",
+    connectors: [{ type: "TYPE2", powerKW: 22, totalSlots: 1, availableSlots: 1 }],
+    photos: [],
+  })
 
   useEffect(() => {
     const fetchStations = async () => {
@@ -46,11 +65,37 @@ function ManageStations() {
     return stations.filter((station) => {
       const stationName = (station.name ?? '').toLowerCase()
       const matchesSearch = stationName.includes(searchTerm.toLowerCase())
-      const avgRating = Number(station.averageRating ?? 0)
+      const avgRating = Number(station.rating ?? 0)
       const matchesRating = ratingFilter === 'all' || avgRating >= Number(ratingFilter)
       return matchesSearch && matchesRating
     })
   }, [stations, searchTerm, ratingFilter])
+
+  //Add handleStations
+  const handleAddStation = async () => {
+    if (!adminRequestConfig) return alert("Admin authentication required.")
+
+    if (!formData.name.trim()) return alert("Station name is required")
+    if (!formData.latitude || !formData.longitude) return alert("Please select a location on the map")
+
+    try {
+      setSaving(true)
+      const payload = {
+        ...formData,
+        latitude: Number(formData.latitude),
+        longitude: Number(formData.longitude),
+      }
+
+      const res = await axios.post("/api/stations", payload, adminRequestConfig)
+      setStations((prev) => [res.data.data, ...prev])
+      setIsAddOpen(false)
+    } catch (err) {
+      console.error(err)
+      alert(err?.response?.data?.message || "Failed to add station")
+    } finally {
+      setSaving(false)
+    }
+  }
 
   const handleDelete = async (stationId) => {
     if (!window.confirm('Delete this station?')) return
@@ -88,6 +133,28 @@ function ManageStations() {
             <p className="admin-card__title">Admin Panel</p>
             <h1>Manage Stations</h1>
           </div>
+
+          <button
+            className="admin-button admin-button--primary"
+            onClick={() => {
+              setIsAddOpen(true)
+              setMarker(null)
+              setFormData({
+                name: "",
+                description: "",
+                address: "",
+                city: "",
+                district: "",
+                status: "Open",
+                latitude: "",
+                longitude: "",
+                connectors: [{ type: "TYPE2", powerKW: 22, totalSlots: 1, availableSlots: 1 }],
+                photos: [],
+              })
+            }}
+          >
+            + Add Station
+          </button>
         </header>
 
         <div className="admin-filters">
@@ -144,6 +211,18 @@ function ManageStations() {
             )}
           </div>
         )}
+
+        <AddStations
+          open={isAddOpen}
+          onClose={() => setIsAddOpen(false)}
+          formData={formData}
+          setFormData={setFormData}
+          marker={marker}
+          setMarker={setMarker}
+          onSubmit={handleAddStation}
+          saving={saving}
+        />
+
       </main>
     </div>
   )
