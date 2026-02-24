@@ -1,19 +1,47 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
 import AdminSidebar from '../../components/admin/AdminSidebar'
 import '../../styles/admin.css'
+import useAuth from '../../context/useAuth'
+import { Link } from 'react-router-dom'
+
+const normalizeReviews = (list = []) =>
+  list.map((review) => ({
+    ...review,
+    stationName: review.stationName ?? review.station?.name ?? 'Unknown station',
+    userName:
+      review.userName ??
+      review.user?.name ??
+      review.user?.email ??
+      'Anonymous user',
+  }))
 
 function ManageReviews() {
+  const { token } = useAuth()
+  const authConfig = useMemo(() => {
+    if (!token) return null
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  }, [token])
+
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
     const fetchReviews = async () => {
+      if (!authConfig) {
+        setLoading(false)
+        return
+      }
       try {
         setLoading(true)
-        const { data } = await axios.get('/api/reviews')
-        setReviews(data)
+        const response = await axios.get('/api/reviews', authConfig)
+        const reviewList = response.data?.data ?? response.data ?? []
+        setReviews(normalizeReviews(reviewList))
         setError('')
       } catch (err) {
         console.error('Failed to load reviews', err)
@@ -24,12 +52,17 @@ function ManageReviews() {
     }
 
     fetchReviews()
-  }, [])
+  }, [authConfig])
 
   const handleDelete = async (reviewId) => {
     if (!window.confirm('Delete this review?')) return
+
+    if (!authConfig) {
+      alert('Admin authentication required.')
+      return
+    }
     try {
-      await axios.delete(`/api/reviews/${reviewId}`)
+      await axios.delete(`/api/reviews/${reviewId}`, authConfig)
       setReviews((prev) => prev.filter((review) => (review.id ?? review._id) !== reviewId))
     } catch (err) {
       console.error('Delete failed', err)
@@ -51,6 +84,9 @@ function ManageReviews() {
       <main className="admin-content">
         <header className="admin-header">
           <div>
+            <Link to="/" className="admin-back-link">
+              ← Home
+            </Link>
             <p className="admin-card__title">Admin Panel</p>
             <h1>Manage Reviews</h1>
             <p className="admin-card__title">Admin can remove inappropriate reviews</p>

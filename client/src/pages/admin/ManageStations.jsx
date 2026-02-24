@@ -2,8 +2,20 @@ import { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
 import AdminSidebar from '../../components/admin/AdminSidebar'
 import '../../styles/admin.css'
+import useAuth from '../../context/useAuth'
+import { Link } from 'react-router-dom'
 
 function ManageStations() {
+  const { token } = useAuth()
+  const adminRequestConfig = useMemo(() => {
+    if (!token) return null
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  }, [token])
+
   const [stations, setStations] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -42,8 +54,13 @@ function ManageStations() {
 
   const handleDelete = async (stationId) => {
     if (!window.confirm('Delete this station?')) return
+
+    if (!adminRequestConfig) {
+      alert('Admin authentication required.')
+      return
+    }
     try {
-      await axios.delete(`/api/stations/${stationId}`)
+      await axios.delete(`/api/stations/${stationId}`, adminRequestConfig)
       setStations((prev) => prev.filter((station) => (station.id ?? station._id) !== stationId))
     } catch (err) {
       console.error('Delete failed', err)
@@ -52,6 +69,10 @@ function ManageStations() {
   }
 
   const handleEdit = (stationId) => {
+    if (!adminRequestConfig) {
+      alert('Admin authentication required.')
+      return
+    }
     alert(`Edit flow not yet implemented for station ${stationId}`)
   }
 
@@ -60,7 +81,10 @@ function ManageStations() {
       <AdminSidebar />
       <main className="admin-content">
         <header className="admin-header">
-          <div>
+          <div className="admin-header__title">
+            <Link to="/" className="admin-back-link">
+              ← Home
+            </Link>
             <p className="admin-card__title">Admin Panel</p>
             <h1>Manage Stations</h1>
           </div>
