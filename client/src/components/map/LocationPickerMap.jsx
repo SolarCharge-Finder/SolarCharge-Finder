@@ -29,30 +29,40 @@ function ClickMarker({ position, onChange }) {
   return position ? <Marker position={position} /> : null
 }
 
+ClickMarker.propTypes = {
+  position: PropTypes.arrayOf(PropTypes.number),
+  onChange: PropTypes.func.isRequired,
+}
+
 function Recenter({ center }) {
   const map = useMap()
+
   useEffect(() => {
     if (center) {
       map.setView(center, 13)
     }
   }, [center, map])
-  
-  // Also recenter on initial mount if center exists
+
+  // Recalculate size after mount (helps inside modals)
   useEffect(() => {
     if (center) {
       setTimeout(() => map.invalidateSize(), 100)
       map.setView(center, 13)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  
+
   return null
 }
 
+Recenter.propTypes = {
+  center: PropTypes.arrayOf(PropTypes.number).isRequired,
+}
+
 export default function LocationPickerMap({ value, onChange }) {
-  // Use a key to force re-mount when editing a different location
-  const mapKey = value ? `${value[0]}-${value[1]}` : 'default'
-  
+  // Force re-mount when switching between different locations
+  const mapKey = value ? `${value[0]}-${value[1]}` : "default"
+
   return (
     <div style={{ height: 300, width: "100%", borderRadius: 12, overflow: "hidden" }}>
       <MapContainer
