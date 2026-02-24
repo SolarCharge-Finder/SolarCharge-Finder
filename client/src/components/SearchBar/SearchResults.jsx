@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import { calculateDistance } from '../../utils/distance';
 
 const renderStars = (rating = 0) => {
@@ -13,6 +14,8 @@ const renderStars = (rating = 0) => {
 }
 
 const SearchResults = ({ stations, error, userLocation = null, loadingLocation = false }) => {
+  const navigate = useNavigate();
+
   if (stations.length === 0 && !error) {
     return (
       <p className="no-results">
@@ -20,6 +23,23 @@ const SearchResults = ({ stations, error, userLocation = null, loadingLocation =
       </p>
     );
   }
+
+  const handleCardClick = (stationId) => {
+    navigate(`/stations/${stationId}`);
+  };
+
+  const handleGetDirections = (e, station) => {
+    e.stopPropagation();
+    if (!station.location?.coordinates) {
+      alert('Location not available');
+      return;
+    }
+    const [lng, lat] = station.location.coordinates;
+    window.open(
+      `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`,
+      '_blank'
+    );
+  };
 
   return (
     <div className="stations-grid">
@@ -42,7 +62,12 @@ const SearchResults = ({ stations, error, userLocation = null, loadingLocation =
         const distanceDisplay = typeof distance === 'number' ? `${distance.toFixed(1)} km` : distance;
 
         return (
-          <div key={station._id} className="station-card">
+          <div 
+            key={station._id} 
+            className="station-card"
+            onClick={() => handleCardClick(station._id)}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="card-header">
               <h3 className="station-card__header">{station.name}</h3>
               <span className="station-card__rating">{renderStars(station.rating)}</span>
@@ -60,7 +85,10 @@ const SearchResults = ({ stations, error, userLocation = null, loadingLocation =
 
             <p className="station-card__distance"> {distanceDisplay} away</p>
 
-            <button className="station-card__cta">
+            <button 
+              className="station-card__cta"
+              onClick={(e) => handleGetDirections(e, station)}
+            >
               Get Directions
             </button>
           </div>

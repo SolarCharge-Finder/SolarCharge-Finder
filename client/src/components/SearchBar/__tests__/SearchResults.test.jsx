@@ -1,13 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import { it, expect, vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import SearchResults from "../SearchResults";
 import { calculateDistance } from "../../../utils/distance";
 
 vi.mock("../../../utils/distance");
 
+// Helper to render with router
+const renderWithRouter = (ui) => render(<MemoryRouter>{ui}</MemoryRouter>);
+
 // no station resulsts test
 it("shows no results message when stations array is empty", () => {
-  render(<SearchResults stations={[]} error="" />);
+  renderWithRouter(<SearchResults stations={[]} error="" />);
 
   expect(
     screen.getByText("No stations found. Try adjusting your search criteria.")
@@ -27,7 +31,7 @@ it("renders station information correctly", () => {
     },
   ];
 
-  render(<SearchResults stations={stations} error="" />);
+  renderWithRouter(<SearchResults stations={stations} error="" />);
 
   expect(screen.getByText("Colombo Fast Charge")).toBeInTheDocument();
   expect(screen.getByText("Colombo 03")).toBeInTheDocument();
@@ -47,7 +51,7 @@ it('shows "Calculating..." when loadingLocation is true', () => {
     },
   ];
 
-  render(
+  renderWithRouter(
     <SearchResults
       stations={stations}
       error=""
@@ -75,7 +79,7 @@ it("calculates distance when userLocation is provided", () => {
     },
   ];
 
-  render(
+  renderWithRouter(
     <SearchResults
       stations={stations}
       error=""
@@ -99,7 +103,7 @@ it('shows "N/A" when no location data is available', () => {
     },
   ];
 
-  render(<SearchResults stations={stations} error="" />);
+  renderWithRouter(<SearchResults stations={stations} error="" />);
 
   expect(screen.getByText("N/A away")).toBeInTheDocument();
 });
@@ -117,7 +121,7 @@ it("renders 5 star icons", () => {
     },
   ];
 
-  render(<SearchResults stations={stations} error="" />);
+  renderWithRouter(<SearchResults stations={stations} error="" />);
 
   const stars = screen.getAllByText("★");
   expect(stars).toHaveLength(5);

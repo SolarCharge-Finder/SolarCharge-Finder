@@ -1,0 +1,510 @@
+.station-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.back-link {
+  display: inline-block;
+  color: #109867;
+  text-decoration: none;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  transition: color 0.2s;
+}
+
+.back-link:hover {
+  color: #0d7a52;
+}
+
+.loading-text,
+.error-text {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.1rem;
+  color: #5f6b7a;
+}
+
+.error-text {
+  color: #ef4444;
+}
+
+/* Grid Layout */
+.station-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2rem;
+}
+
+@media (max-width: 968px) {
+  .station-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Photo Gallery */
+.station-photo-gallery {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f1f5f9;
+  margin-bottom: 1.5rem;
+}
+
+.station-main-photo {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+.no-photo-placeholder-large {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e2e8f0;
+  color: #94a3b8;
+  font-size: 1.1rem;
+}
+
+.photo-indicators {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.photo-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.photo-dot.active {
+  background: #fff;
+  transform: scale(1.2);
+}
+
+/* Station Header */
+.station-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.station-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.status-badge {
+  padding: 0.375rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-badge.status-open {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-badge.status-closed {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.status-badge.status-maintenance {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+/* Rating Row */
+.station-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.star {
+  font-size: 1.1rem;
+}
+
+.star-filled {
+  color: #fbbf24;
+}
+
+.star-muted {
+  color: #d1d5db;
+}
+
+.star-interactive:hover {
+  transform: scale(1.2);
+}
+
+.rating-value {
+  font-weight: 700;
+  color: #1e293b;
+  margin-left: 0.25rem;
+}
+
+.review-count {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+/* Address */
+.station-address {
+  color: #64748b;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+/* Stats Cards */
+.station-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.25rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.stat-card {
+  text-align: center;
+  padding: 0.75rem;
+}
+
+.stat-card:not(:last-child) {
+  border-right: 1px solid #e2e8f0;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Description */
+.station-description {
+  margin-bottom: 2rem;
+}
+
+.station-description h3 {
+  font-size: 1.1rem;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+}
+
+.station-description p {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+/* Connectors Section */
+.connectors-section {
+  margin-bottom: 2rem;
+}
+
+.connectors-section h3 {
+  font-size: 1.1rem;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.connectors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.connector-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.connector-type {
+  background: #1e293b;
+  color: #fff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.connector-power {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.connector-slots {
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.connector-slots-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #109867, #22c55e);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.connector-slots-text {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* Sidebar */
+.station-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Location Section */
+.location-section {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.location-section h3 {
+  font-size: 1rem;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.station-map-container {
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.no-location {
+  color: #94a3b8;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Directions Button */
+.directions-btn {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, #109867, #0d7a52);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.directions-btn:hover {
+  background: linear-gradient(135deg, #0d7a52, #0a6342);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 152, 103, 0.3);
+}
+
+/* Reviews Section */
+.reviews-section {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.reviews-section h3 {
+  font-size: 1rem;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.review-badge {
+  background: #e2e8f0;
+  color: #64748b;
+  padding: 0.125rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Add Review Form */
+.add-review-form {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.rating-input {
+  margin-bottom: 0.75rem;
+}
+
+.review-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.review-textarea:focus {
+  outline: none;
+  border-color: #109867;
+}
+
+.submit-review-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #109867;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.submit-review-btn:hover:not(:disabled) {
+  background: #0d7a52;
+}
+
+.submit-review-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Reviews List */
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.review-item {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.review-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.review-author {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.9rem;
+}
+
+.review-rating .star {
+  font-size: 0.85rem;
+}
+
+.review-comment {
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.review-date {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.no-reviews {
+  color: #94a3b8;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .station-details-container {
+    padding: 1rem;
+  }
+
+  .station-main-photo {
+    height: 250px;
+  }
+
+  .station-title {
+    font-size: 1.5rem;
+  }
+
+  .station-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card:not(:last-child) {
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 1rem;
+  }
+
+  .connectors-grid {
+    grid-template-columns: 1fr;
+  }
+}
