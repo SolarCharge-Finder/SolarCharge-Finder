@@ -1,6 +1,7 @@
 //import StationCard from '../StationCard/StationCard';
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import SearchResults from '../SearchBar/SearchResults';
+import MapView from "../map/MapView";
 import { getTopRatedStations } from '../../services/stationService';
 import useGeolocation from '../../hooks/useGeoLocation';
 import { calculateDistance } from '../../utils/distance';
@@ -33,10 +34,7 @@ function MapSection() {
       fetchTopRatedStations();
     }
 
-    if (sortOption === 'distance') {
-      // get user location - hooks/useGeoLocation.js
-      getLocation();
-    }
+    getLocation(); //get the location on page mount 
   }, [sortOption, fetchTopRatedStations, getLocation]);
 
   const displayedStations = useMemo(() => {
@@ -48,10 +46,9 @@ function MapSection() {
       sorted = sorted.map((station) => ({
         ...station,
         distance: calculateDistance(
-          geolocation.latitude,
           geolocation.longitude,
-          station.location.coordinates[1], //latitude
-          station.location.coordinates[0]  //longitude - GeoJSON (lng 0, lat 1) format
+          geolocation.latitude,
+          station.location.coordinates
         ),
       })).sort((a, b) => a.distance - b.distance);
     }
@@ -71,38 +68,9 @@ function MapSection() {
         </div>
 
         <div className="map-content">
-          <div className="map-view">
-            <div className="map-placeholder">
-              <div className="map-placeholder-inner">
-                <div className="map-grid">
-                  {/* Simulated map with pin markers */}
-                  {displayedStations.map((station, index) => (
-                    <div
-                      key={station.id || station._id} // fallback to _id if id is not available (adeesha)
-                      className={`map-pin ${station.available ? 'pin-available' : 'pin-busy'}`}
-                      style={{
-                        left: `${15 + ((index) % 3) * 30}%`,
-                        top: `${20 + Math.floor((index) / 3) * 40}%`,
-                      }}
-                      title={station.name}
-                    >
-                      <div className="pin-dot"></div>
-                      <div className="pin-label">{station.name.split(' ')[0]}</div>
-                    </div>
-                  ))}
-                </div>
-                <div className="map-overlay-text">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                  <p>Interactive map loads here</p>
-                  <span>Integrate with Google Maps or Leaflet.js</span>
-                </div>
-              </div>
-            </div>
+          <div className='map-view'>
+            <MapView stations={displayedStations} userLocation={geolocation} loadingLocation={loading}/>
           </div>
-
           <div className="station-list">
             <div className="list-header">
               <h3>{displayedStations.length} stations found</h3>

@@ -64,15 +64,6 @@ const SearchPage = () => {
         setCity(filters.city);
         setStatus(filters.status);
         setConnectorType(filters.connectorType);
-
-        // Only search if at least one filter exists
-        /*
-        const hasFilters = Object.values(filters).some(Boolean);
-
-        if (hasFilters) {
-            handleSearch(filters);
-        }
-        */
         
         //to show all results regardless of filter with the same api endpoint 
         handleSearch(filters);
@@ -101,7 +92,8 @@ const SearchPage = () => {
 
                 {/* Map preview on the right side */}
                 <div className="map-preview-panel">
-                     <MapView />
+                    {/* mapview updated to show user location & returned station location (adeesha) */}
+                     <MapView stations={stations} userLocation={geolocation} loadingLocation={loading}/>
                 </div>
                 
             </div>

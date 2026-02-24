@@ -31,7 +31,7 @@ const SearchResults = ({ stations, error, userLocation = null, loadingLocation =
             distance = "Calculating...";
           } else if (userLocation && station.location) {
             distance = calculateDistance(
-              [userLocation.latitude, userLocation.longitude],
+              [userLocation.longitude, userLocation.latitude],
               station.location.coordinates
             );
           } else {
