@@ -32,15 +32,31 @@ function ClickMarker({ position, onChange }) {
 function Recenter({ center }) {
   const map = useMap()
   useEffect(() => {
-    if (center) map.setView(center, 13)
+    if (center) {
+      map.setView(center, 13)
+    }
   }, [center, map])
+  
+  // Also recenter on initial mount if center exists
+  useEffect(() => {
+    if (center) {
+      setTimeout(() => map.invalidateSize(), 100)
+      map.setView(center, 13)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  
   return null
 }
 
 export default function LocationPickerMap({ value, onChange }) {
+  // Use a key to force re-mount when editing a different location
+  const mapKey = value ? `${value[0]}-${value[1]}` : 'default'
+  
   return (
     <div style={{ height: 300, width: "100%", borderRadius: 12, overflow: "hidden" }}>
       <MapContainer
+        key={mapKey}
         center={value || SRI_LANKA_CENTER}
         zoom={value ? 13 : 8}
         maxBounds={SRI_LANKA_BOUNDS}

@@ -11,19 +11,25 @@ export default function AddStations({
   setMarker,
   onSubmit,
   saving,
+  isEditMode = false,
 }) {
   const [photoPreview, setPhotoPreview] = useState([])
   const [searchAddress, setSearchAddress] = useState("")
   const [dragActive, setDragActive] = useState(false)
 
-  // Cleanup photo previews when modal closes
+  // Clear photo previews when modal closes
   useEffect(() => {
     if (!open) {
-      photoPreview.forEach(url => URL.revokeObjectURL(url))
       setPhotoPreview([])
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
+
+  // Load existing photos when modal opens in edit mode
+  useEffect(() => {
+    if (open && isEditMode && formData.photos && formData.photos.length > 0) {
+      setPhotoPreview(formData.photos)
+    }
+  }, [open, isEditMode, formData.photos])
 
   if (!open) return null
 
@@ -140,13 +146,16 @@ export default function AddStations({
       return true
     })
 
-    // Create preview URLs
-    const newPreviews = validFiles.map(file => URL.createObjectURL(file))
-    setPhotoPreview(prev => [...prev, ...newPreviews])
-    
-    // Store file names (in production, you'd upload to a server)
-    const photoUrls = validFiles.map(file => file.name)
-    setFormData(p => ({ ...p, photos: [...p.photos, ...photoUrls] }))
+    // Convert files to data URLs
+    validFiles.forEach(file => {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const dataUrl = reader.result
+        setPhotoPreview(prev => [...prev, dataUrl])
+        setFormData(p => ({ ...p, photos: [...p.photos, dataUrl] }))
+      }
+      reader.readAsDataURL(file)
+    })
   }
 
   const handleDrag = (e) => {
@@ -183,18 +192,20 @@ export default function AddStations({
         return true
       })
 
-      const newPreviews = validFiles.map(file => URL.createObjectURL(file))
-      setPhotoPreview(prev => [...prev, ...newPreviews])
-      
-      const photoUrls = validFiles.map(file => file.name)
-      setFormData(p => ({ ...p, photos: [...p.photos, ...photoUrls] }))
+      // Convert files to data URLs
+      validFiles.forEach(file => {
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          const dataUrl = reader.result
+          setPhotoPreview(prev => [...prev, dataUrl])
+          setFormData(p => ({ ...p, photos: [...p.photos, dataUrl] }))
+        }
+        reader.readAsDataURL(file)
+      })
     }
   }
 
   const removePhoto = (index) => {
-    if (photoPreview[index].startsWith('blob:')) {
-      URL.revokeObjectURL(photoPreview[index])
-    }
     setPhotoPreview(prev => prev.filter((_, i) => i !== index))
     setFormData(p => ({ ...p, photos: p.photos.filter((_, i) => i !== index) }))
   }
@@ -233,7 +244,7 @@ export default function AddStations({
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal station-modal modern-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Add New Station</h2>
+          <h2>{isEditMode ? 'Edit Station' : 'Add New Station'}</h2>
           <button className="modal-close" onClick={onClose}>&times;</button>
         </div>
 
@@ -521,7 +532,7 @@ export default function AddStations({
             Cancel
           </button>
           <button className="admin-button admin-button--primary" onClick={onSubmit} disabled={saving}>
-            {saving ? "Saving..." : "Add Station"}
+            {saving ? "Saving..." : (isEditMode ? "Update Station" : "Add Station")}
           </button>
         </div>
       </div>
@@ -538,4 +549,5 @@ AddStations.propTypes = {
   setMarker: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   saving: PropTypes.bool.isRequired,
+  isEditMode: PropTypes.bool,
 }
