@@ -284,7 +284,7 @@ export default function AddStations({
                 >
                   <option value="Open">Open</option>
                   <option value="Closed">Closed</option>
-                  <option value="Maintenance">Maintenance</option>
+                  <option value="Under Maintenance">Under Maintenance</option>
                 </select>
               </div>
 
@@ -428,9 +428,11 @@ export default function AddStations({
                         className="modern-input"
                       >
                         <option value="TYPE2">TYPE2</option>
-                        <option value="CCS">CCS</option>
+                        <option value="CCS2">CCS2</option>
                         <option value="CHADEMO">CHAdeMO</option>
                         <option value="TYPE1">TYPE1</option>
+                        <option value="GBT">GBT</option>
+                        <option value="DOMESTIC">DOMESTIC</option>
                       </select>
                     </div>
 

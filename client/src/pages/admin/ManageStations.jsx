@@ -5,10 +5,10 @@ import AdminSidebar from '../../components/admin/AdminSidebar'
 import '../../styles/admin.css'
 import useAuth from '../../context/useAuth'
 import AddStations from "../../components/station/AddStations"
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 // Station Card Component with auto-changing photos
-function StationCard({ station, onEdit, onDelete }) {
+function StationCard({ station, onEdit, onDelete, onCardClick }) {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
   const stationId = station.id ?? station._id
   const ratingValue = Number(station.rating ?? 0)
@@ -39,7 +39,7 @@ function StationCard({ station, onEdit, onDelete }) {
         return '#109867'
       case 'Closed':
         return '#ef4444'
-      case 'Maintenance':
+      case 'Under Maintenance':
         return '#f8c537'
       default:
         return '#5f6b7a'
@@ -48,7 +48,7 @@ function StationCard({ station, onEdit, onDelete }) {
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'Maintenance':
+      case 'Under Maintenance':
         return 'UNDER MAINTENANCE'
       default:
         return status?.toUpperCase() || 'UNKNOWN'
@@ -56,13 +56,14 @@ function StationCard({ station, onEdit, onDelete }) {
   }
 
   return (
-    <article className="station-card">
+    <article className="station-card" onClick={() => onCardClick(stationId)} style={{ cursor: 'pointer' }}>
       <div className="station-card-image">
         {hasPhotos ? (
           <>
             <img
               src={photos[currentPhotoIndex]}
               alt={station.name}
+              loading="lazy"
               onError={(e) => {
                 e.target.src = 'https://via.placeholder.com/400x200?text=No+Image'
               }}
@@ -99,7 +100,7 @@ function StationCard({ station, onEdit, onDelete }) {
 
         <div className="station-rating">⭐ {ratingValue.toFixed(1)}</div>
 
-        <div className="station-card-actions">
+        <div className="station-card-actions" onClick={(e) => e.stopPropagation()}>
           <button onClick={() => onEdit(stationId)} className="admin-button admin-button--ghost">
             Edit
           </button>
@@ -121,14 +122,19 @@ StationCard.propTypes = {
     district: PropTypes.string,
     status: PropTypes.string,
     rating: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    photos: PropTypes.arrayOf(PropTypes.string)
+    photos: PropTypes.arrayOf(PropTypes.string),
+    location: PropTypes.shape({
+      coordinates: PropTypes.arrayOf(PropTypes.number)
+    })
   }).isRequired,
   onEdit: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired
+  onDelete: PropTypes.func.isRequired,
+  onCardClick: PropTypes.func.isRequired
 }
 
 function ManageStations() {
   const { token } = useAuth()
+  const navigate = useNavigate()
   const adminRequestConfig = useMemo(() => {
     if (!token) return null
     return {
@@ -165,10 +171,8 @@ function ManageStations() {
     const fetchStations = async () => {
       try {
         setLoading(true)
-        //did this work before? u were treating it like an array instead of an object...
-        //i fixed it like this & it works, might be because u were using a different database ig (-adeesha)
         const response = await axios.get('/api/stations')
-        setStations(response.data.data || []) //setStations(data)
+        setStations(response.data.data || [])
         setError('')
       } catch (err) {
         console.error('Failed to load stations', err)
@@ -233,6 +237,10 @@ function ManageStations() {
     }
   }
 
+  const handleCardClick = (stationId) => {
+    navigate(`/stations/${stationId}`)
+  }
+
   const handleEdit = (stationId) => {
     if (!adminRequestConfig) {
       alert('Admin authentication required.')
@@ -241,7 +249,7 @@ function ManageStations() {
     
     // Use cached station data for instant opening
     const stationToEdit = stations.find(s => (s.id ?? s._id) === stationId)
-    
+
     if (!stationToEdit) {
       alert('Station not found')
       return
@@ -392,6 +400,7 @@ function ManageStations() {
                 station={station}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                onCardClick={handleCardClick}
               />
             ))}
             {!filteredStations.length && (

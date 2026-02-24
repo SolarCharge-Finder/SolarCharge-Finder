@@ -53,7 +53,14 @@ export const createChargingStation = async (req, res, next) => {
 //GET all stations
 export const getChargingStations = async (req, res, next) => {
     try {
-        const stations = await ChargingStationModel.find().sort({ createdAt: -1 });
+        const { excludePhotos } = req.query;
+        
+        // If excludePhotos=true, exclude the photos field to speed up loading
+        const selectFields = excludePhotos === 'true' ? '-photos' : '';
+        
+        const stations = await ChargingStationModel.find()
+            .select(selectFields)
+            .sort({ createdAt: -1 });
 
         return res.status(200).json({
             count: stations.length,
@@ -158,10 +165,17 @@ export const updateChargingStation = async (req, res, next) => {
             return res.status(400).json({ message: "Invalid station id" });
         }
 
-        //out of bounds
-        if(err.message && err.message){
+        // Check for MongoDB GeoJSON validation errors
+        if (err.message && (err.message.includes('longitude') || err.message.includes('latitude') || err.message.includes('coordinates'))) {
             return res.status(400).json({ message: "Invalid location. Latitude must be between -90 and 90, longitude between -180 and 180"});
         }
+        
+        // Handle validation errors
+        if (err.name === 'ValidationError') {
+            return res.status(400).json({ message: err.message });
+        }
+        
+        console.error('Update station error:', err);
         next(err);
     }
 };

@@ -367,6 +367,28 @@
   background: transparent;
 }
 
+.admin-button--primary {
+  background: linear-gradient(135deg, #109867, #0d7a52);
+  color: #fff;
+  border: none;
+}
+
+.admin-button--primary:hover {
+  background: linear-gradient(135deg, #0d7a52, #0a6342);
+  box-shadow: 0 4px 12px rgba(16, 152, 103, 0.3);
+}
+
+.admin-button--secondary {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+}
+
+.admin-button--secondary:hover {
+  background: #2563eb;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
 .admin-card-list {
   display: flex;
   flex-direction: column;
