@@ -73,7 +73,7 @@ MapView.propTypes = {
   userLocation: PropTypes.shape({
     latitude: PropTypes.number,
     longitude: PropTypes.number
-  }).isRequired
+  })
 };
 
 export default MapView;

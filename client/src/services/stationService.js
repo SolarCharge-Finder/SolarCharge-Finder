@@ -14,3 +14,15 @@ export const getTopRatedStations = async () => {
     const response = await axios.get(`${API_URL}/top-rated`);
     return response.data;
 }
+
+export const searchStationsByDistance = async (filters = {}, userLocation) => {
+    if (!userLocation) throw new Error("Location required for distance filter");
+
+    const params = new URLSearchParams(filters);
+    params.append("lat", userLocation.latitude);
+    params.append("lng", userLocation.longitude);
+
+    const res = await fetch(`/api/stations/distanceSearch?${params.toString()}`);
+    if (!res.ok) throw new Error("Failed to fetch distance-filtered stations");
+    return res.json();
+};

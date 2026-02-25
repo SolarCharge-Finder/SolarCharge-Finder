@@ -8,7 +8,7 @@ export const searchStations = async (req, res) => {
         let query = {};
         const andConditions = [];
 
-        if (!search || search.trim() !== "") {
+        if (search && search.trim() !== "") {
             const searchRegex = new RegExp(search, "i"); //case-insensitive regex for partial matching
             andConditions.push({
                 $or: [
@@ -59,5 +59,75 @@ export const getTopRatedStations = async (req, res) => {
     } catch (error) {
         console.error("Error fetching top rated stations:", error);
         res.status(500).json({ message: "Server error while fetching top rated stations" });
+    }
+};
+
+//search endpoint with user distance 
+export const distanceSearchStations = async (req, res) => {
+    try {
+        const { search, city, status, connectorType, lat, lng } = req.query;
+
+        // Validate coordinates
+        if (!lat || !lng) {
+            return res.status(400).json({ message: "Latitude and longitude are required for distance search" });
+        }
+
+        const userLat = parseFloat(lat);
+        const userLng = parseFloat(lng);
+
+        let query = {};
+        const andConditions = [];
+
+        if (search && search.trim() !== "") {
+            const searchRegex = new RegExp(search, "i"); //case-insensitive regex for partial matching
+            andConditions.push({
+                $or: [
+                    { name: searchRegex },
+                    { address: searchRegex },
+                    { "connectors.type": searchRegex }
+                ]
+            });
+        }
+
+        //Filter by city, status, and connector type if provided
+        if (city) {
+            andConditions.push({ city: city });
+        }
+
+        if (status) {
+            andConditions.push({ status: status });
+        }
+
+        if (connectorType) {
+            andConditions.push({ "connectors.type": connectorType });
+        }
+
+        // add the conditions to the query if they exist
+        if (andConditions.length > 0) {
+            query = { $and: andConditions };
+        }
+
+        // Use MongoDB aggregation with geoNear
+        const stations = await Station.aggregate([
+            {
+                $geoNear: {
+                    near: { type: "Point", coordinates: [userLng, userLat] },
+                    distanceField: "distance",
+                    spherical: true,
+                    query: query
+                }
+            },
+            { $sort: { distance: 1 } } // nearest first
+        ]);
+
+        stations.forEach(station => {
+            station.distance = station.distance / 1000; // conver tto km
+        });
+
+        res.status(200).json(stations);
+
+    } catch (error) {
+        console.error("Error filtering stations by distance:", error);
+        res.status(500).json({ message: "Server error during distance filtering" });
     }
 };
