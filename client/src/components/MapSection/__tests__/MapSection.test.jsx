@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import MapSection from '../MapSection';
 import * as stationService from '../../../services/stationService';
 
@@ -12,6 +13,9 @@ vi.mock('../../../hooks/useGeoLocation', () => ({
     getLocation: vi.fn(),
   }),
 }));
+
+// Helper to render with router
+const renderWithRouter = (ui) => render(<MemoryRouter>{ui}</MemoryRouter>);
 
 describe('MapSection Component', () => {
   beforeEach(() => {
@@ -26,7 +30,7 @@ describe('MapSection Component', () => {
 
     vi.mocked(stationService.getTopRatedStations).mockResolvedValue(mockStations);
 
-    render(<MapSection />);
+    renderWithRouter(<MapSection />);
 
     await waitFor(() => {
       expect(screen.getByText('Station 1')).toBeInTheDocument();
@@ -38,7 +42,7 @@ describe('MapSection Component', () => {
   it('handles no stations gracefully', async () => {
     vi.mocked(stationService.getTopRatedStations).mockResolvedValue([]);
 
-    render(<MapSection />);
+    renderWithRouter(<MapSection />);
 
     await waitFor(() => {
       expect(screen.getByText(/No stations found/i)).toBeInTheDocument();
@@ -48,7 +52,7 @@ describe('MapSection Component', () => {
   it('handles errors gracefully', async () => {
     vi.mocked(stationService.getTopRatedStations).mockRejectedValue(new Error('Network Error'));
 
-    render(<MapSection />);
+    renderWithRouter(<MapSection />);
 
     await waitFor(() => {
       expect(screen.getByText(/Failed to load stations/i)).toBeInTheDocument();
