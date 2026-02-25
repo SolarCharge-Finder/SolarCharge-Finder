@@ -36,6 +36,7 @@
     "eslint-plugin-react-refresh": "^0.4.14",
     "globals": "^15.11.0",
     "jsdom": "^23.0.1",
+    "lodash.merge": "^4.6.2",
     "vite": "^5.0.8",
     "vitest": "^1.1.0"
   },
