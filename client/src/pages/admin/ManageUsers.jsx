@@ -45,24 +45,28 @@ function ManageUsers() {
   }, [authConfig])
 
   const handlePromote = async (userId) => {
-    if (!window.confirm('Promote this user to Admin?')) return
-
     if (!authConfig) {
       alert('Admin authentication required.')
       return
     }
 
+    const targetUser = users.find((u) => (u.id ?? u._id) === userId)
+    const currentRole = (targetUser?.role || '').toLowerCase()
+    const newRole = currentRole === 'admin' ? 'user' : 'admin'
+    const confirmMsg = newRole === 'admin' ? 'Promote this user to Admin?' : 'Demote this user to regular user?'
+    if (!window.confirm(confirmMsg)) return
+
     try {
-      await axios.patch(`/api/users/${userId}/promote`, null, authConfig)
+      const { data } = await axios.patch(`/api/users/${userId}/role`, { role: newRole }, authConfig)
       setUsers((prev) =>
         prev.map((user) => {
           const currentId = user.id ?? user._id
-          return currentId === userId ? { ...user, role: 'Admin' } : user
+          return currentId === userId ? { ...user, role: data?.data?.user?.role ?? newRole } : user
         }),
       )
     } catch (err) {
-      console.error('Promotion failed', err)
-      alert('Could not promote user. Please retry.')
+      console.error('Update role failed', err)
+      alert('Could not update user role. Please retry.')
     }
   }
 
@@ -127,7 +131,7 @@ function ManageUsers() {
                             onClick={() => handlePromote(userId)}
                             className="admin-button admin-button--ghost"
                           >
-                            Promote to Admin
+                            {((user.role || '').toString().toLowerCase() === 'admin') ? 'Promote to user' : 'Promote to Admin'}
                           </button>
                           <button
                             onClick={() => handleDelete(userId)}

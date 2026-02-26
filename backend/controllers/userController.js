@@ -473,3 +473,68 @@ export const resetPassword = async (req, res) => {
     });
   }
 };
+
+// @desc    Promote user to admin
+// @route   PATCH /api/users/:id/promote
+// @access  Private (Admin only)
+export const promoteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: 'Invalid user id' });
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    user.role = 'admin';
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'User promoted to admin',
+      data: { user: { id: user._id, email: user.email, role: user.role } }
+    });
+  } catch (error) {
+    logError('Promote user error', error);
+    res.status(500).json({ success: false, message: 'Server error while promoting user', error: process.env.NODE_ENV === 'development' ? error.message : undefined });
+  }
+};
+
+// @desc    Update user role
+// @route   PATCH /api/users/:id/role
+// @access  Private (Admin only)
+export const updateUserRole = async (req, res) => {
+  try {
+    const { id } = req.params
+    const { role } = req.body
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: 'Invalid user id' })
+    }
+
+    if (!role || (role !== 'admin' && role !== 'user')) {
+      return res.status(400).json({ success: false, message: 'Role must be "admin" or "user"' })
+    }
+
+    const user = await User.findById(id)
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' })
+    }
+
+    user.role = role
+    await user.save()
+
+    res.status(200).json({
+      success: true,
+      message: `User role updated to ${role}`,
+      data: { user: { id: user._id, email: user.email, role: user.role } },
+    })
+  } catch (error) {
+    logError('Update user role error', error)
+    res.status(500).json({ success: false, message: 'Server error while updating user role', error: process.env.NODE_ENV === 'development' ? error.message : undefined })
+  }
+}

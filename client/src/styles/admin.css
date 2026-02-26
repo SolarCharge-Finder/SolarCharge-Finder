@@ -92,10 +92,15 @@
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-.admin-sidebar__link.is-active,
 .admin-sidebar__link:hover {
-  background: rgba(16, 152, 103, 0.1);
+  background: rgba(16, 152, 103, 0.08);
   color: var(--admin-green);
+}
+
+.admin-sidebar__link.is-active {
+  background: rgba(16, 152, 103, 0.12);
+  color: var(--admin-green);
+  font-weight: 700;
 }
 
 .admin-content {
@@ -429,6 +434,64 @@
   text-align: center;
   color: var(--admin-muted);
   font-weight: 600;
+}
+
+.admin-reviews-by-station {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.admin-station-reviews-block {
+  background: var(--admin-card);
+  border-radius: 1.5rem;
+  border: 1px solid var(--admin-border);
+  box-shadow: var(--admin-shadow);
+  overflow: hidden;
+}
+
+.admin-station-reviews-block__header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border: none;
+  background: #f8faf9;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.admin-station-reviews-block__header:hover {
+  background: #f1f5f4;
+}
+
+.admin-station-reviews-block__chevron {
+  font-size: 0.75rem;
+  color: var(--admin-muted);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.admin-station-reviews-block__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--admin-text);
+  margin: 0;
+  flex: 1;
+}
+
+.admin-station-reviews-block__count {
+  font-size: 0.875rem;
+  color: var(--admin-muted);
+  font-weight: 600;
+}
+
+.admin-station-reviews-block .admin-card-list {
+  padding: 1rem 1.25rem 1.25rem;
+  border-top: 1px solid var(--admin-border);
 }
 
 /* Station Card Styles */

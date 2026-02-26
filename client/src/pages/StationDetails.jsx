@@ -99,7 +99,7 @@ const StationDetails = () => {
       await axios.post(
         '/api/reviews',
         {
-          station: id,
+          stationId: id,
           rating: userRating,
           comment: reviewText,
         },
@@ -381,7 +381,12 @@ const StationDetails = () => {
                     {reviews.map((review) => (
                       <div key={review._id} className="review-item">
                         <div className="review-header">
-                          <span className="review-author">{review.user?.name || 'Anonymous'}</span>
+                          <div className="review-author-block">
+                            <span className="review-author">{review.user?.name || 'Anonymous'}</span>
+                            {review.user?.email && (
+                              <span className="review-author-email">{review.user.email}</span>
+                            )}
+                          </div>
                           <span className="review-rating">{renderStars(review.rating)}</span>
                         </div>
                         {review.comment && <p className="review-comment">{review.comment}</p>}
