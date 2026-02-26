@@ -38,6 +38,23 @@ router.get('/profile', protect, getProfile);
 // @access  Private (Admin only)
 router.get('/', protect, authorize('admin'), getAllUsers);
 
+// @route   PATCH /api/users/:id/promote
+// @desc    Promote a user to admin
+// @access  Private (Admin only)
+router.patch('/:id/promote', protect, authorize('admin'), (req, res, next) => {
+  // lazy-load controller to avoid circular deps in some setups
+  import('../controllers/userController.js').then((mod) => mod.promoteUser(req, res)).catch(next)
+});
+
+// @route   PATCH /api/users/:id/role
+// @desc    Update a user's role (admin <-> user)
+// @access  Private (Admin only)
+router.patch('/:id/role', protect, authorize('admin'), (req, res, next) => {
+  import('../controllers/userController.js')
+    .then((mod) => mod.updateUserRole(req, res))
+    .catch(next)
+});
+
 // @route   POST /api/users/forgot-password
 // @desc    Send password reset code
 // @access  Public

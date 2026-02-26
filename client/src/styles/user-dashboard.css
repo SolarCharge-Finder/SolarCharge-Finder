@@ -368,6 +368,107 @@
   font-size: 0.9rem;
 }
 
+.user-my-reviews {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.user-my-reviews__empty {
+  color: var(--user-muted);
+  margin: 0;
+  padding: 1rem 0;
+  font-size: 0.95rem;
+}
+
+.user-review-item {
+  border: 1px solid var(--user-border);
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  background: #fafcfb;
+}
+
+.user-review-item__main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.user-review-item__station {
+  font-weight: 700;
+  color: var(--user-accent);
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.user-review-item__station:hover {
+  text-decoration: underline;
+}
+
+.user-review-item__stars {
+  display: inline-flex;
+  align-items: center;
+}
+
+.user-review-star {
+  color: #e2e8f0;
+  font-size: 1rem;
+}
+
+.user-review-star--filled {
+  color: #fbbf24;
+}
+
+.user-review-star--interactive {
+  cursor: pointer;
+}
+
+.user-review-item__comment {
+  color: var(--user-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0.5rem 0 0.75rem 0;
+}
+
+.user-review-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.user-review-item__edit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.user-review-edit-stars {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-review-edit-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--user-text);
+}
+
+.user-review-edit-comment {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--user-border);
+  border-radius: 0.75rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+  min-height: 80px;
+}
+
 .user-chip {
   display: inline-flex;
   align-items: center;

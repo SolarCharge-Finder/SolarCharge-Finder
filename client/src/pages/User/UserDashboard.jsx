@@ -85,6 +85,12 @@ function UserDashboard() {
   const [topStations, setTopStations] = useState([])
   const [stationLoading, setStationLoading] = useState(true)
   const [stationError, setStationError] = useState('')
+  const [myReviews, setMyReviews] = useState([])
+  const [myReviewsLoading, setMyReviewsLoading] = useState(false)
+  const [myReviewsError, setMyReviewsError] = useState('')
+  const [editingReviewId, setEditingReviewId] = useState(null)
+  const [editRating, setEditRating] = useState(0)
+  const [editComment, setEditComment] = useState('')
 
   const handleLogout = () => {
     logout()
@@ -162,6 +168,103 @@ function UserDashboard() {
       isMounted = false
     }
   }, [])
+
+  useEffect(() => {
+    let isMounted = true
+    const fetchMyReviews = async () => {
+      if (!token) {
+        setMyReviews([])
+        return
+      }
+      try {
+        setMyReviewsLoading(true)
+        const { data } = await axios.get('/api/reviews/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        if (!isMounted) return
+        setMyReviews(data?.data ?? [])
+        setMyReviewsError('')
+      } catch (err) {
+        if (!isMounted) return
+        console.error('Failed to load my reviews', err)
+        setMyReviewsError('Unable to load your reviews.')
+        setMyReviews([])
+      } finally {
+        if (isMounted) setMyReviewsLoading(false)
+      }
+    }
+    fetchMyReviews()
+    return () => { isMounted = false }
+  }, [token])
+
+  const authConfig = useMemo(
+    () => (token ? { headers: { Authorization: `Bearer ${token}` } } : null),
+    [token],
+  )
+
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm('Delete this review?')) return
+    if (!authConfig) return
+    try {
+      await axios.delete(`/api/reviews/${reviewId}`, authConfig)
+      setMyReviews((prev) => prev.filter((r) => (r._id ?? r.id) !== reviewId))
+    } catch (err) {
+      console.error('Delete review failed', err)
+      alert(err?.response?.data?.message ?? 'Could not delete review.')
+    }
+  }
+
+  const handleStartEdit = (review) => {
+    setEditingReviewId(review._id ?? review.id)
+    setEditRating(Number(review.rating) || 0)
+    setEditComment(review.comment ?? '')
+  }
+
+  const handleCancelEdit = () => {
+    setEditingReviewId(null)
+    setEditRating(0)
+    setEditComment('')
+  }
+
+  const handleSaveEdit = async () => {
+    if (!editingReviewId || !authConfig) return
+    if (editRating < 1 || editRating > 5) {
+      alert('Please select a rating between 1 and 5.')
+      return
+    }
+    try {
+      const { data } = await axios.put(
+        `/api/reviews/${editingReviewId}`,
+        { rating: editRating, comment: editComment },
+        authConfig,
+      )
+      setMyReviews((prev) =>
+        prev.map((r) => ((r._id ?? r.id) === editingReviewId ? { ...r, ...data?.data, rating: editRating, comment: editComment } : r)),
+      )
+      handleCancelEdit()
+    } catch (err) {
+      console.error('Update review failed', err)
+      alert(err?.response?.data?.message ?? 'Could not update review.')
+    }
+  }
+
+  const renderStars = (rating, interactive = false, onRate) => {
+    return Array.from({ length: 5 }, (_, idx) => {
+      const filled = idx < Math.round(rating)
+      return (
+        <span
+          key={idx}
+          role={interactive ? 'button' : undefined}
+          tabIndex={interactive ? 0 : undefined}
+          className={`user-review-star ${filled ? 'user-review-star--filled' : ''} ${interactive ? 'user-review-star--interactive' : ''}`}
+          onClick={() => interactive && onRate && onRate(idx + 1)}
+          onKeyDown={(e) => interactive && onRate && (e.key === 'Enter' || e.key === ' ') && onRate(idx + 1)}
+        >
+          ★
+        </span>
+      )
+    })
+  }
 
   const derivedProfile = useMemo(() => {
     if (profile && user) {
@@ -273,29 +376,6 @@ function UserDashboard() {
       },
     ]
   }, [topStations, membershipStats.sessions])
-
-  const badges = useMemo(() => {
-    return [
-      {
-        id: 'badge-streak',
-        label: 'Streak Keeper',
-        detail: `${membershipStats.streak}-day clean-energy streak`,
-        level: membershipStats.streak >= 15 ? 'Lv.3' : 'Lv.2',
-      },
-      {
-        id: 'badge-scout',
-        label: 'Solar Scout',
-        detail: `${membershipStats.contributions} verified updates shared`,
-        level: membershipStats.contributions >= 4 ? 'Lv.3' : 'Lv.1',
-      },
-      {
-        id: 'badge-advocate',
-        label: 'Climate Advocate',
-        detail: `${membershipStats.carbonSaved} kg CO₂ avoided`,
-        level: membershipStats.carbonSaved >= 120 ? 'Lv.4' : 'Lv.2',
-      },
-    ]
-  }, [membershipStats])
 
   const displayName = derivedProfile?.name || derivedProfile?.email?.split('@')[0] || 'Explorer'
   const memberSince = createdAt
@@ -582,21 +662,74 @@ function UserDashboard() {
           <article className="user-card">
             <div className="user-card__header">
               <div>
-                <h2>Badges & milestones</h2>
-                <p className="user-card__subtitle">Celebrate progress toward cleaner miles</p>
+                <h2>My Reviews</h2>
+                <p className="user-card__subtitle">Reviews you added to stations — edit or delete anytime</p>
               </div>
             </div>
-            <div className="user-badges">
-              {badges.map((badge) => (
-                <div key={badge.id} className="user-badge">
-                  <div>
-                    <p className="user-badge__label">{badge.label}</p>
-                    <p className="user-badge__detail">{badge.detail}</p>
-                  </div>
-                  <span className="user-chip user-chip--soft">{badge.level}</span>
-                </div>
-              ))}
-            </div>
+            {myReviewsError && <p className="user-card__subtitle" style={{ color: '#ef4444' }}>{myReviewsError}</p>}
+            {myReviewsLoading && <p className="user-card__subtitle">Loading your reviews…</p>}
+            {!myReviewsLoading && !myReviewsError && (
+              <div className="user-my-reviews">
+                {myReviews.length === 0 ? (
+                  <p className="user-my-reviews__empty">You haven&apos;t left any reviews yet. Visit a station page to add one.</p>
+                ) : (
+                  myReviews.map((review) => {
+                    const rid = review._id ?? review.id
+                    const stationId = review.station?._id ?? review.station
+                    const stationName = review.station?.name ?? 'Unknown station'
+                    const isEditing = editingReviewId === rid
+                    return (
+                      <div key={rid} className="user-review-item">
+                        {!isEditing ? (
+                          <>
+                            <div className="user-review-item__main">
+                              <Link to={`/stations/${stationId}`} className="user-review-item__station">
+                                {stationName}
+                              </Link>
+                              <span className="user-review-item__stars">{renderStars(review.rating)}</span>
+                            </div>
+                            {review.comment && <p className="user-review-item__comment">{review.comment}</p>}
+                            <div className="user-review-item__actions">
+                              <button type="button" className="user-button user-button--ghost" onClick={() => handleStartEdit(review)}>
+                                Edit
+                              </button>
+                              <button type="button" className="user-button user-button--danger" onClick={() => handleDeleteReview(rid)}>
+                                Delete
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="user-review-item__edit">
+                            <Link to={`/stations/${stationId}`} className="user-card__title user-review-item__station">
+                              {stationName}
+                            </Link>
+                            <div className="user-review-edit-stars">
+                              <span className="user-review-edit-label">Rating:</span>
+                              {renderStars(editRating, true, setEditRating)}
+                            </div>
+                            <textarea
+                              className="user-review-edit-comment"
+                              placeholder="Comment (optional)"
+                              value={editComment}
+                              onChange={(e) => setEditComment(e.target.value)}
+                              rows={3}
+                            />
+                            <div className="user-review-item__actions">
+                              <button type="button" className="user-button" onClick={handleSaveEdit}>
+                                Save
+                              </button>
+                              <button type="button" className="user-button user-button--ghost" onClick={handleCancelEdit}>
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })
+                )}
+              </div>
+            )}
           </article>
         </section>
       </div>
