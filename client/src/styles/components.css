@@ -756,6 +756,20 @@ html {
   margin-bottom: 2.5rem;
 }
 
+/* Ensure section header inside the map section stacks vertically
+   so tag, title and description appear on separate lines even when
+   other admin styles set .section-header to flex. */
+.map-section .section-header {
+  display: block;
+}
+
+/* Ensure section header inside the features section stacks vertically
+   so tag, title and description appear on separate lines even when
+   other admin styles set .section-header to flex. */
+.features-section .section-header {
+  display: block;
+}
+
 .section-tag {
   display: inline-block;
   padding: 0.35rem 0.85rem;

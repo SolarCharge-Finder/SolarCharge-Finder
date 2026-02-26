@@ -1,13 +1,14 @@
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 import AdminSidebar from '../../components/admin/AdminSidebar'
 import useAuth from '../../context/useAuth'
 import { Link, useNavigate } from 'react-router-dom'
 import '../../styles/admin.css'
 
-const statCards = [
-  // Mock metrics - replace with real API data
-  { title: 'Total Users', value: '1,248', change: '+8% vs last month', accent: 'linear-gradient(90deg,#34d399,#10b981)' },
-  { title: 'Total Stations', value: '312', change: '+15 new this week', accent: 'linear-gradient(90deg,#a3e635,#facc15)' },
-  { title: 'Total Reviews', value: '4,580', change: '+120 this week', accent: 'linear-gradient(90deg,#fcd34d,#f97316)' },
+const statCardAccents = [
+  'linear-gradient(90deg,#34d399,#10b981)',
+  'linear-gradient(90deg,#a3e635,#facc15)',
+  'linear-gradient(90deg,#fcd34d,#f97316)',
 ]
 
 const goals = ['Reduce grid load by 25%', 'Add 1,000 solar stations', 'Plant 10k new trees']
@@ -19,13 +20,45 @@ const insightStats = [
 ]
 
 function AdminDashboard() {
-  const { user, logout } = useAuth()
+  const { user, token, logout } = useAuth()
   const navigate = useNavigate()
+  const [stats, setStats] = useState({ totalUsers: 0, totalStations: 0, totalReviews: 0 })
+  const [statsLoading, setStatsLoading] = useState(true)
+  const [statsError, setStatsError] = useState('')
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!token) {
+        setStatsLoading(false)
+        return
+      }
+      try {
+        setStatsLoading(true)
+        const { data } = await axios.get('/api/admin/stats', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        setStats(data?.data ?? { totalUsers: 0, totalStations: 0, totalReviews: 0 })
+        setStatsError('')
+      } catch (err) {
+        console.error('Failed to load dashboard stats', err)
+        setStatsError('Unable to load stats')
+      } finally {
+        setStatsLoading(false)
+      }
+    }
+    fetchStats()
+  }, [token])
 
   const handleLogout = () => {
     logout()
     navigate('/auth')
   }
+
+  const statCards = [
+    { title: 'Total Users', value: stats.totalUsers.toLocaleString(), accent: statCardAccents[0] },
+    { title: 'Total Stations', value: stats.totalStations.toLocaleString(), accent: statCardAccents[1] },
+    { title: 'Total Reviews', value: stats.totalReviews.toLocaleString(), accent: statCardAccents[2] },
+  ]
 
   return (
     <div className="admin-layout">
@@ -54,15 +87,25 @@ function AdminDashboard() {
           </div>
         </header>
 
+        {statsError && <p className="admin-card__change" style={{ color: '#ef4444' }}>{statsError}</p>}
         <section className="admin-card-grid">
-          {statCards.map((card) => (
-            <article key={card.title} className="admin-card">
-              <p className="admin-card__title">{card.title}</p>
-              <p className="admin-card__value">{card.value}</p>
-              <p className="admin-card__change">{card.change}</p>
-              <div className="admin-card__accent" style={{ background: card.accent }}></div>
-            </article>
-          ))}
+          {statsLoading
+            ? (
+                statCards.map((card) => (
+                  <article key={card.title} className="admin-card">
+                    <p className="admin-card__title">{card.title}</p>
+                    <p className="admin-card__value">—</p>
+                    <div className="admin-card__accent" style={{ background: card.accent }}></div>
+                  </article>
+                ))
+              )
+            : statCards.map((card) => (
+                <article key={card.title} className="admin-card">
+                  <p className="admin-card__title">{card.title}</p>
+                  <p className="admin-card__value">{card.value}</p>
+                  <div className="admin-card__accent" style={{ background: card.accent }}></div>
+                </article>
+              ))}
         </section>
 
         <section className="admin-panel-grid">

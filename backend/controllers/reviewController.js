@@ -129,7 +129,7 @@ export const getReviewsByStation = async (req, res, next) => {
         }
 
         const reviews = await Review.find({ station: stationId })
-            .populate("user", "name")
+            .populate("user", "name email")
             .sort({ createdAt: -1 });
 
         return res.status(200).json({
@@ -141,6 +141,28 @@ export const getReviewsByStation = async (req, res, next) => {
             return res.status(400).json({ message: "Invalid station id" });
         }
 
+        return next(error);
+    }
+};
+
+export const getReviewsByMe = async (req, res, next) => {
+    try {
+        const userId = getUserId(req.user);
+        if (!userId) {
+            return res.status(401).json({ message: "Not authorized" });
+        }
+
+        const reviews = await Review.find({ user: userId })
+            .populate("station", "name")
+            .sort({ createdAt: -1 })
+            .lean();
+
+        return res.status(200).json({
+            success: true,
+            count: reviews.length,
+            data: reviews,
+        });
+    } catch (error) {
         return next(error);
     }
 };

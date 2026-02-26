@@ -22,6 +22,7 @@ function AdminSidebar() {
           <NavLink
             key={item.to}
             to={item.to}
+            end={item.to === '/admin'}
             className={({ isActive }) => `admin-sidebar__link ${isActive ? 'is-active' : ''}`}
           >
             {item.label}
