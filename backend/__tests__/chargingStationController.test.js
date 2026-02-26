@@ -1,3 +1,4 @@
+/// <reference types="jest" />
 import { jest, describe, test, expect, beforeAll, beforeEach, afterAll } from '@jest/globals'
 
 // Use ESM mock API so controller imports receive mocked model

@@ -1,3 +1,4 @@
+/// <reference types="jest" />
 import { jest, describe, test, expect, beforeEach, beforeAll, afterAll } from '@jest/globals'
 
 const mockFindById = jest.fn()
