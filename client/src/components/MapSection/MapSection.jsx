@@ -8,7 +8,7 @@ import useGeolocation from '../../hooks/useGeoLocation';
 function MapSection() {
 
   const [stations, setStations] = useState([]);
-  const [sortOption, setSortOption] = useState('rating');
+  const [sortOption, setSortOption] = useState('distance');
   const [error, setError] = useState(null);
 
   const { geolocation, loading, getLocation } = useGeolocation();
