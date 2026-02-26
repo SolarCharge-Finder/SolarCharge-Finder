@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import { searchStations } from "../services/stationService";
+import { searchStations, searchStationsByDistance } from "../services/stationService";
 import useGeolocation from '../hooks/useGeoLocation';
 import SearchBar from '../components/SearchBar/SearchBar';
 import SearchResults from "../components/SearchBar/SearchResults";
@@ -33,7 +33,14 @@ const SearchPage = () => {
                     connectorType,
                 };
 
-                const data = await searchStations(filters);
+                let data; 
+                //user geo location present -> searchStationsByDistance || user geo location not present -> searchStation
+                if(geolocation?.latitude && geolocation?.longitude) {
+                    data = await searchStationsByDistance(filters, geolocation);
+                }
+                else {
+                    data = await searchStations(filters);
+                }
                 setStations(data);
 
             } catch (err) {
@@ -41,7 +48,7 @@ const SearchPage = () => {
                 setError("Error fetching stations");
             }
         },
-        [query, city, status, connectorType]
+        [query, city, status, connectorType, geolocation]
     );
 
     //get location on search page load 

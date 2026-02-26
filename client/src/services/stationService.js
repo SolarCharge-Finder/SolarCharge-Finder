@@ -22,7 +22,29 @@ export const searchStationsByDistance = async (filters = {}, userLocation) => {
     params.append("lat", userLocation.latitude);
     params.append("lng", userLocation.longitude);
 
-    const res = await fetch(`/api/stations/distanceSearch?${params.toString()}`);
-    if (!res.ok) throw new Error("Failed to fetch distance-filtered stations");
-    return res.json();
+    //const res = await fetch(`/api/stations/distance-search?${params.toString()}`);
+    const response = await axios.get(`${API_URL}/distance-search`, {
+        params
+    });
+
+    return response.data;
 };
+
+export const nearbyStations = async (userLocation, maxDistance, responseLimit) => {
+    if (!userLocation) throw new Error("Location required for distance filter");
+    //can force maxDistance & limit requirement here... 
+    //for now they were just if present in params 
+
+    const params = {
+        lat: userLocation.latitude,
+        lng: userLocation.longitude,
+        ...(maxDistance && { maxDistance }), 
+        ...(responseLimit && { responseLimit })
+    };
+
+    const response = await axios.get(`${API_URL}/nearby-stations`, {
+        params
+    });
+
+    return response.data;
+}

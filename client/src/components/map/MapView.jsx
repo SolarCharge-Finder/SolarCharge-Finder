@@ -14,6 +14,20 @@ L.Icon.Default.mergeOptions({
     "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
 });
 
+//custom "your location" marker
+const redIcon = new L.Icon({
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+  iconRetinaUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+  shadowUrl:
+    "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
 const MapView = ({ stations = [], userLocation }) => {
 
   // Default center (Sri Lanka fallback)
@@ -37,7 +51,7 @@ const MapView = ({ stations = [], userLocation }) => {
 
         {/* User Location Marker */}
         {userLocation && (
-          <Marker position={[userLocation.latitude, userLocation.longitude]}>
+          <Marker position={[userLocation.latitude, userLocation.longitude]} icon={redIcon}>
             <Popup>
               <strong>Your Current Location</strong>
             </Popup>

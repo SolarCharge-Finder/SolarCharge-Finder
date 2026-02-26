@@ -12,6 +12,10 @@ import debugRoutes from './routes/debug.js';
 import authRoutes from './routes/auth.js';
 import adminRoutes from './routes/adminRoutes.js';
 
+//DNS issue </3 (adeesha) - doesn't really affect anything 
+import {setServers} from "node:dns/promises";
+setServers(["1.1.1.1", "8.8.8.8"]);
+
 dotenv.config();
 
 const app = express();

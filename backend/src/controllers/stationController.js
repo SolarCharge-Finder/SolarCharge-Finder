@@ -65,7 +65,7 @@ export const getTopRatedStations = async (req, res) => {
 //search endpoint with user distance 
 export const distanceSearchStations = async (req, res) => {
     try {
-        const { search, city, status, connectorType, lat, lng } = req.query;
+        const { search, city, status, connectorType, lat, lng, responseLimit } = req.query;
 
         // Validate coordinates
         if (!lat || !lng) {
@@ -108,21 +108,80 @@ export const distanceSearchStations = async (req, res) => {
         }
 
         // Use MongoDB aggregation with geoNear
-        const stations = await Station.aggregate([
-            {
-                $geoNear: {
-                    near: { type: "Point", coordinates: [userLng, userLat] },
-                    distanceField: "distance",
-                    spherical: true,
-                    query: query
-                }
-            },
-            { $sort: { distance: 1 } } // nearest first
-        ]);
+        /** @type {any[]} */
+        const aggregationPipeline = [];
 
-        stations.forEach(station => {
-            station.distance = station.distance / 1000; // conver tto km
+        aggregationPipeline.push({
+            $geoNear: {
+                near: { type: "Point", coordinates: [userLng, userLat] },
+                distanceField: "distance",
+                spherical: true,
+                query: query,
+            }
         });
+
+        aggregationPipeline.push({ $sort: { distance: 1 } });
+
+        if (responseLimit) {
+            aggregationPipeline.push({ $limit: parseInt(responseLimit)})
+        }
+
+        aggregationPipeline.push ({
+            $addFields: {
+                distance: { $divide: ["$distance", 1000]}
+            }
+        });
+
+        const stations = await Station.aggregate(aggregationPipeline);
+
+        res.status(200).json(stations);
+
+    } catch (error) {
+        console.error("Error filtering stations by distance:", error);
+        res.status(500).json({ message: "Server error during distance filtering" });
+    }
+};
+
+
+//get neraby stations (distance, limit)
+export const nearbyStations = async (req, res) => {
+    try {
+        const { lat, lng, maxDistance, responseLimit } = req.query;
+
+        // Validate coordinates
+        if (!lat || !lng) {
+            return res.status(400).json({ message: "Latitude and longitude are required for distance search" });
+        }
+
+        const userLat = parseFloat(lat);
+        const userLng = parseFloat(lng);
+
+        // Use MongoDB aggregation with geoNear
+        /** @type {any[]} */
+        const aggregationPipeline = [];
+
+        aggregationPipeline.push({
+            $geoNear: {
+                near: { type: "Point", coordinates: [userLng, userLat] },
+                distanceField: "distance",
+                spherical: true,
+                ...(maxDistance && { maxDistance: parseFloat(maxDistance) })
+            }
+        });
+
+        aggregationPipeline.push({ $sort: { distance: 1 } });
+
+        if (responseLimit) {
+            aggregationPipeline.push({ $limit: parseInt(responseLimit)})
+        }
+
+        aggregationPipeline.push ({
+            $addFields: {
+                distance: { $divide: ["$distance", 1000]}
+            }
+        });
+
+        const stations = await Station.aggregate(aggregationPipeline);
 
         res.status(200).json(stations);
 
