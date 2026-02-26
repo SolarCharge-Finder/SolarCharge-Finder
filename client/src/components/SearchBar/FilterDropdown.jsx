@@ -1,15 +1,17 @@
 import { useEffect, useRef } from "react";
 import PropTypes from 'prop-types';
 
-function FilterDropdown({
-  city,
-  setCity,
-  status,
-  setStatus,
-  connectorType,
-  setConnectorType,
-  onClose
-}) {
+const cities = [
+  "Ampara", "Anuradhapura", "Badulla", "Batticaloa", "Colombo",
+  "Galle", "Gampaha", "Hambantota", "Jaffna", "Kalutara",
+  "Kandy", "Kegalle", "Kilinochchi", "Kurunegala", "Mannar",
+  "Matale", "Matara", "Monaragala", "Mullaitivu", "Nuwara Eliya",
+  "Polonnaruwa", "Puttalam", "Ratnapura", "Trincomalee", "Vavuniya"
+];
+const statuses = ["Open", "Under Maintenance", "Closed"];
+const connectorTypes = ["Type1", "Type2", "CCS2", "CHADEMO", "DOMESTIC", "GBT"];
+
+function FilterDropdown({city, setCity, status, setStatus, connectorType, setConnectorType, onClose}) {
   const dropdownRef = useRef(null);
 
   // minimize when clicking outside 
@@ -24,6 +26,12 @@ function FilterDropdown({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
 
+  //render filter options from the lists 
+  const renderOptions = (options) => [
+    <option key="" value="">All</option>,
+    ...options.map(opt => <option key={opt} value={opt}>{opt}</option>)
+  ]; 
+
   return (
     <div className="filter-dropdown" ref={dropdownRef}>
 
@@ -31,32 +39,21 @@ function FilterDropdown({
       <div className="filter-group">
         <label>City</label>
         <select value={city} onChange={(e) => setCity(e.target.value)}>
-          <option value="">All Cities</option>
-          <option value="Colombo">Colombo</option>
-          <option value="Kandy">Kandy</option>
-          <option value="Galle">Galle</option>
+          {renderOptions(cities)}
         </select>
       </div>
 
       <div className="filter-group">
         <label>Status</label>
         <select value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="">All Status</option>
-          <option value="Open">Open</option>
-          <option value="Under Maintenance">Under Maintenance</option>
-          <option value="Closed">Closed</option>
+          {renderOptions(statuses)}
         </select>
       </div>
 
       <div className="filter-group">
         <label>Connector Type</label>
-        <select
-          value={connectorType}
-          onChange={(e) => setConnectorType(e.target.value)}
-        >
-          <option value="">All Types</option>
-          <option value="Type 1">Type 1</option>
-          <option value="Type 2">Type 2</option>
+        <select value={connectorType} onChange={(e) => setConnectorType(e.target.value)}>
+          {renderOptions(connectorTypes)}
         </select>
       </div>
     </div>

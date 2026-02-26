@@ -73,7 +73,7 @@ function SearchBar() {
         <div className="search-tags">
           <span className="tag-label">Popular:</span>
           <button className="search-tag" onClick={() => setQuery('Colombo')}>Colombo</button>
-          <button className="search-tag" onClick={() => setQuery('Type 2')}>Type 2</button>
+          <button className="search-tag" onClick={() => setQuery('Jaffna')}>Jaffna</button>
           <button className="search-tag" onClick={() => setQuery('Kandy')}>Kandy</button>
           <button className="search-tag" onClick={() => setQuery('Galle')}>Galle</button>
         </div>

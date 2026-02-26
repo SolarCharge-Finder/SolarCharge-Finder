@@ -532,8 +532,8 @@ html {
   box-shadow:
     0 25px 50px rgba(0, 0, 0, 0.1),
     0 5px 15px rgba(16, 185, 129, 0.05);
-
-  z-index: 50;
+  
+  z-index: 50; /* apprear on top of other components */
 
   animation: fadeSlide 0.2s ease-out;
 }
@@ -804,15 +804,15 @@ html {
 }
 
 .map-view {
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid #e2e8f0;
+  position: relative;
+  height: 100%;
+  min-height: 400px;
+  z-index: 1; /*appear below filter dropdown*/
 }
 
 .map-placeholder {
-  position: relative;
-  width: 100%;
-  padding-top: 65%;
+  padding-top: 2%;                /* takes remaining space */
+  height: 100%;
 }
 
 .map-placeholder-inner {

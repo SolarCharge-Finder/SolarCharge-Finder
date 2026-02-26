@@ -32,8 +32,10 @@
 
 /* RIGHT SIDE - Map */
 .map-preview-panel {
+  padding-top: 2%;
   flex: 1;                  /* takes remaining space */
   height: 100%;
+  z-index: 1; /*appear below filter dropdown*/
 }
 
 
