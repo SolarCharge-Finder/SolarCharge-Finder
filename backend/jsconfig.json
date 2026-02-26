@@ -10,5 +10,8 @@
       "*": ["node_modules/*"]
     }
   },
+  "typeAcquisition": {
+    "include": ["jest"]
+  },
   "exclude": ["node_modules", "dist"]
 }
