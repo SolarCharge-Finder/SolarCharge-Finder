@@ -11,6 +11,7 @@ import userRoutes from './routes/userRoutes.js';
 import debugRoutes from './routes/debug.js';
 import authRoutes from './routes/auth.js';
 import adminRoutes from './routes/adminRoutes.js';
+import errorHandler from './middleware/errorHandler.js';
 
 //DNS issue </3 (adeesha) - doesn't really affect anything 
 import {setServers} from "node:dns/promises";
@@ -50,12 +51,7 @@ app.use('/api/debug', debugRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 
-app.use((err, req, res, _next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    message: 'Something went wrong!',
-    error: process.env.NODE_ENV === 'development' ? err.message : undefined
-  });
-});
+// centralized error handler
+app.use(errorHandler);
 
 export default app;
