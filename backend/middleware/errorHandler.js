@@ -1,4 +1,4 @@
-import { fail } from '../utils/responseHelper.js'
+import { fail } from '../src/utils/responseHelper.js'
 
 export default function errorHandler(err, _req, res, _next) {
   // you can extend to log errors differently depending on env
