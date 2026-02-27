@@ -39,7 +39,7 @@ describe('Station Search and Rating Controllers', () => {
     const stations = [{ name: 'Station A' }]
     mockFind.mockResolvedValue(stations)
     
-    const req = { query: { search: 'Tesla', city: 'London' } }
+    const req = { query: { search: 'Tesla', district: 'London' } }
     const res = mockRes()
     
     await controllers.searchStations(req, res)

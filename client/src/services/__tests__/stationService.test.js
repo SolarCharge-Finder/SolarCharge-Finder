@@ -16,7 +16,7 @@ describe('stationService', () => {
     const mockData = [{ name: 'Station 1', rating: 4 }];
     axios.get.mockResolvedValue({ data: mockData });
 
-    const filters = { city: 'Colombo', status: '', connectorType: '' };
+    const filters = { district: 'Colombo', status: '', connectorType: '' };
     const result = await searchStations(filters);
 
     expect(axios.get).toHaveBeenCalledWith(`${API_URL}/search`, { params: filters });

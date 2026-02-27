@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import PropTypes from 'prop-types';
 
-const cities = [
+const districts = [
   "Ampara", "Anuradhapura", "Badulla", "Batticaloa", "Colombo",
   "Galle", "Gampaha", "Hambantota", "Jaffna", "Kalutara",
   "Kandy", "Kegalle", "Kilinochchi", "Kurunegala", "Mannar",
@@ -9,9 +9,9 @@ const cities = [
   "Polonnaruwa", "Puttalam", "Ratnapura", "Trincomalee", "Vavuniya"
 ];
 const statuses = ["Open", "Under Maintenance", "Closed"];
-const connectorTypes = ["Type1", "Type2", "CCS2", "CHADEMO", "DOMESTIC", "GBT"];
+const connectorTypes = ["TYPE1", "TYPE2", "CCS2", "CHADEMO", "DOMESTIC", "GBT"];
 
-function FilterDropdown({city, setCity, status, setStatus, connectorType, setConnectorType, onClose}) {
+function FilterDropdown({district, setDistrict, status, setStatus, connectorType, setConnectorType, onClose}) {
   const dropdownRef = useRef(null);
 
   // minimize when clicking outside 
@@ -37,9 +37,9 @@ function FilterDropdown({city, setCity, status, setStatus, connectorType, setCon
 
 
       <div className="filter-group">
-        <label>City</label>
-        <select value={city} onChange={(e) => setCity(e.target.value)}>
-          {renderOptions(cities)}
+        <label>District</label>
+        <select value={district} onChange={(e) => setDistrict(e.target.value)}>
+          {renderOptions(districts)}
         </select>
       </div>
 
@@ -62,8 +62,8 @@ function FilterDropdown({city, setCity, status, setStatus, connectorType, setCon
 
 //prop types validation
 FilterDropdown.propTypes = {
-  city: PropTypes.string.isRequired,
-  setCity: PropTypes.func.isRequired,
+  district: PropTypes.string.isRequired,
+  setDistrict: PropTypes.func.isRequired,
   status: PropTypes.string.isRequired,
   setStatus: PropTypes.func.isRequired,
   connectorType: PropTypes.string.isRequired,
