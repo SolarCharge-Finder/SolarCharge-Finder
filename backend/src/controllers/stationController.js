@@ -3,7 +3,7 @@ import Station from "../../models/ChargingStationModel.js";
 
 export const searchStations = async (req, res) => {
     try {
-        const { search, city, status, connectorType } = req.query;
+        const { search, district, status, connectorType } = req.query;
 
         let query = {};
         const andConditions = [];
@@ -19,9 +19,10 @@ export const searchStations = async (req, res) => {
             });
         }
 
-        //Filter by city, status, and connector type if provided
-        if (city) {
-            andConditions.push({ city: city });
+        //Filter by district, status, and connector type if provided
+        if (district && district.trim() !== "") {
+            const districtRegex = new RegExp(district, "i"); // partial search - why r you guys saving it as 'colombo district' </3 (adeesha)
+            andConditions.push({ district: districtRegex });
         }
 
         if (status) {
@@ -65,7 +66,7 @@ export const getTopRatedStations = async (req, res) => {
 //search endpoint with user distance 
 export const distanceSearchStations = async (req, res) => {
     try {
-        const { search, city, status, connectorType, lat, lng, responseLimit } = req.query;
+        const { search, district, status, connectorType, lat, lng, responseLimit } = req.query;
 
         // Validate coordinates
         if (!lat || !lng) {
@@ -89,9 +90,10 @@ export const distanceSearchStations = async (req, res) => {
             });
         }
 
-        //Filter by city, status, and connector type if provided
-        if (city) {
-            andConditions.push({ city: city });
+        //Filter by district, status, and connector type if provided
+        if (district && district.trim() !== "") {
+            const districtRegex = new RegExp(district, "i"); // partial search - why r you guys saving it as 'colombo district' </3 (adeesha)
+            andConditions.push({ district: districtRegex });
         }
 
         if (status) {

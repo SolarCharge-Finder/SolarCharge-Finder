@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 function SearchBar() {
   const [query, setQuery] = useState('');
-  const [city, setCity] = useState('');
+  const [district, setDistrict] = useState('');
   const [status, setStatus] = useState('');
   const [connectorType, setConnectorType] = useState('');
 
@@ -17,7 +17,7 @@ function SearchBar() {
 
         const params = new URLSearchParams({
           search: query || "",
-          city: city || "",
+          district: district || "",
           status: status || "",
           connectorType: connectorType || ""
         });
@@ -60,8 +60,8 @@ function SearchBar() {
 
         {showFilters && (
           <FilterDropdown
-            city={city}
-            setCity={setCity}
+            district={district}
+            setDistrict={setDistrict}
             status={status}
             setStatus={setStatus}
             connectorType={connectorType}

@@ -80,15 +80,15 @@ describe("Station Search API", () => {
         expect(res.body.length).toBe(3); // 3 stations seeded
     });
 
-    it("filters by city", async () => {
+    it("filters by district", async () => {
         const app = await createTestApp();
         const res = await request(app)
             .get("/api/stations/search")
-            .query({ city: "Colombo" });
+            .query({ district: "Colombo" });
 
         expect(res.statusCode).toBe(200);
         expect(res.body.length).toBe(1);
-        expect(res.body[0].city).toBe("Colombo");
+        expect(res.body[0].district).toBe("Colombo");
     });
 
     it("filters by status", async () => {
@@ -115,22 +115,22 @@ describe("Station Search API", () => {
         expect(cities).toContain("Galle");
     });
 
-    it("filters by city and status together", async () => {
+    it("filters by district and status together", async () => {
         const app = await createTestApp();
         const res = await request(app)
             .get("/api/stations/search")
-            .query({ city: "Galle", status: "Under Maintenance" });
+            .query({ district: "Galle", status: "Under Maintenance" });
 
         expect(res.statusCode).toBe(200);
         expect(res.body.length).toBe(1);
         expect(res.body[0].name).toBe("Galle SuperCharge");
     });
 
-    it("filters by city and connector type", async () => {
+    it("filters by district and connector type", async () => {
         const app = await createTestApp();
         const res = await request(app)
             .get("/api/stations/search")
-            .query({ city: "Colombo", connectorType: "TYPE2" });
+            .query({ district: "Colombo", connectorType: "TYPE2" });
 
         expect(res.statusCode).toBe(200);
         expect(res.body.length).toBe(1);
@@ -152,7 +152,7 @@ describe("Station Search API", () => {
         const app = await createTestApp();
         const res = await request(app)
             .get("/api/stations/search")
-            .query({ city: "Kandy", status: "Open", connectorType: "TYPE1" });
+            .query({ district: "Kandy", status: "Open", connectorType: "TYPE1" });
 
         expect(res.statusCode).toBe(200);
         expect(res.body.length).toBe(0);

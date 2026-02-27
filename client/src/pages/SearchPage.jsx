@@ -12,7 +12,7 @@ import '../styles/SearchPage.css';
 const SearchPage = () => {
     const [query, setQuery] = useState("");
     const [stations, setStations] = useState([]); //results from search 
-    const [city, setCity] = useState("");
+    const [district, setDistrict] = useState("");
     const [status, setStatus] = useState("");
     const [connectorType, setConnectorType] = useState("");
     const [error, setError] = useState("");
@@ -28,7 +28,7 @@ const SearchPage = () => {
 
                 const filters = filtersOverride ?? {
                     search: query,
-                    city,
+                    district,
                     status,
                     connectorType,
                 };
@@ -48,7 +48,7 @@ const SearchPage = () => {
                 setError("Error fetching stations");
             }
         },
-        [query, city, status, connectorType, geolocation]
+        [query, district, status, connectorType, geolocation]
     );
 
     //get location on search page load 
@@ -61,14 +61,14 @@ const SearchPage = () => {
 
         const filters = {
             search: params.get("search") ?? "",
-            city: params.get("city") ?? "",
+            district: params.get("district") ?? "",
             status: params.get("status") ?? "",
             connectorType: params.get("connectorType") ?? "",
         };
 
         // Sync state with URL
         setQuery(filters.search);
-        setCity(filters.city);
+        setDistrict(filters.district);
         setStatus(filters.status);
         setConnectorType(filters.connectorType);
         
