@@ -1,5 +1,5 @@
 //import Station from "../models/Station.js";
-import Station from "../../models/ChargingStationModel.js";
+import Station from "../models/ChargingStationModel.js";
 
 export const searchStations = async (req, res) => {
     try {

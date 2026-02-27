@@ -3,7 +3,7 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from "@jest/glo
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 //import app from "../server.js";   cooked, not exporting app from server.js </3
-import Station from "../models/ChargingStationModel.js";
+import Station from "../src/models/ChargingStationModel.js";
 
 let mongoServer;
 
@@ -12,7 +12,7 @@ const createTestApp = async () => {
     const express = await import('express');
     const app = express.default();
 
-    const stationRoutes = await import('../routes/chargingStationRoutes.js');
+    const stationRoutes = await import('../src/routes/chargingStationRoutes.js');
     app.use('/api/stations', stationRoutes.default);
 
     return app;

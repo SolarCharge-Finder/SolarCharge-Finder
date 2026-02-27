@@ -5,12 +5,12 @@ import connectDB from './config/db.js';
 import session from 'express-session';
 import passport from './config/passport.js';
 
-import chargingStationRoutes from './routes/chargingStationRoutes.js';
-import reviewRoutes from './routes/reviewRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import debugRoutes from './routes/debug.js';
-import authRoutes from './routes/auth.js';
-import adminRoutes from './routes/adminRoutes.js';
+import chargingStationRoutes from './src/routes/chargingStationRoutes.js';
+import reviewRoutes from './src/routes/reviewRoutes.js';
+import userRoutes from './src/routes/userRoutes.js';
+import debugRoutes from './src/routes/debug.js';
+import authRoutes from './src/routes/auth.js';
+import adminRoutes from './src/routes/adminRoutes.js';
 
 //DNS issue </3 (adeesha) - doesn't really affect anything 
 import {setServers} from "node:dns/promises";
