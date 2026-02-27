@@ -13,7 +13,7 @@ jest.unstable_mockModule('mongoose', () => ({
   default: { connection: { readyState: 1 }, Types: { ObjectId: { isValid: () => true } } }
 }))
 
-jest.unstable_mockModule('../models/User.js', () => ({
+jest.unstable_mockModule('../src/models/User.js', () => ({
   __esModule: true,
   default: {
     findOne: mockFindOne,
@@ -26,7 +26,7 @@ jest.unstable_mockModule('../models/User.js', () => ({
 const mockSendVerificationEmail = jest.fn()
 const mockSendPasswordResetEmail = jest.fn()
 
-jest.unstable_mockModule('../utils/emailService.js', () => ({
+jest.unstable_mockModule('../src/utils/emailService.js', () => ({
   __esModule: true,
   sendVerificationEmail: mockSendVerificationEmail,
   sendPasswordResetEmail: mockSendPasswordResetEmail,
@@ -35,7 +35,7 @@ jest.unstable_mockModule('../utils/emailService.js', () => ({
 
 let controllers
 beforeAll(async () => {
-  controllers = await import('../controllers/userController.js')
+  controllers = await import('../src/controllers/userController.js')
 })
 
 afterAll(() => jest.resetAllMocks())

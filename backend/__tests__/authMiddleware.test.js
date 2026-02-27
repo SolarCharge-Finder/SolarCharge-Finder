@@ -4,7 +4,7 @@ import { jest, describe, test, expect, beforeAll, beforeEach, afterAll } from '@
 
 const mockFindById = jest.fn()
 
-jest.unstable_mockModule('../models/User.js', () => ({
+jest.unstable_mockModule('../src/models/User.js', () => ({
   __esModule: true,
   default: {
     findById: mockFindById,

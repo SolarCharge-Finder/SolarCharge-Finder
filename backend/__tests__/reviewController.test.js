@@ -15,7 +15,7 @@ const mockStationFindById = jest.fn()
 /** @type {any} */
 const mockStationExists = jest.fn()
 
-jest.unstable_mockModule('../models/Review.js', () => ({
+jest.unstable_mockModule('../src/models/Review.js', () => ({
   __esModule: true,
   default: {
     findOne: mockFindOne,
@@ -25,7 +25,7 @@ jest.unstable_mockModule('../models/Review.js', () => ({
   }
 }))
 
-jest.unstable_mockModule('../models/ChargingStationModel.js', () => ({
+jest.unstable_mockModule('../src/models/ChargingStationModel.js', () => ({
   __esModule: true,
   default: {
     findById: mockStationFindById,
@@ -35,7 +35,7 @@ jest.unstable_mockModule('../models/ChargingStationModel.js', () => ({
 
 let controllers
 beforeAll(async () => {
-  controllers = await import('../controllers/reviewController.js')
+  controllers = await import('../src/controllers/reviewController.js')
 })
 afterAll(() => jest.resetAllMocks())
 

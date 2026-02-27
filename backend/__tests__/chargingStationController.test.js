@@ -13,7 +13,7 @@ const mockFindByIdAndUpdate = jest.fn()
 /** @type {any} */
 const mockFindByIdAndDelete = jest.fn()
 
-jest.unstable_mockModule('../models/ChargingStationModel.js', () => ({
+jest.unstable_mockModule('../src/models/ChargingStationModel.js', () => ({
   __esModule: true,
   default: {
     create: mockCreate,
@@ -26,7 +26,7 @@ jest.unstable_mockModule('../models/ChargingStationModel.js', () => ({
 
 let controllers
 beforeAll(async () => {
-  controllers = await import('../controllers/chargingStationController.js')
+  controllers = await import('../src/controllers/chargingStationController.js')
 })
 afterAll(() => jest.resetAllMocks())
 
