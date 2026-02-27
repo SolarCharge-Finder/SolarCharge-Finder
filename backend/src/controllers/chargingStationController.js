@@ -1,4 +1,5 @@
 import ChargingStationModel from "../models/ChargingStationModel.js";
+import { success, fail } from '../utils/responseHelper.js';
 
 // Create stations
 export const createChargingStation = async (req, res, next) => {
@@ -17,12 +18,12 @@ export const createChargingStation = async (req, res, next) => {
         } = req.body;
 
         //validations
-        if (!name) return res.status(400).json({ message: "Station name is required" });
+        if (!name) return fail(res, { message: "Station name is required", status: 400 });
         if (latitude === undefined || longitude === undefined)
-            return res.status(400).json({ message: "latitude and longitude are required" });
+            return fail(res, { message: "latitude and longitude are required", status: 400 });
 
         if (!Array.isArray(connectors) || connectors.length === 0)
-            return res.status(400).json({ message: "At least one connectors required" });
+            return fail(res, { message: "At least one connectors required", status: 400 });
 
         const station = await ChargingStationModel.create({
             name,
@@ -39,10 +40,7 @@ export const createChargingStation = async (req, res, next) => {
             photos: Array.isArray(photos) ? photos : [],
         });
 
-        return res.status(201).json({
-            message: "Charging station created successfully",
-            data: station,
-        });
+        return success(res, { status: 201, message: "Charging station created successfully", data: station });
 
     } catch (err) {
         next(err);
@@ -62,10 +60,7 @@ export const getChargingStations = async (req, res, next) => {
             .select(selectFields)
             .sort({ createdAt: -1 });
 
-        return res.status(200).json({
-            count: stations.length,
-            data: stations,
-        });
+        return success(res, { status: 200, count: stations.length, data: stations });
 
     } catch (err) {
         next(err);
@@ -78,10 +73,10 @@ export const getChargingStationById = async (req, res, next) => {
         const station = await ChargingStationModel.findById(req.params.id);
 
         if (!station) {
-            return res.status(404).json({ message: "Charging station not found" });
+            return fail(res, { message: "Charging station not found", status: 404 });
         }
 
-        return res.status(200).json({ data: station });
+        return success(res, { status: 200, data: station });
 
     } catch (err) {
         if (err.name === "CastError") {
@@ -118,22 +113,18 @@ export const updateChargingStation = async (req, res, next) => {
         //if connecctors privided, replace connectors
         if (connectors !== undefined) {
             if (!Array.isArray(connectors) || connectors.length === 0) {
-                return res
-                    .status(400)
-                    .json({ message: "At least one connector is required" });
+                return fail(res, { message: "At least one connector is required", status: 400 });
             }
 
             for (const c of connectors) {
                 if (c.totalSlots <= 0) {
-                    return res.status(400).json({ message: `totalSlots must be greater than 0 for ${c.type}` });
+                    return fail(res, { message: `totalSlots must be greater than 0 for ${c.type}`, status: 400 });
                 }
                 if(c.availableSlots < 0){
-                    return res.status(400).json({ message: `availableSlots cannot be negative for ${c.type}`});
+                    return fail(res, { message: `availableSlots cannot be negative for ${c.type}`, status: 400 });
                 }
                 if (c.availableSlots > c.totalSlots) {
-                    return res.status(400).json({
-                        message: `availableSlots cannot be greater than totalSlots for ${c.type}`,
-                    })
+                    return fail(res, { message: `availableSlots cannot be greater than totalSlots for ${c.type}`, status: 400 })
                 }
             }
 
@@ -152,27 +143,24 @@ export const updateChargingStation = async (req, res, next) => {
         );
 
         if (!updated) {
-            return res.status(404).json({ message: "Charging station not found" });
+            return fail(res, { message: "Charging station not found", status: 404 });
         }
 
-        return res.status(200).json({
-            message: "Charging station updated successfully",
-            data: updated,
-        });
+        return success(res, { status: 200, message: "Charging station updated successfully", data: updated });
 
     } catch (err) {
-        if (err.name === "CastError") {
-            return res.status(400).json({ message: "Invalid station id" });
+            if (err.name === "CastError") {
+            return fail(res, { message: "Invalid station id", status: 400 });
         }
 
         // Check for MongoDB GeoJSON validation errors
         if (err.message && (err.message.includes('longitude') || err.message.includes('latitude') || err.message.includes('coordinates'))) {
-            return res.status(400).json({ message: "Invalid location. Latitude must be between -90 and 90, longitude between -180 and 180"});
+            return fail(res, { message: "Invalid location. Latitude must be between -90 and 90, longitude between -180 and 180", status: 400 });
         }
         
         // Handle validation errors
         if (err.name === 'ValidationError') {
-            return res.status(400).json({ message: err.message });
+            return fail(res, { message: err.message, status: 400 });
         }
         
         console.error('Update station error:', err);
@@ -187,15 +175,13 @@ export const deleteChargingStation = async (req, res, _next) => {
         const deleted = await ChargingStationModel.findByIdAndDelete(req.params.id);
 
         if(!deleted){
-            return res.status(404).json({ message: "Charging station not found"});
+            return fail(res, { message: "Charging station not found", status: 404 });
         }
-        return res.status(200).json({
-            message: "Charging staton deleted successfully.",
-        });
+        return success(res, { status: 200, message: "Charging staton deleted successfully." });
 
     } catch(err){
         if(err.name === "CastError"){
-            return res.status(400).josn({message: "Invalid station id"});
+            return fail(res, { message: "Invalid station id", status: 400 });
         }
 
     }

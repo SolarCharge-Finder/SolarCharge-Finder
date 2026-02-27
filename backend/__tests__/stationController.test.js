@@ -7,7 +7,7 @@ const mockFind = jest.fn()
 const mockAggregate = jest.fn()
 
 // ESM Mocking for the ChargingStationModel
-jest.unstable_mockModule('../models/ChargingStationModel.js', () => ({
+jest.unstable_mockModule('../src/models/ChargingStationModel.js', () => ({
   __esModule: true,
   default: {
     find: mockFind,

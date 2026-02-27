@@ -10,7 +10,6 @@ import ManageReviews from './pages/admin/ManageReviews'
 import ProtectedRoute from './components/routing/ProtectedRoute'
 import UserDashboard from './pages/User/UserDashboard'
 import SearchPage from './pages/SearchPage' //new search page with filters (adeesha)
-import SearchStations from './pages/SearchStations'
 import StationDetails from './pages/StationDetails'
 import AuthPage from './auth'
 import EmailVerification from './auth/EmailVerification'
@@ -37,7 +36,6 @@ function App() {
             <Route path="/oauth/callback" element={<OAuthCallback />} />
             <Route path='/search' element={<SearchPage />} />
             <Route path="/stations/:id" element={<StationDetails />} />
-            <Route path="/oldsearch" element={<SearchStations />} />
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<ManageUsers />} />

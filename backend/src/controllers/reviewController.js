@@ -1,5 +1,6 @@
 import Review from "../models/Review.js";
 import ChargingStationModel from "../models/ChargingStationModel.js";
+import { success, fail } from '../utils/responseHelper.js';
 
 const parseRating = (value) => {
     const parsed = Number(value);
@@ -34,30 +35,30 @@ export const addReview = async (req, res, next) => {
         const { stationId, rating, comment } = req.body;
 
         if (!stationId) {
-            return res.status(400).json({ message: "stationId is required" });
+            return fail(res, { message: "stationId is required", status: 400 });
         }
 
         const userId = getUserId(req.user);
         if (!userId) {
-            return res.status(401).json({ message: "Not authorized, invalid user context" });
+            return fail(res, { message: "Not authorized, invalid user context", status: 401 });
         }
 
         if (rating === undefined) {
-            return res.status(400).json({ message: "rating is required" });
+            return fail(res, { message: "rating is required", status: 400 });
         }
 
         const normalizedRating = parseRating(rating);
         if (normalizedRating === null) {
-            return res.status(400).json({ message: "rating must be a number" });
+            return fail(res, { message: "rating must be a number", status: 400 });
         }
 
         if (normalizedRating < 1 || normalizedRating > 5) {
-            return res.status(400).json({ message: "rating must be between 1 and 5" });
+            return fail(res, { message: "rating must be between 1 and 5", status: 400 });
         }
 
         const station = await ChargingStationModel.findById(stationId);
         if (!station) {
-            return res.status(404).json({ message: "Charging station not found" });
+            return fail(res, { message: "Charging station not found", status: 404 });
         }
 
         const existingReview = await Review.findOne({
@@ -66,7 +67,7 @@ export const addReview = async (req, res, next) => {
         });
 
         if (existingReview) {
-            return res.status(400).json({ message: "You have already reviewed this station" });
+            return fail(res, { message: "You have already reviewed this station", status: 400 });
         }
 
         const review = await Review.create({
@@ -84,10 +85,7 @@ export const addReview = async (req, res, next) => {
 
         await review.populate("user", "name");
 
-        return res.status(201).json({
-            message: "Review added successfully",
-            data: review,
-        });
+        return success(res, { status: 201, message: "Review added successfully", data: review });
     } catch (error) {
         if (error.name === "CastError") {
             return res.status(400).json({ message: "Invalid station id" });
@@ -132,10 +130,7 @@ export const getReviewsByStation = async (req, res, next) => {
             .populate("user", "name email")
             .sort({ createdAt: -1 });
 
-        return res.status(200).json({
-            count: reviews.length,
-            data: reviews,
-        });
+        return success(res, { status: 200, count: reviews.length, data: reviews });
     } catch (error) {
         if (error.name === "CastError") {
             return res.status(400).json({ message: "Invalid station id" });
@@ -149,7 +144,7 @@ export const getReviewsByMe = async (req, res, next) => {
     try {
         const userId = getUserId(req.user);
         if (!userId) {
-            return res.status(401).json({ message: "Not authorized" });
+            return fail(res, { message: "Not authorized", status: 401 });
         }
 
         const reviews = await Review.find({ user: userId })
@@ -157,11 +152,7 @@ export const getReviewsByMe = async (req, res, next) => {
             .sort({ createdAt: -1 })
             .lean();
 
-        return res.status(200).json({
-            success: true,
-            count: reviews.length,
-            data: reviews,
-        });
+        return success(res, { status: 200, data: reviews, count: reviews.length });
     } catch (error) {
         return next(error);
     }
@@ -172,12 +163,12 @@ export const updateReview = async (req, res, next) => {
         const review = await Review.findById(req.params.id);
 
         if (!review) {
-            return res.status(404).json({ message: "Review not found" });
+            return fail(res, { message: "Review not found", status: 404 });
         }
 
         const userId = getUserId(req.user);
         if (!userId) {
-            return res.status(401).json({ message: "Not authorized, invalid user context" });
+            return fail(res, { message: "Not authorized, invalid user context", status: 401 });
         }
 
         if (review.user.toString() !== userId) {
@@ -193,7 +184,7 @@ export const updateReview = async (req, res, next) => {
         const station = await ChargingStationModel.findById(review.station);
 
         if (!station) {
-            return res.status(404).json({ message: "Charging station not found" });
+            return fail(res, { message: "Charging station not found", status: 404 });
         }
 
         const oldRating = review.rating;
@@ -225,10 +216,7 @@ export const updateReview = async (req, res, next) => {
             await station.save();
         }
 
-        return res.status(200).json({
-            message: "Review updated successfully",
-            data: review,
-        });
+        return success(res, { status: 200, message: "Review updated successfully", data: review });
     } catch (error) {
         if (error.name === "CastError") {
             return res.status(400).json({ message: "Invalid review id" });
@@ -243,12 +231,12 @@ export const deleteReview = async (req, res, next) => {
         const review = await Review.findById(req.params.id);
 
         if (!review) {
-            return res.status(404).json({ message: "Review not found" });
+            return fail(res, { message: "Review not found", status: 404 });
         }
 
         const userId = getUserId(req.user);
         if (!userId) {
-            return res.status(401).json({ message: "Not authorized, invalid user context" });
+            return fail(res, { message: "Not authorized, invalid user context", status: 401 });
         }
 
         const isAdmin = req.user?.role === "admin";
@@ -260,7 +248,7 @@ export const deleteReview = async (req, res, next) => {
         const station = await ChargingStationModel.findById(review.station);
 
         if (!station) {
-            return res.status(404).json({ message: "Charging station not found" });
+            return fail(res, { message: "Charging station not found", status: 404 });
         }
 
         if (station.totalRatings <= 1) {
@@ -275,7 +263,7 @@ export const deleteReview = async (req, res, next) => {
 
         await Promise.all([review.deleteOne(), station.save()]);
 
-        return res.status(200).json({ message: "Review deleted successfully" });
+        return success(res, { status: 200, message: "Review deleted successfully" });
     } catch (error) {
         if (error.name === "CastError") {
             return res.status(400).json({ message: "Invalid review id" });

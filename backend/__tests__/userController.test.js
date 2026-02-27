@@ -5,7 +5,7 @@ const mockFindById = jest.fn()
 const mockFind = jest.fn()
 const mockCountDocuments = jest.fn()
 
-jest.unstable_mockModule('../models/User.js', () => ({
+jest.unstable_mockModule('../src/models/User.js', () => ({
   __esModule: true,
   default: {
     findById: mockFindById,
@@ -17,7 +17,7 @@ jest.unstable_mockModule('../models/User.js', () => ({
 import mongoose from 'mongoose'
 let controllers
 beforeAll(async () => {
-  controllers = await import('../controllers/userController.js')
+  controllers = await import('../src/controllers/userController.js')
 })
 afterAll(() => jest.resetAllMocks())
 

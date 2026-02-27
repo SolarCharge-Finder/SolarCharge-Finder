@@ -1,4 +1,3 @@
-//import StationCard from '../StationCard/StationCard';
 import { useEffect, useState, useCallback } from 'react';
 import SearchResults from '../SearchBar/SearchResults';
 import MapView from "../map/MapView";
