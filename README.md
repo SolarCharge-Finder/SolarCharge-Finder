@@ -146,3 +146,7 @@ ISC
 ## Contributing
 
 Feel free to contribute to this project.
+
+## Architecture & Demo
+
+See [ARCHITECTURE_AND_DEMO.md](ARCHITECTURE_AND_DEMO.md) for a one-page architecture summary and quick demo script (start servers, run tests, smoke API).

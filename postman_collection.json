@@ -1,0 +1,43 @@
+{
+  "info": {
+    "name": "SolarCharge Finder API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Register User",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"email\": \"test@example.com\", \"password\": \"password\" }" },
+        "url": { "raw": "{{baseUrl}}/api/users/register", "host": ["{{baseUrl}}"], "path": ["api","users","register"] }
+      }
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{ \"email\": \"test@example.com\", \"password\": \"password\" }" },
+        "url": { "raw": "{{baseUrl}}/api/users/login", "host": ["{{baseUrl}}"], "path": ["api","users","login"] }
+      }
+    },
+    {
+      "name": "List Stations",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/api/stations", "host": ["{{baseUrl}}"], "path": ["api","stations"] }
+      }
+    },
+    {
+      "name": "Get Station",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/api/stations/:id", "host": ["{{baseUrl}}"], "path": ["api","stations",":id"] }
+      }
+    }
+  ],
+  "variable": [ { "key": "baseUrl", "value": "http://localhost:5001" } ]
+}
