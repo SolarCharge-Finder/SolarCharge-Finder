@@ -53,7 +53,7 @@ it("navigates with correct query params on submit", () => {
   fireEvent.click(button);
 
   expect(mockNavigate).toHaveBeenCalledWith(
-    "/search?search=Colombo&city=&status=&connectorType="
+    "/search?search=Colombo&district=&status=&connectorType="
   );
 });
 
