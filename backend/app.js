@@ -8,6 +8,7 @@ import passport from './config/passport.js';
 import chargingStationRoutes from './src/routes/chargingStationRoutes.js';
 import reviewRoutes from './src/routes/reviewRoutes.js';
 import userRoutes from './src/routes/userRoutes.js';
+import sellRequestRoutes from './src/routes/sellRequestRoutes.js';
 import debugRoutes from './src/routes/debug.js';
 import authRoutes from './src/routes/auth.js';
 import adminRoutes from './src/routes/adminRoutes.js';
@@ -48,6 +49,7 @@ app.get('/', (req, res) => {
 app.use('/api/stations', chargingStationRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/sell-request', sellRequestRoutes);
 app.use('/api/debug', debugRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);

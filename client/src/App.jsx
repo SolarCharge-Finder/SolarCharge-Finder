@@ -11,6 +11,7 @@ import ProtectedRoute from './components/routing/ProtectedRoute'
 import UserDashboard from './pages/User/UserDashboard'
 import SearchPage from './pages/SearchPage' //new search page with filters (adeesha)
 import StationDetails from './pages/StationDetails'
+import AddSellRequest from './components/SellRequest/AddSellRequest' //modal for excess energy sell requests, details on user page
 import AuthPage from './auth'
 import EmailVerification from './auth/EmailVerification'
 import ForgotPassword from './auth/ForgotPassword'
@@ -44,6 +45,7 @@ function App() {
             </Route>
             <Route element={<ProtectedRoute allowedRoles={['user']} />}>
               <Route path="/user" element={<UserDashboard />} />
+              <Route path='/sell-request' element={<AddSellRequest/>} />
             </Route>
           </Routes>
         </div>
