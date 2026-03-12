@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import useAuth from '../../context/useAuth'
+import SellRequestPage from '../../components/SellRequest/SellRequest'
 import '../../styles/user-dashboard.css'
 
 const FALLBACK_STATIONS = [
@@ -730,6 +731,17 @@ function UserDashboard() {
                 )}
               </div>
             )}
+          </article>
+        </section>
+        <section className="user-grid user-grid--two">
+          <article className="user-card">
+            <div className="user-card__header">
+              <div>
+                <h2>My Sell Requests</h2>
+                <p className="user-card__subtitle">View, edit, or delete your sell requests</p>
+              </div>
+            </div>
+            <SellRequestPage />
           </article>
         </section>
       </div>
