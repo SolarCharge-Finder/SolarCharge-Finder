@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import axios from 'axios'
 import useAuth from '../../context/useAuth'
 import "./SellRequest.css"
@@ -11,9 +11,12 @@ function SellRequestPage() {
     const [editingId, setEditingId] = useState(null)
     const [editData, setEditData] = useState({ energyAmount: '', comment: '', location: { coordinates: [] } })
 
-    const authConfig = token ? { headers: { Authorization: `Bearer ${token}` } } : null
+    const authConfig = useMemo(() => {
+        if (!token) return null
+        return { headers: { Authorization: `Bearer ${token}` } }
+    }, [token])
 
-    const fetchSellRequests = async () => {
+    const fetchSellRequests = useCallback(async () => {
         if (!authConfig) return
         setLoading(true)
         try {
@@ -27,11 +30,11 @@ function SellRequestPage() {
         } finally {
             setLoading(false)
         }
-    }
+    }, [authConfig]) 
 
     useEffect(() => {
         fetchSellRequests()
-    }, [token])
+    }, [fetchSellRequests])
 
     const startEdit = (request) => {
         setEditingId(request._id)
