@@ -1201,6 +1201,53 @@ html {
   }
 }
 
+/* Sell Request Card */
+.sell-request-cta-card {
+  position: relative;
+  background: linear-gradient(135deg, #052e16, #14532d);
+  border-radius: 24px;
+  padding: 3.5rem 2.5rem;
+  text-align: center;
+  overflow: hidden;
+  color: #fff;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  margin-top: 2%;
+}
+
+.sell-request-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.sell-request-modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.sell-request-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: none;
+  background: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
 /* ==================== FOOTER ==================== */
 .footer {
   background: #f8fafc;

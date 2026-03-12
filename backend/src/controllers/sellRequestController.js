@@ -2,7 +2,7 @@ import SellRequest from "../models/SellRequest.js";
 
 export const createSellRequest = async (req, res) => {
     try {
-        const { energyAmount, latitude, longitude } = req.body;
+        const { energyAmount, location, comment } = req.body;
 
         //excess energy amount validation
         if (!energyAmount) {
@@ -12,11 +12,13 @@ export const createSellRequest = async (req, res) => {
         }
         
         //seller location validation
-        if (!latitude || !longitude) {
+        if (!location || !location.coordinates) {
             return res.status(400).json({
-                message: "Location (latitude & longitude) is required."
+                message: "Location is required."
             })
         }
+
+        const [longitude, latitude] = location.coordinates;
 
         //location cordinate validity
         if (latitude < -90 || latitude > 90) {
@@ -36,7 +38,8 @@ export const createSellRequest = async (req, res) => {
             location: {
                 type: "Point",
                 coordinates: [Number(longitude), Number(latitude)],
-            }
+            },
+            comment
         });
 
         const savedRequest = await newRequest.save();

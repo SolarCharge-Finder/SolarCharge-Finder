@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import AddSellRequest from '../SellRequest/AddSellRequest'
 
 function CallToAction() {
   const [open, setOpen] = useState(false)
+  const [sellModalOpen, setSellModalOpen] = useState(false)
   const shareUrl = typeof window !== 'undefined' ? window.location.href : 'https://solarcharge.com'
   const title = 'SolarCharge — find solar charging stations'
 
@@ -82,6 +84,33 @@ function CallToAction() {
               <span className="trust-text">Join <strong>2,500+</strong> contributors sharing clean energy</span>
             </div>
           </div>
+        </div>
+      
+        <div className="sell-request-cta-card">
+          <h2 className="cta-title">Sell Your Excess Solar Energy</h2>
+          <p className='cta-desc'>Have extra energy from your home solar panels? Submit it here so nearby charging stations can use it.</p>
+          
+          <button
+            className="cta-btn-secondary"
+            type="button"
+            onClick={() => setSellModalOpen((prev) => !prev)}
+          >
+            {sellModalOpen ? "Hide Form" : "Sell Excess Solar Energy"}
+          </button>
+
+          {sellModalOpen && (
+            <div className="sell-request-modal-overlay">
+              <div className="sell-request-modal-content">
+                <button
+                  className="sell-request-modal-close"
+                  onClick={() => setSellModalOpen(false)}
+                >
+                  ✕
+                </button>
+                <AddSellRequest />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>
