@@ -3,10 +3,10 @@ import Footer from '../components/Footer/Footer';
 
 function Terms() {
   return (
-    <div className="page-layout">
-      <Navbar />
-      <main className="page-content">
-        <div className="content-container">
+    <div className="page-layout info-page">
+      <Navbar forceSolid />
+      <main className="info-page__main">
+        <div className="info-page__container">
           <h1 className="page-title">Terms and Conditions</h1>
           
           <p className="page-intro">

@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { FiMapPin } from 'react-icons/fi';
 import SearchResults from '../SearchBar/SearchResults';
 import MapView from "../map/MapView";
 import { getTopRatedStations, nearbyStations } from '../../services/stationService';
@@ -53,7 +54,10 @@ function MapSection() {
     <section className="map-section" id="map">
       <div className="map-container">
         <div className="section-header">
-          <span className="section-tag">📍 Nearby Stations</span>
+          <span className="section-tag">
+            <FiMapPin aria-hidden="true" />
+            Nearby Stations
+          </span>
           <h2 className="section-title">Explore Solar Charging Stations</h2>
           <p className="section-desc">
             Browse the map or scroll through the station cards to find the perfect charging spot.
