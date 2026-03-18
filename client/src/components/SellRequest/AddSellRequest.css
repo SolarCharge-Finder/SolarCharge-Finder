@@ -3,69 +3,99 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  padding: 2.5rem;
-  max-width: 500px;
+  padding: 0;
+  max-width: 100%;
   margin: 0 auto;
-  border-radius: 20px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  border-radius: 0;
+  box-shadow: none;
   text-align: center;
 }
 
 /* Title */
 .sell-request-title {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #1f3d32;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 /* Form groups */
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.35rem;
   text-align: left;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
 }
 
 /* Inputs and textarea */
 .form-group input,
 .form-group textarea {
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-  border: none;
-  font-size: 1rem;
-  outline: auto;
-  outline-color: #b4b4b4;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+  font-family: inherit;
   width: 100%;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
-  box-shadow: 0 0 0 2px #22c55e;
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 /* Submit button */
 .sell-request-cta-btn-primary {
-    margin-top: 3%;
-    padding: 0.85rem 1.75rem;
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: #fff;
-    font-weight: 600;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.25s ease-in-out;
-    box-shadow: 0 4px 14px rgba(34,197,94,0.35);
+  margin-top: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.35);
+  width: 100%;
 }
 
 .sell-request-cta-btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(34,197,94,0.5);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
 }
 
 .sell-request-cta-btn-primary:disabled {
   background-color: #a7f3d0;
   cursor: not-allowed;
   transform: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sell-request-title {
+    font-size: 1.35rem;
+  }
+  
+  .form-group label {
+    font-size: 0.8rem;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    font-size: 0.9rem;
+    padding: 0.55rem 0.7rem;
+  }
+  
+  .sell-request-cta-btn-primary {
+    font-size: 0.9rem;
+    padding: 0.65rem 1.25rem;
+  }
 }

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import { FiShare2 } from 'react-icons/fi';
 import { calculateDistance } from '../../utils/distance';
 
 const renderStars = (rating = 0) => {
@@ -39,6 +40,32 @@ const SearchResults = ({ stations, error, userLocation = null, loadingLocation =
       `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`,
       '_blank'
     );
+  };
+
+  const handleShare = async (e, station) => {
+    e.stopPropagation();
+    if (typeof window === 'undefined') return;
+
+    const shareUrl = `${window.location.origin}/stations/${station._id}`;
+    const shareData = {
+      title: `Charge at ${station.name}`,
+      text: `Check out ${station.name} on SolarCharge Finder.`,
+      url: shareUrl,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(`${station.name} - ${shareUrl}`);
+        alert('Station link copied to clipboard');
+      } else {
+        window.prompt('Copy this link to share', shareUrl);
+      }
+    } catch (err) {
+      console.error('Failed to share station', err);
+      alert('Unable to share this station right now.');
+    }
   };
 
   return (
@@ -85,12 +112,22 @@ const SearchResults = ({ stations, error, userLocation = null, loadingLocation =
 
             <p className="station-card__distance"> {distanceDisplay} away</p>
 
-            <button 
-              className="station-card__cta"
-              onClick={(e) => handleGetDirections(e, station)}
-            >
-              Get Directions
-            </button>
+            <div className="station-card__actions">
+              <button 
+                className="station-card__cta"
+                onClick={(e) => handleGetDirections(e, station)}
+              >
+                Get Directions
+              </button>
+              <button
+                type="button"
+                className="station-card__share"
+                onClick={(e) => handleShare(e, station)}
+              >
+                <FiShare2 aria-hidden="true" />
+                Share
+              </button>
+            </div>
           </div>
         );
       })}

@@ -64,7 +64,7 @@ export default function LocationPickerMap({ value, onChange }) {
   const mapKey = value ? `${value[0]}-${value[1]}` : "default"
 
   return (
-    <div style={{ height: 300, width: "100%", borderRadius: 12, overflow: "hidden" }}>
+    <div style={{ height: 250, width: "100%", borderRadius: 8, overflow: "hidden" }}>
       <MapContainer
         key={mapKey}
         center={value || SRI_LANKA_CENTER}

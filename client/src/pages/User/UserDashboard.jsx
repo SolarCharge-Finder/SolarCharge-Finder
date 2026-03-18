@@ -92,6 +92,7 @@ function UserDashboard() {
   const [editingReviewId, setEditingReviewId] = useState(null)
   const [editRating, setEditRating] = useState(0)
   const [editComment, setEditComment] = useState('')
+  const [activeTab, setActiveTab] = useState('dashboard')
 
   const handleLogout = () => {
     logout()
@@ -383,6 +384,15 @@ function UserDashboard() {
     ? createdAt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
     : 'New member'
   const isVerified = Boolean(derivedProfile?.isEmailVerified)
+  const firstName = displayName?.split(' ')[0] || displayName || 'Your'
+  const tabItems = useMemo(
+    () => [
+      { id: 'dashboard', label: 'Dashboard', helper: 'Sessions, goals, quick actions' },
+      { id: 'insights', label: `${firstName}'s Insights`, helper: 'Recommendations & reviews' },
+      { id: 'sell', label: 'Sell Requests', helper: 'Manage energy sharing' },
+    ],
+    [firstName],
+  )
 
   const quickActions = [
     {
@@ -446,231 +456,258 @@ function UserDashboard() {
   return (
     <div className="user-dashboard">
       <div className="user-dashboard__container">
-        <section className="user-hero">
-          <div>
+        
+        <section className="user-panel">
+          <div className="user-panel__info">
             <Link to="/" className="user-hero__back" aria-label="Back to home">
-              ←
-            </Link>
-            <p className="user-hero__eyebrow">Personal dashboard</p>
-            <h1>Welcome back, {displayName}</h1>
-            <p className="user-hero__subtitle">
-              Surface your latest sessions, eco goals, and recommended solar-first charging stops.
-            </p>
-            <div className="user-hero__meta">
-              <span className="user-chip user-chip--soft">Member since {memberSince}</span>
-              <span className={`user-chip ${isVerified ? 'user-chip--success' : 'user-chip--ghost'}`}>
-                {isVerified ? '✅ Email verified' : '⏳ Verification pending'}
-              </span>
-            </div>
-            <div className="user-hero__actions">
-              
-              <button className="user-button user-button--danger" onClick={handleLogout}>
-                Logout
-              </button>
-            </div>
+                  ←
+                </Link>
+            <p className="user-panel__eyebrow">Control center</p>
+            
+    
           </div>
-          <div className="user-hero__tile">
-            <p className="user-card__title">Clean-energy streak</p>
-            <p className="user-hero__streak">{membershipStats.streak} days</p>
-            <p className="user-hero__hint">Stay consistent to unlock new badges.</p>
-            <button className="user-button user-button--ghost" onClick={() => navigate('/search')}>
-              View session history
-            </button>
+          <div className="user-panel__tabs">
+            {tabItems.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                className={`user-panel__tab${activeTab === tab.id ? ' is-active' : ''}`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <span>{tab.label}</span>
+                <small>{tab.helper}</small>
+              </button>
+            ))}
           </div>
         </section>
 
         {profileError && <div className="user-dashboard__alert user-dashboard__alert--error">{profileError}</div>}
 
-        <section className="user-grid user-grid--stats">
-          {statCards.map((card) => (
-            <article key={card.id} className="user-stat-card">
-              <p className="user-card__title">{card.label}</p>
-              <p className="user-stat-card__value">{card.value}</p>
-              <p className="user-stat-card__helper">{card.helper}</p>
-            </article>
-          ))}
-        </section>
-
-        <section className="user-grid user-grid--actions">
-          <article className="user-card user-card--tall">
-            <div className="user-card__header">
+        {activeTab === 'dashboard' && (
+          <>
+            <section className="user-hero">
               <div>
-                <h2>Quick actions</h2>
-                <p className="user-card__subtitle">Pick up where you left off</p>
-              </div>
-            </div>
-            <div className="user-actions">
-              {quickActions.map((action) => (
-                <div key={action.id} className="user-action">
-                  <span className="user-action__icon" aria-hidden="true">
-                    {action.icon}
+                
+                <p className="user-hero__eyebrow">Personal dashboard</p>
+                <h1>Welcome back, {displayName}</h1>
+                <p className="user-hero__subtitle">
+                  Surface your latest sessions, eco goals, and recommended solar-first charging stops.
+                </p>
+                <div className="user-hero__meta">
+                  <span className="user-chip user-chip--soft">Member since {memberSince}</span>
+                  <span className={`user-chip ${isVerified ? 'user-chip--success' : 'user-chip--ghost'}`}>
+                    {isVerified ? '✅ Email verified' : '⏳ Verification pending'}
                   </span>
-                  <div className="user-action__content">
-                    <h3>{action.title}</h3>
-                    <p>{action.description}</p>
-                  </div>
-                  <button
-                    className="user-button user-button--ghost"
-                    type="button"
-                    onClick={action.onClick ?? undefined}
-                    disabled={!action.onClick}
-                  >
-                    {action.cta}
+                </div>
+                <div className="user-hero__actions">
+                  <button className="user-button user-button--danger" onClick={handleLogout}>
+                    Logout
                   </button>
                 </div>
-              ))}
-            </div>
-          </article>
-
-          <article className="user-card user-card--accent">
-            <div className="user-card__header">
-              <div>
-                <h2>Upcoming trip</h2>
-                <p className="user-card__subtitle">Solar-priority weekend route draft</p>
               </div>
-            </div>
-            <ul className="user-trip-list">
-              {recommendedStations.slice(0, 3).map((station) => (
-                <li key={station._id ?? station.id}>
+              <div className="user-hero__tile">
+                <p className="user-card__title">Clean-energy streak</p>
+                <p className="user-hero__streak">{membershipStats.streak} days</p>
+                <p className="user-hero__hint">Stay consistent to unlock new badges.</p>
+                <button className="user-button user-button--ghost" onClick={() => navigate('/search')}>
+                  View session history
+                </button>
+              </div>
+            </section>
+
+            <section className="user-grid user-grid--stats">
+              {statCards.map((card) => (
+                <article key={card.id} className="user-stat-card">
+                  <p className="user-card__title">{card.label}</p>
+                  <p className="user-stat-card__value">{card.value}</p>
+                  <p className="user-stat-card__helper">{card.helper}</p>
+                </article>
+              ))}
+            </section>
+
+            <section className="user-grid user-grid--actions">
+              <article className="user-card user-card--tall">
+                <div className="user-card__header">
                   <div>
-                    <p className="user-trip__title">{station.name}</p>
-                    <p className="user-trip__meta">{station.city || station.district || 'Location TBA'}</p>
+                    <h2>Quick actions</h2>
+                    <p className="user-card__subtitle">Pick up where you left off</p>
                   </div>
-                  <span className="user-chip user-chip--soft">
-                    ⭐ {Number(station.rating ?? station.averageRating ?? 4.8).toFixed(1)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <button className="user-button" onClick={() => navigate('/search')}>
-              Finalize route
-            </button>
-          </article>
-        </section>
-
-        <section className="user-grid user-grid--two">
-          <article className="user-card">
-            <div className="user-card__header">
-              <div>
-                <h2>Recent activity</h2>
-                <p className="user-card__subtitle">Last 7 days</p>
-              </div>
-            </div>
-            <div className="user-activity">
-              {activityFeed.map((item) => (
-                <div key={item.id} className="user-activity__item">
-                  <span className="user-activity__icon" aria-hidden="true">
-                    {item.icon}
-                  </span>
-                  <div>
-                    <p className="user-activity__title">{item.title}</p>
-                    <p className="user-activity__meta">{item.meta}</p>
-                  </div>
-                  <span className="user-activity__time">{item.timeAgo}</span>
                 </div>
-              ))}
-            </div>
-          </article>
-
-          <article className="user-card">
-            <div className="user-card__header">
-              <div>
-                <h2>Eco goals</h2>
-                <p className="user-card__subtitle">Stay accountable on clean miles</p>
-              </div>
-            </div>
-            <div className="user-goals">
-              {ecoGoals.map((goal) => (
-                <div key={goal.id} className="user-progress">
-                  <div className="user-progress__meta">
-                    <p>{goal.label}</p>
-                    <span>{goal.target}</span>
-                  </div>
-                  <div className="user-progress__bar" aria-hidden="true">
-                    <div className="user-progress__fill" style={{ width: `${goal.progress}%` }}></div>
-                  </div>
-                  <span className="sr-only">{goal.progress}% complete</span>
-                </div>
-              ))}
-            </div>
-          </article>
-        </section>
-
-        <section className="user-grid user-grid--two">
-          <article className="user-card">
-            <div className="user-card__header">
-              <div>
-                <h2>Recommended stations</h2>
-                <p className="user-card__subtitle">Top-rated solar hubs nearby</p>
-              </div>
-            </div>
-            {stationError && <div className="user-dashboard__alert user-dashboard__alert--muted">{stationError}</div>}
-            {stationLoading && (
-              <div className="user-dashboard__state user-dashboard__state--inline">
-                <span className="user-dashboard__loader" aria-hidden="true"></span>
-                <p className="user-dashboard__helper">Loading stations...</p>
-              </div>
-            )}
-            <div className="user-stations">
-              {recommendedStations.map((station) => {
-                const connectors = getConnectorTypes(station.connectors)
-                return (
-                  <article key={station._id ?? station.id} className="user-station">
-                    <header className="user-station__header">
-                      <div>
-                        <h3>{station.name}</h3>
-                        <p>{station.city || station.district || station.address || 'Location coming soon'}</p>
-                      </div>
-                      <span
-                        className={`user-chip ${
-                          (station.status || '').toLowerCase() === 'open' ? 'user-chip--success' : 'user-chip--ghost'
-                        }`}
-                      >
-                        {station.status || 'Open'}
+                <div className="user-actions">
+                  {quickActions.map((action) => (
+                    <div key={action.id} className="user-action">
+                      <span className="user-action__icon" aria-hidden="true">
+                        {action.icon}
                       </span>
-                    </header>
-                    <div className="user-station__meta">
+                      <div className="user-action__content">
+                        <h3>{action.title}</h3>
+                        <p>{action.description}</p>
+                      </div>
+                      <button
+                        className="user-button user-button--ghost"
+                        type="button"
+                        onClick={action.onClick ?? undefined}
+                        disabled={!action.onClick}
+                      >
+                        {action.cta}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="user-card user-card--accent">
+                <div className="user-card__header">
+                  <div>
+                    <h2>Upcoming trip</h2>
+                    <p className="user-card__subtitle">Solar-priority weekend route draft</p>
+                  </div>
+                </div>
+                <ul className="user-trip-list">
+                  {recommendedStations.slice(0, 3).map((station) => (
+                    <li key={station._id ?? station.id}>
+                      <div>
+                        <p className="user-trip__title">{station.name}</p>
+                        <p className="user-trip__meta">{station.city || station.district || 'Location TBA'}</p>
+                      </div>
                       <span className="user-chip user-chip--soft">
                         ⭐ {Number(station.rating ?? station.averageRating ?? 4.8).toFixed(1)}
                       </span>
-                      <span className="user-chip user-chip--ghost">{formatSlots(station.connectors)}</span>
-                    </div>
-                    <div className="user-station__connectors">
-                      {connectors.length ? (
-                        connectors.map((connector) => (
-                          <span key={connector} className="user-chip user-chip--outline">
-                            {connector}
-                          </span>
-                        ))
-                      ) : (
-                        <p className="user-station__empty">Connector details coming soon</p>
-                      )}
-                    </div>
-                    <div className="user-card__actions">
-                      <button className="user-button user-button--ghost" onClick={() => navigate('/search')}>
-                        View details
-                      </button>
-                      <button className="user-button" onClick={() => navigate('/search')}>
-                        Start navigation
-                      </button>
-                    </div>
-                  </article>
-                )
-              })}
-            </div>
-          </article>
+                    </li>
+                  ))}
+                </ul>
+                <button className="user-button" onClick={() => navigate('/search')}>
+                  Finalize route
+                </button>
+              </article>
+            </section>
 
-          <article className="user-card">
-            <div className="user-card__header">
-              <div>
-                <h2>My Reviews</h2>
-                <p className="user-card__subtitle">Reviews you added to stations — edit or delete anytime</p>
+            <section className="user-grid user-grid--two">
+              <article className="user-card">
+                <div className="user-card__header">
+                  <div>
+                    <h2>Recent activity</h2>
+                    <p className="user-card__subtitle">Last 7 days</p>
+                  </div>
+                </div>
+                <div className="user-activity">
+                  {activityFeed.map((item) => (
+                    <div key={item.id} className="user-activity__item">
+                      <span className="user-activity__icon" aria-hidden="true">
+                        {item.icon}
+                      </span>
+                      <div>
+                        <p className="user-activity__title">{item.title}</p>
+                        <p className="user-activity__meta">{item.meta}</p>
+                      </div>
+                      <span className="user-activity__time">{item.timeAgo}</span>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="user-card">
+                <div className="user-card__header">
+                  <div>
+                    <h2>Eco goals</h2>
+                    <p className="user-card__subtitle">Stay accountable on clean miles</p>
+                  </div>
+                </div>
+                <div className="user-goals">
+                  {ecoGoals.map((goal) => (
+                    <div key={goal.id} className="user-progress">
+                      <div className="user-progress__meta">
+                        <p>{goal.label}</p>
+                        <span>{goal.target}</span>
+                      </div>
+                      <div className="user-progress__bar" aria-hidden="true">
+                        <div className="user-progress__fill" style={{ width: `${goal.progress}%` }}></div>
+                      </div>
+                      <span className="sr-only">{goal.progress}% complete</span>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </section>
+          </>
+        )}
+
+        {activeTab === 'insights' && (
+          <section className="user-grid user-grid--two">
+            <article className="user-card">
+              <div className="user-card__header">
+                <div>
+                  <h2>Recommended stations</h2>
+                  <p className="user-card__subtitle">Top-rated solar hubs nearby</p>
+                </div>
               </div>
-            </div>
-            {myReviewsError && <p className="user-card__subtitle" style={{ color: '#ef4444' }}>{myReviewsError}</p>}
-            {myReviewsLoading && <p className="user-card__subtitle">Loading your reviews…</p>}
-            {!myReviewsLoading && !myReviewsError && (
-              <div className="user-my-reviews">
+              {stationError && <div className="user-dashboard__alert user-dashboard__alert--muted">{stationError}</div>}
+              {stationLoading && (
+                <div className="user-dashboard__state user-dashboard__state--inline">
+                  <span className="user-dashboard__loader" aria-hidden="true"></span>
+                  <p className="user-dashboard__helper">Loading stations...</p>
+                </div>
+              )}
+              <div className="user-stations">
+                {recommendedStations.map((station) => {
+                  const connectors = getConnectorTypes(station.connectors)
+                  return (
+                    <article key={station._id ?? station.id} className="user-station">
+                      <header className="user-station__header">
+                        <div>
+                          <h3>{station.name}</h3>
+                          <p>{station.city || station.district || station.address || 'Location coming soon'}</p>
+                        </div>
+                        <span
+                          className={`user-chip ${
+                            (station.status || '').toLowerCase() === 'open' ? 'user-chip--success' : 'user-chip--ghost'
+                          }`}
+                        >
+                          {station.status || 'Open'}
+                        </span>
+                      </header>
+                      <div className="user-station__meta">
+                        <span className="user-chip user-chip--soft">
+                          ⭐ {Number(station.rating ?? station.averageRating ?? 4.8).toFixed(1)}
+                        </span>
+                        <span className="user-chip user-chip--ghost">{formatSlots(station.connectors)}</span>
+                      </div>
+                      <div className="user-station__connectors">
+                        {connectors.length ? (
+                          connectors.map((connector) => (
+                            <span key={connector} className="user-chip user-chip--outline">
+                              {connector}
+                            </span>
+                          ))
+                        ) : (
+                          <p className="user-station__empty">Connector details coming soon</p>
+                        )}
+                      </div>
+                      <div className="user-card__actions">
+                        <button className="user-button user-button--ghost" onClick={() => navigate('/search')}>
+                          View details
+                        </button>
+                        <button className="user-button" onClick={() => navigate('/search')}>
+                          Start navigation
+                        </button>
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+            </article>
+
+            <article className="user-card">
+              <div className="user-card__header">
+                <div>
+                  <h2>My Reviews</h2>
+                  <p className="user-card__subtitle">Reviews you added to stations — edit or delete anytime</p>
+                </div>
+              </div>
+              {myReviewsError && <p className="user-card__subtitle" style={{ color: '#ef4444' }}>{myReviewsError}</p>}
+              {myReviewsLoading && <p className="user-card__subtitle">Loading your reviews…</p>}
+              {!myReviewsLoading && !myReviewsError && (
+                <div className="user-my-reviews">
                 {myReviews.length === 0 ? (
                   <p className="user-my-reviews__empty">You haven&apos;t left any reviews yet. Visit a station page to add one.</p>
                 ) : (
@@ -733,17 +770,21 @@ function UserDashboard() {
             )}
           </article>
         </section>
-        <section className="user-grid user-grid--two">
-          <article className="user-card">
-            <div className="user-card__header">
-              <div>
-                <h2>My Sell Requests</h2>
-                <p className="user-card__subtitle">View, edit, or delete your sell requests</p>
+        )}
+
+        {activeTab === 'sell' && (
+          <section className="user-grid user-grid--two">
+            <article className="user-card">
+              <div className="user-card__header">
+                <div>
+                  <h2>My Sell Requests</h2>
+                  <p className="user-card__subtitle">View, edit, or delete your sell requests</p>
+                </div>
               </div>
-            </div>
-            <SellRequestPage />
-          </article>
-        </section>
+              <SellRequestPage />
+            </article>
+          </section>
+        )}
       </div>
     </div>
   )

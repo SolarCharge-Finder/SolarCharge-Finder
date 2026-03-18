@@ -25,6 +25,67 @@
   gap: 2rem;
 }
 
+.user-panel {
+  background: var(--user-card);
+  border-radius: 2rem;
+  border: 1px solid var(--user-border);
+  box-shadow: var(--user-shadow);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.user-panel__info h2 {
+  margin: 0;
+}
+
+.user-panel__info p {
+  margin: 0.35rem 0 0;
+  color: var(--user-muted);
+}
+
+.user-panel__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  color: var(--user-muted);
+  margin: 0;
+}
+
+.user-panel__tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.user-panel__tab {
+  border: 1px solid var(--user-border);
+  border-radius: 1.5rem;
+  padding: 0.9rem 1.1rem;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  color: var(--user-text);
+}
+
+.user-panel__tab small {
+  font-weight: 500;
+  color: var(--user-muted);
+  opacity: 0.9;
+}
+
+.user-panel__tab.is-active {
+  background: linear-gradient(135deg, #e8fff2, #effaf7);
+  border-color: rgba(16, 152, 103, 0.3);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+}
+
 .user-dashboard--center {
   display: flex;
   align-items: center;

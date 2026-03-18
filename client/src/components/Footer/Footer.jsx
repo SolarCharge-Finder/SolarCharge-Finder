@@ -1,13 +1,15 @@
+import { Link } from 'react-router-dom'
+
 function Footer() {
   return (
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-top">
           <div className="footer-brand">
-            <div className="footer-logo">
+            <Link to="/" className="footer-logo">
               <span className="logo-icon">☀️</span>
-              <span className="logo-text">SolarCharge <span className="logo-accent">Finder</span></span>
-            </div>
+              <span>SolarCharge <span className="logo-accent">Finder</span></span>
+            </Link>
             <p className="footer-tagline">
               Making solar-powered charging accessible for everyone.
               Find, rate, and share clean energy stations worldwide.
@@ -23,21 +25,21 @@ function Footer() {
             </div>
             <div className="footer-col">
               <h4>Resources</h4>
-              <a href="#">Linkedin</a>
+              <a href="#" rel="noopener noreferrer">LinkedIn</a>
               <a href="/about-us">About</a>
-              <a href="#">Blog</a>
+              <a href="#" rel="noopener noreferrer">Blog</a>
             </div>
             <div className="footer-col">
               <h4>Connect</h4>
-              <a href="#">Facebook</a>
-              <a href="#">Twitter</a>
-              <a href="#">Instagram</a>
+              <a href="#" rel="noopener noreferrer">Facebook</a>
+              <a href="#" rel="noopener noreferrer">Twitter</a>
+              <a href="#" rel="noopener noreferrer">Instagram</a>
             </div>
           </div>
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} SolarCharge Finder. Built for a sustainable future.</p>
+          <p>© {new Date().getFullYear()} SolarCharge Finder. Built for a sustainable future.</p>
           <div className="footer-bottom-links">
             <a href="/privacy">Privacy</a>
             <a href="/terms">Terms</a>

@@ -4,6 +4,7 @@ import axios from 'axios'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { FiShare2 } from 'react-icons/fi'
 import Navbar from '../components/Navbar/Navbar'
 import Footer from '../components/Footer/Footer'
 import useAuth from '../context/useAuth'
@@ -134,6 +135,31 @@ const StationDetails = () => {
     )
   }
 
+  const handleShareStation = async () => {
+    if (typeof window === 'undefined' || !station) return
+
+    const shareUrl = `${window.location.origin}/stations/${station._id}`
+    const shareData = {
+      title: `Charge at ${station.name}`,
+      text: `Check out ${station.name} on SolarCharge Finder.`,
+      url: shareUrl,
+    }
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData)
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(`${station.name} - ${shareUrl}`)
+        alert('Station link copied to clipboard')
+      } else {
+        window.prompt('Copy this link to share', shareUrl)
+      }
+    } catch (err) {
+      console.error('Failed to share station', err)
+      alert('Unable to share this station right now.')
+    }
+  }
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'Open':
@@ -164,8 +190,8 @@ const StationDetails = () => {
 
   if (loading) {
     return (
-      <div className="page-layout">
-        <Navbar />
+      <div className="page-layout station-details-page">
+        <Navbar forceSolid />
         <main className="page-content">
           <div className="station-details-container">
             <p className="loading-text">Loading station details...</p>
@@ -178,8 +204,8 @@ const StationDetails = () => {
 
   if (error || !station) {
     return (
-      <div className="page-layout">
-        <Navbar />
+      <div className="page-layout station-details-page">
+        <Navbar forceSolid />
         <main className="page-content">
           <div className="station-details-container">
             <p className="error-text">{error || 'Station not found'}</p>
@@ -201,8 +227,8 @@ const StationDetails = () => {
   const reviewCount = reviews.length
 
   return (
-    <div className="page-layout">
-      <Navbar />
+    <div className="page-layout station-details-page">
+      <Navbar forceSolid />
       <main className="page-content">
         <div className="station-details-container">
           <Link to="/search" className="back-link">← Back to Search</Link>
@@ -344,6 +370,10 @@ const StationDetails = () => {
                 {/* Directions Button */}
                 <button className="directions-btn" onClick={handleGetDirections}>
                   🧭 Get Directions
+                </button>
+                <button className="share-station-btn" type="button" onClick={handleShareStation}>
+                  <FiShare2 aria-hidden="true" />
+                  Share Station
                 </button>
               </div>
 

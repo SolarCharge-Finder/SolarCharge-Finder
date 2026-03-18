@@ -78,33 +78,44 @@ const SearchPage = () => {
     }, [location.search, handleSearch]);
 
     return (
-    <div className="page-layout">
-      <Navbar />
+    <div className="page-layout search-page">
+      <Navbar forceSolid />
       <main className="page-content">
         <div className="searchpage-container">
-            <h1 className="page-title">Searching For Charging Stations</h1>
+            <div className="searchpage-hero">
+                <span className="section-tag">Live Solar Charging Map</span>
+                <h1 className="page-title">Search Solar-Friendly Stations</h1>
+                <p className="page-subtitle">
+                    Use smart filters, view live availability, and share stations with friends — all in the same polished experience as the homepage.
+                </p>
+            </div>
 
-            <SearchBar />
+            <div className="searchpage-hero-card">
+                <SearchBar />
+            </div>
 
-            {error && <p className="error-message">{error}</p>}
+            {error && <p className="error-msg">{error}</p>}
 
             {/* Display search results */}
             <div className="search-page-layout">
                 {/* Search results displayed in the left side */}
                 <div className="search-results-panel">
+                    <div className="results-header">
+                        <div>
+                            <h2>Stations Nearby</h2>
+                            <p>Browse curated cards or jump into the interactive map.</p>
+                        </div>
+                        <span className="results-count">{stations.length} results</span>
+                    </div>
                     <SearchResults stations={stations} error={error} userLocation={geolocation} loadingLocation={loading}/>
-                    {/* distance calc works { latitude: 6.915, longitude: 79.857 } 
-                    - need to fix the issues with browser location requests </3*/}
                 </div>
 
                 {/* Map preview on the right side */}
                 <div className="map-preview-panel">
-                    {/* mapview updated to show user location & returned station location (adeesha) */}
                      <MapView stations={stations} userLocation={geolocation} loadingLocation={loading}/>
                 </div>
                 
             </div>
-
         </div>
       </main>
       <Footer />
