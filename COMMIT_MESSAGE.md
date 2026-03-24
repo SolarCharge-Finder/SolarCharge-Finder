@@ -1,6 +1,7 @@
 Client: UI overhaul — responsive styles, sharing, and sell-energy modal
 
 Summary:
+
 - Consolidated and modernized global styles and design tokens; improved responsive behavior and animations.
 - Updated navbar to support scroll state, accessibility, and cleaned CSS imports.
 - Enhanced search results and station details with share functionality and better action layout.
@@ -8,6 +9,7 @@ Summary:
 - Polished multiple pages (Home, Search, About, Terms, Privacy, StationDetails, User Dashboard) for consistent layout and theming.
 
 Files changed (high level):
+
 - client/src/components/Navbar/Navbar.css — moved styles, cleaned/condensed, kept compatibility comments.
 - client/src/components/Navbar/Navbar.jsx — added scroll state, prop `forceSolid`, accessibility improvements.
 - client/src/components/SearchBar/SearchResults.jsx — added share button, actions grouping, distance/render fixes.
@@ -28,6 +30,7 @@ Files changed (high level):
 - client/src/components/CallToAction/SellEnergySection.jsx — new Sell Energy CTA + modal and portal logic.
 
 Notes:
+
 - This commit groups layout, styling, and small behavior enhancements across the client app.
 - If you want, I can: run the client build, run tests, or create a shorter conventional commit header for git.
 

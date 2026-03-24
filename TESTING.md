@@ -71,5 +71,6 @@ npm test
   - Ensure CI installs devDependencies, sets `NODE_ENV=test`, and runs `npm test` in the `backend` folder.
 
 If you want, I can:
+
 - Add more integration tests covering authenticated endpoints and CRUD flows.
 - Add a simplified Artillery script to POST and GET through common flows.

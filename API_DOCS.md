@@ -7,6 +7,7 @@ Base URL: `/api`
 Authentication: Bearer token in `Authorization` header: `Authorization: Bearer <token>`
 
 User
+
 - POST `/users/register`
   - Body: `{ name?, email, password }`
   - Success: `201` `{ success: true, message: 'User registered', data: { _id, email, ... } }`
@@ -17,6 +18,7 @@ User
   - Success: `200` `{ success: true, data: user }`
 
 Stations
+
 - GET `/stations` - list stations (query params: city, rating, chargerType, lat,lng,radius)
   - Success: `200` `{ success: true, count, data: [ ... ] }`
 - POST `/stations` (protected)
@@ -26,6 +28,7 @@ Stations
   - Success: `200` `{ success: true, data: station }`
 
 Reviews
+
 - POST `/reviews` (protected)
   - Body: `{ stationId, rating, comment }`
   - Success: `201` `{ success: true, message: 'Review added', data: review }`
@@ -38,8 +41,10 @@ Reviews
   - Success: `200` `{ success: true, message: 'Review deleted' }`
 
 Errors
+
 - Standard error envelope: `{ success: false, message: 'Reason' }` with appropriate HTTP status codes.
 
 Notes
+
 - Make sure to populate `JWT_SECRET` in `.env`.
 - Consider exporting a Postman collection from this doc for manual testing.

@@ -474,13 +474,11 @@ export const promoteUser = async (req, res) => {
     });
   } catch (error) {
     logError('Promote user error', error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: 'Server error while promoting user',
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined,
-      });
+    res.status(500).json({
+      success: false,
+      message: 'Server error while promoting user',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
   }
 };
 
@@ -515,12 +513,10 @@ export const updateUserRole = async (req, res) => {
     });
   } catch (error) {
     logError('Update user role error', error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: 'Server error while updating user role',
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined,
-      });
+    res.status(500).json({
+      success: false,
+      message: 'Server error while updating user role',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
   }
 };
