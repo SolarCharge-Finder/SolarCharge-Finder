@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 
 function Footer() {
   return (
@@ -8,11 +8,13 @@ function Footer() {
           <div className="footer-brand">
             <Link to="/" className="footer-logo">
               <span className="logo-icon">☀️</span>
-              <span>SolarCharge <span className="logo-accent">Finder</span></span>
+              <span>
+                SolarCharge <span className="logo-accent">Finder</span>
+              </span>
             </Link>
             <p className="footer-tagline">
-              Making solar-powered charging accessible for everyone.
-              Find, rate, and share clean energy stations worldwide.
+              Making solar-powered charging accessible for everyone. Find, rate, and share clean
+              energy stations worldwide.
             </p>
           </div>
 
@@ -25,15 +27,25 @@ function Footer() {
             </div>
             <div className="footer-col">
               <h4>Resources</h4>
-              <a href="#" rel="noopener noreferrer">LinkedIn</a>
+              <a href="#" rel="noopener noreferrer">
+                LinkedIn
+              </a>
               <a href="/about-us">About</a>
-              <a href="#" rel="noopener noreferrer">Blog</a>
+              <a href="#" rel="noopener noreferrer">
+                Blog
+              </a>
             </div>
             <div className="footer-col">
               <h4>Connect</h4>
-              <a href="#" rel="noopener noreferrer">Facebook</a>
-              <a href="#" rel="noopener noreferrer">Twitter</a>
-              <a href="#" rel="noopener noreferrer">Instagram</a>
+              <a href="#" rel="noopener noreferrer">
+                Facebook
+              </a>
+              <a href="#" rel="noopener noreferrer">
+                Twitter
+              </a>
+              <a href="#" rel="noopener noreferrer">
+                Instagram
+              </a>
             </div>
           </div>
         </div>

@@ -27,12 +27,15 @@
     "docker:prod:build": "docker-compose -f docker-compose.prod.yml up --build",
     "docker:down": "docker-compose down",
     "prepare": "husky install || true",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
     "husky": "^8.0.3",
-    "lint-staged": "^15.2.0"
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.8.1"
   },
   "lint-staged": {
     "backend/**/*.js": [

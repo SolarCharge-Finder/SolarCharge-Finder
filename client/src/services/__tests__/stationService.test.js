@@ -2,14 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import axios from 'axios';
 import { getTopRatedStations, searchStations } from '../stationService';
 
-const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001/api") + "/stations";
-
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5001/api') + '/stations';
 
 vi.mock('axios');
 
 describe('stationService', () => {
   beforeEach(() => {
-    vi.clearAllMocks(); 
+    vi.clearAllMocks();
   });
 
   it('searchStations calls axios with correct params', async () => {

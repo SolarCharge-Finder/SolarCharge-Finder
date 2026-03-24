@@ -1,26 +1,26 @@
-import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import axios from 'axios'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
-import { FiShare2 } from 'react-icons/fi'
-import Navbar from '../components/Navbar/Navbar'
-import Footer from '../components/Footer/Footer'
-import useAuth from '../context/useAuth'
-import '../styles/StationDetails.css'
+import { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import axios from 'axios';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import { FiShare2 } from 'react-icons/fi';
+import Navbar from '../components/Navbar/Navbar';
+import Footer from '../components/Footer/Footer';
+import useAuth from '../context/useAuth';
+import '../styles/StationDetails.css';
 
 // Fix default marker icon paths
-delete L.Icon.Default.prototype._getIconUrl
+delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-})
+});
 
 const renderStars = (rating = 0, interactive = false, onRate = null) => {
   return Array.from({ length: 5 }, (_, idx) => {
-    const filled = idx < Math.round(rating)
+    const filled = idx < Math.round(rating);
     return (
       <span
         key={idx}
@@ -30,73 +30,73 @@ const renderStars = (rating = 0, interactive = false, onRate = null) => {
       >
         ★
       </span>
-    )
-  })
-}
+    );
+  });
+};
 
 const StationDetails = () => {
-  const { id } = useParams()
-  const { user, token } = useAuth()
-  const [station, setStation] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
-  const [reviews, setReviews] = useState([])
-  const [userRating, setUserRating] = useState(0)
-  const [reviewText, setReviewText] = useState('')
-  const [submittingReview, setSubmittingReview] = useState(false)
+  const { id } = useParams();
+  const { user, token } = useAuth();
+  const [station, setStation] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [reviews, setReviews] = useState([]);
+  const [userRating, setUserRating] = useState(0);
+  const [reviewText, setReviewText] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   useEffect(() => {
     const fetchStation = async () => {
       try {
-        setLoading(true)
-        const response = await axios.get(`/api/stations/${id}`)
-        setStation(response.data.data || response.data)
-        setError('')
+        setLoading(true);
+        const response = await axios.get(`/api/stations/${id}`);
+        setStation(response.data.data || response.data);
+        setError('');
       } catch (err) {
-        console.error('Failed to fetch station:', err)
-        setError('Unable to load station details.')
+        console.error('Failed to fetch station:', err);
+        setError('Unable to load station details.');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(`/api/reviews/station/${id}`)
-        setReviews(response.data.data || response.data || [])
+        const response = await axios.get(`/api/reviews/station/${id}`);
+        setReviews(response.data.data || response.data || []);
       } catch (err) {
-        console.error('Failed to fetch reviews:', err)
+        console.error('Failed to fetch reviews:', err);
       }
-    }
+    };
 
-    fetchStation()
-    fetchReviews()
-  }, [id])
+    fetchStation();
+    fetchReviews();
+  }, [id]);
 
   // Auto-change photos every 4 seconds
   useEffect(() => {
-    if (!station?.photos || station.photos.length <= 1) return
+    if (!station?.photos || station.photos.length <= 1) return;
 
     const interval = setInterval(() => {
-      setCurrentPhotoIndex((prev) => (prev + 1) % station.photos.length)
-    }, 4000)
+      setCurrentPhotoIndex(prev => (prev + 1) % station.photos.length);
+    }, 4000);
 
-    return () => clearInterval(interval)
-  }, [station?.photos])
+    return () => clearInterval(interval);
+  }, [station?.photos]);
 
   const handleSubmitReview = async () => {
     if (!user) {
-      alert('Please login to submit a review')
-      return
+      alert('Please login to submit a review');
+      return;
     }
     if (userRating === 0) {
-      alert('Please select a rating')
-      return
+      alert('Please select a rating');
+      return;
     }
 
     try {
-      setSubmittingReview(true)
+      setSubmittingReview(true);
       await axios.post(
         '/api/reviews',
         {
@@ -107,86 +107,83 @@ const StationDetails = () => {
         {
           headers: { Authorization: `Bearer ${token}` },
         }
-      )
+      );
       // Refresh reviews
-      const response = await axios.get(`/api/reviews/station/${id}`)
-      setReviews(response.data.data || response.data || [])
-      setUserRating(0)
-      setReviewText('')
-      alert('Review submitted successfully!')
+      const response = await axios.get(`/api/reviews/station/${id}`);
+      setReviews(response.data.data || response.data || []);
+      setUserRating(0);
+      setReviewText('');
+      alert('Review submitted successfully!');
     } catch (err) {
-      console.error('Failed to submit review:', err)
-      alert(err?.response?.data?.message || 'Failed to submit review')
+      console.error('Failed to submit review:', err);
+      alert(err?.response?.data?.message || 'Failed to submit review');
     } finally {
-      setSubmittingReview(false)
+      setSubmittingReview(false);
     }
-  }
+  };
 
   const handleGetDirections = () => {
     if (!station?.location?.coordinates) {
-      alert('Location not available')
-      return
+      alert('Location not available');
+      return;
     }
-    const [lng, lat] = station.location.coordinates
+    const [lng, lat] = station.location.coordinates;
     // Open Google Maps with directions
-    window.open(
-      `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`,
-      '_blank'
-    )
-  }
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+  };
 
   const handleShareStation = async () => {
-    if (typeof window === 'undefined' || !station) return
+    if (typeof window === 'undefined' || !station) return;
 
-    const shareUrl = `${window.location.origin}/stations/${station._id}`
+    const shareUrl = `${window.location.origin}/stations/${station._id}`;
     const shareData = {
       title: `Charge at ${station.name}`,
       text: `Check out ${station.name} on SolarCharge Finder.`,
       url: shareUrl,
-    }
+    };
 
     try {
       if (navigator.share) {
-        await navigator.share(shareData)
+        await navigator.share(shareData);
       } else if (navigator.clipboard) {
-        await navigator.clipboard.writeText(`${station.name} - ${shareUrl}`)
-        alert('Station link copied to clipboard')
+        await navigator.clipboard.writeText(`${station.name} - ${shareUrl}`);
+        alert('Station link copied to clipboard');
       } else {
-        window.prompt('Copy this link to share', shareUrl)
+        window.prompt('Copy this link to share', shareUrl);
       }
     } catch (err) {
-      console.error('Failed to share station', err)
-      alert('Unable to share this station right now.')
+      console.error('Failed to share station', err);
+      alert('Unable to share this station right now.');
     }
-  }
+  };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
       case 'Open':
-        return '#109867'
+        return '#109867';
       case 'Closed':
-        return '#ef4444'
+        return '#ef4444';
       case 'Under Maintenance':
       case 'Maintenance':
-        return '#f8c537'
+        return '#f8c537';
       default:
-        return '#5f6b7a'
+        return '#5f6b7a';
     }
-  }
+  };
 
-  const getStatusClass = (status) => {
+  const getStatusClass = status => {
     switch (status) {
       case 'Open':
-        return 'status-open'
+        return 'status-open';
       case 'Closed':
-        return 'status-closed'
+        return 'status-closed';
       case 'Under Maintenance':
       case 'Maintenance':
-        return 'status-maintenance'
+        return 'status-maintenance';
       default:
-        return ''
+        return '';
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -199,7 +196,7 @@ const StationDetails = () => {
         </main>
         <Footer />
       </div>
-    )
+    );
   }
 
   if (error || !station) {
@@ -209,29 +206,34 @@ const StationDetails = () => {
         <main className="page-content">
           <div className="station-details-container">
             <p className="error-text">{error || 'Station not found'}</p>
-            <Link to="/search" className="back-link">← Back to Search</Link>
+            <Link to="/search" className="back-link">
+              ← Back to Search
+            </Link>
           </div>
         </main>
         <Footer />
       </div>
-    )
+    );
   }
 
-  const photos = station.photos || []
-  const hasPhotos = photos.length > 0
-  const coordinates = station.location?.coordinates || []
-  const [lng, lat] = coordinates
-  const totalSlots = station.connectors?.reduce((sum, c) => sum + (c.totalSlots || 0), 0) || 0
-  const availableSlots = station.connectors?.reduce((sum, c) => sum + (c.availableSlots || 0), 0) || 0
-  const avgRating = station.rating || 0
-  const reviewCount = reviews.length
+  const photos = station.photos || [];
+  const hasPhotos = photos.length > 0;
+  const coordinates = station.location?.coordinates || [];
+  const [lng, lat] = coordinates;
+  const totalSlots = station.connectors?.reduce((sum, c) => sum + (c.totalSlots || 0), 0) || 0;
+  const availableSlots =
+    station.connectors?.reduce((sum, c) => sum + (c.availableSlots || 0), 0) || 0;
+  const avgRating = station.rating || 0;
+  const reviewCount = reviews.length;
 
   return (
     <div className="page-layout station-details-page">
       <Navbar forceSolid />
       <main className="page-content">
         <div className="station-details-container">
-          <Link to="/search" className="back-link">← Back to Search</Link>
+          <Link to="/search" className="back-link">
+            ← Back to Search
+          </Link>
 
           <div className="station-details-grid">
             {/* Left Column - Main Info */}
@@ -244,8 +246,8 @@ const StationDetails = () => {
                       src={photos[currentPhotoIndex]}
                       alt={station.name}
                       className="station-main-photo"
-                      onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/800x400?text=No+Image'
+                      onError={e => {
+                        e.target.src = 'https://via.placeholder.com/800x400?text=No+Image';
                       }}
                     />
                     {photos.length > 1 && (
@@ -302,7 +304,10 @@ const StationDetails = () => {
                     {station.status === 'Under Maintenance' ? 'Under' : station.status}
                   </span>
                   {station.status === 'Under Maintenance' && (
-                    <span className="stat-value" style={{ color: getStatusColor(station.status), fontSize: '1rem' }}>
+                    <span
+                      className="stat-value"
+                      style={{ color: getStatusColor(station.status), fontSize: '1rem' }}
+                    >
                       Maintenance
                     </span>
                   )}
@@ -329,7 +334,9 @@ const StationDetails = () => {
                       <div className="connector-slots">
                         <div
                           className="connector-slots-bar"
-                          style={{ width: `${(connector.availableSlots / connector.totalSlots) * 100}%` }}
+                          style={{
+                            width: `${(connector.availableSlots / connector.totalSlots) * 100}%`,
+                          }}
                         />
                       </div>
                       <span className="connector-slots-text">
@@ -379,7 +386,9 @@ const StationDetails = () => {
 
               {/* Reviews Section */}
               <div className="reviews-section">
-                <h3>Reviews <span className="review-badge">{reviewCount}</span></h3>
+                <h3>
+                  Reviews <span className="review-badge">{reviewCount}</span>
+                </h3>
 
                 {/* Add Review Form */}
                 {user && (
@@ -392,7 +401,7 @@ const StationDetails = () => {
                       className="review-textarea"
                       placeholder="Share your experience (optional)..."
                       value={reviewText}
-                      onChange={(e) => setReviewText(e.target.value)}
+                      onChange={e => setReviewText(e.target.value)}
                       rows={3}
                     />
                     <button
@@ -408,11 +417,13 @@ const StationDetails = () => {
                 {/* Reviews List */}
                 {reviews.length > 0 ? (
                   <div className="reviews-list">
-                    {reviews.map((review) => (
+                    {reviews.map(review => (
                       <div key={review._id} className="review-item">
                         <div className="review-header">
                           <div className="review-author-block">
-                            <span className="review-author">{review.user?.name || 'Anonymous'}</span>
+                            <span className="review-author">
+                              {review.user?.name || 'Anonymous'}
+                            </span>
                             {review.user?.email && (
                               <span className="review-author-email">{review.user.email}</span>
                             )}
@@ -436,7 +447,7 @@ const StationDetails = () => {
       </main>
       <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default StationDetails
+export default StationDetails;

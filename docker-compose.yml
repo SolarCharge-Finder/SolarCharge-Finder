@@ -11,7 +11,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: admin123
       MONGO_INITDB_DATABASE: solarcharge-finder
     ports:
-      - "27017:27017"
+      - '27017:27017'
     volumes:
       - mongodb_data:/data/db
       - mongodb_config:/data/configdb
@@ -38,7 +38,7 @@ services:
       JWT_SECRET: dev_jwt_secret_key_change_in_production
       JWT_EXPIRE: 30d
     ports:
-      - "5001:5001"
+      - '5001:5001'
     volumes:
       - ./backend:/app
       - /app/node_modules
@@ -60,7 +60,7 @@ services:
     environment:
       VITE_API_URL: http://localhost:5001/api
     ports:
-      - "3000:5173"
+      - '3000:5173'
     volumes:
       - ./client:/app
       - /app/node_modules

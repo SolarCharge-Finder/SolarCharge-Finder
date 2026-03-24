@@ -83,17 +83,17 @@
   .sell-request-title {
     font-size: 1.35rem;
   }
-  
+
   .form-group label {
     font-size: 0.8rem;
   }
-  
+
   .form-group input,
   .form-group textarea {
     font-size: 0.9rem;
     padding: 0.55rem 0.7rem;
   }
-  
+
   .sell-request-cta-btn-primary {
     font-size: 0.9rem;
     padding: 0.65rem 1.25rem;

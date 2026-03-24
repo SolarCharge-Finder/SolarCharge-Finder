@@ -18,7 +18,12 @@
 .search-stations-wrapper {
   min-height: calc(100vh - 120px);
   padding: 2.25rem clamp(1rem, 3vw, 3rem) 2rem;
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   color: #0f172a;
   flex: 1;
 }
@@ -117,7 +122,9 @@
   padding: 0.75rem 1.25rem;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .btn-secondary:disabled {
@@ -150,7 +157,9 @@
   padding: 1rem;
   box-shadow: 0 14px 40px rgba(15, 23, 42, 0.1);
   cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
   background: #fff;
 }
 
@@ -230,8 +239,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(5, 150, 105, 0.75)),
-    url('https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1600&q=80') center / cover;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(5, 150, 105, 0.75)),
+    url('https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1600&q=80')
+      center / cover;
   color: #f8fafc;
   text-align: center;
   padding: 2rem;

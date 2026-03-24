@@ -1,10 +1,10 @@
-import { useContext } from 'react'
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { AuthContext } from '../../contexts/AuthContext'
+import { useContext } from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { AuthContext } from '../../contexts/AuthContext';
 
 function AdminRoute() {
-  const { user, loading } = useContext(AuthContext)
-  const location = useLocation()
+  const { user, loading } = useContext(AuthContext);
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -13,14 +13,14 @@ function AdminRoute() {
           <p className="text-sm font-medium text-slate-600">Checking credentials...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!user || user.role !== 'admin') {
-    return <Navigate to="/auth" state={{ from: location }} replace />
+    return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  return <Outlet />
+  return <Outlet />;
 }
 
-export default AdminRoute
+export default AdminRoute;

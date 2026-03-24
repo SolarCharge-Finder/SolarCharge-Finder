@@ -1,57 +1,57 @@
-import { useState, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
-import './ResetPassword.css'
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import './ResetPassword.css';
 
 function ResetPassword() {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const email = location.state?.email || ''
-  
-  const [resetCode, setResetCode] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState({ type: '', text: '' })
+  const navigate = useNavigate();
+  const location = useLocation();
+  const email = location.state?.email || '';
+
+  const [resetCode, setResetCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
     if (!email) {
       setMessage({
         type: 'error',
-        text: 'No email provided. Please start the password reset process again.'
-      })
-      setTimeout(() => navigate('/forgot-password'), 3000)
+        text: 'No email provided. Please start the password reset process again.',
+      });
+      setTimeout(() => navigate('/forgot-password'), 3000);
     }
-  }, [email, navigate])
+  }, [email, navigate]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    
+  const handleSubmit = async e => {
+    e.preventDefault();
+
     if (!resetCode || resetCode.length !== 6) {
       setMessage({
         type: 'error',
-        text: 'Please enter the 6-digit reset code.'
-      })
-      return
+        text: 'Please enter the 6-digit reset code.',
+      });
+      return;
     }
 
     if (!newPassword || newPassword.length < 6) {
       setMessage({
         type: 'error',
-        text: 'Password must be at least 6 characters long.'
-      })
-      return
+        text: 'Password must be at least 6 characters long.',
+      });
+      return;
     }
 
     if (newPassword !== confirmPassword) {
       setMessage({
         type: 'error',
-        text: 'Passwords do not match.'
-      })
-      return
+        text: 'Passwords do not match.',
+      });
+      return;
     }
 
-    setLoading(true)
-    setMessage({ type: '', text: '' })
+    setLoading(true);
+    setMessage({ type: '', text: '' });
 
     try {
       const response = await fetch('http://localhost:5001/api/users/reset-password', {
@@ -62,42 +62,42 @@ function ResetPassword() {
         body: JSON.stringify({
           email,
           resetCode,
-          newPassword
-        })
-      })
+          newPassword,
+        }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
         setMessage({
           type: 'success',
-          text: 'Password reset successfully! Redirecting to login...'
-        })
+          text: 'Password reset successfully! Redirecting to login...',
+        });
         // Redirect to login after 3 seconds
-        setTimeout(() => navigate('/auth'), 3000)
+        setTimeout(() => navigate('/auth'), 3000);
       } else {
         setMessage({
           type: 'error',
-          text: data.message || 'Failed to reset password. Please try again.'
-        })
+          text: data.message || 'Failed to reset password. Please try again.',
+        });
       }
     } catch (error) {
-      console.error('Reset password error:', error)
+      console.error('Reset password error:', error);
       setMessage({
         type: 'error',
-        text: 'Network error. Please check your connection and try again.'
-      })
+        text: 'Network error. Please check your connection and try again.',
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="reset-password-page">
       <main className="reset-password-page__wrapper">
         {/* Message Display */}
         {message.text && (
-          <div 
+          <div
             className={`auth-message ${message.type === 'success' ? 'success' : 'error'}`}
             style={{
               position: 'fixed',
@@ -109,19 +109,19 @@ function ResetPassword() {
               fontWeight: '500',
               zIndex: '1000',
               maxWidth: '400px',
-              backgroundColor: message.type === 'success' ? '#28a745' : '#dc3545'
+              backgroundColor: message.type === 'success' ? '#28a745' : '#dc3545',
             }}
           >
             {message.text}
           </div>
         )}
-        
+
         <div className="container">
           <div className="form-container">
             <form className="auth-form" onSubmit={handleSubmit} noValidate>
               <h1>Enter Reset Code</h1>
               <span className="form-caption">check your email for the 6-digit code</span>
-              
+
               <label className="input-field">
                 <span>Reset Code</span>
                 <input
@@ -129,7 +129,7 @@ function ResetPassword() {
                   name="resetCode"
                   placeholder="123456"
                   value={resetCode}
-                  onChange={(e) => setResetCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  onChange={e => setResetCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   maxLength="6"
                   required
                   style={{ letterSpacing: '8px', textAlign: 'center', fontSize: '20px' }}
@@ -143,7 +143,7 @@ function ResetPassword() {
                   name="newPassword"
                   placeholder="••••••••"
                   value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  onChange={e => setNewPassword(e.target.value)}
                   minLength="6"
                   required
                 />
@@ -156,34 +156,31 @@ function ResetPassword() {
                   name="confirmPassword"
                   placeholder="••••••••"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={e => setConfirmPassword(e.target.value)}
                   minLength="6"
                   required
                 />
               </label>
-              
+
               <button type="submit" className="primary-btn" disabled={loading}>
                 {loading ? 'Resetting Password...' : 'Reset Password'}
               </button>
             </form>
-            
+
             <div className="reset-back-row">
-              <button 
-                onClick={() => navigate('/auth')}
-                className="reset-back-link"
-              >
+              <button onClick={() => navigate('/auth')} className="reset-back-link">
                 &larr; Back to Login
               </button>
             </div>
           </div>
         </div>
-        
+
         <div className="reset-back-row" style={{ display: 'none' }}>
           {/* Hidden to avoid duplicate */}
         </div>
       </main>
     </div>
-  )
+  );
 }
 
-export default ResetPassword
+export default ResetPassword;

@@ -124,19 +124,23 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 480px) {
   .verification-card {
     padding: 30px 20px;
   }
-  
+
   .verification-title {
     font-size: 20px;
   }
-  
+
   .verification-message {
     font-size: 14px;
   }

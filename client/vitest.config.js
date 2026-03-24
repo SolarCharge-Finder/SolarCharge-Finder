@@ -9,10 +9,7 @@ export default defineConfig({
     setupFiles: './src/test/setup.js',
     coverage: {
       reporter: ['text', 'json', 'html', 'lcov'],
-      exclude: [
-        'node_modules/',
-        'src/test/',
-      ],
+      exclude: ['node_modules/', 'src/test/'],
     },
   },
 });

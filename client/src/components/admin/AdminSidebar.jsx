@@ -1,11 +1,11 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom';
 
 const navItems = [
   { to: '/admin', label: 'Dashboard' },
   { to: '/admin/users', label: 'Manage Users' },
   { to: '/admin/stations', label: 'Manage Stations' },
   { to: '/admin/reviews', label: 'Manage Reviews' },
-]
+];
 
 function AdminSidebar() {
   return (
@@ -18,7 +18,7 @@ function AdminSidebar() {
         </div>
       </div>
       <nav className="admin-sidebar__nav">
-        {navItems.map((item) => (
+        {navItems.map(item => (
           <NavLink
             key={item.to}
             to={item.to}
@@ -30,7 +30,7 @@ function AdminSidebar() {
         ))}
       </nav>
     </aside>
-  )
+  );
 }
 
-export default AdminSidebar
+export default AdminSidebar;

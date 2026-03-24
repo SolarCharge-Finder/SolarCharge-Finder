@@ -1,64 +1,72 @@
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import AdminSidebar from '../../components/admin/AdminSidebar'
-import useAuth from '../../context/useAuth'
-import { Link, useNavigate } from 'react-router-dom'
-import '../../styles/admin.css'
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import AdminSidebar from '../../components/admin/AdminSidebar';
+import useAuth from '../../context/useAuth';
+import { Link, useNavigate } from 'react-router-dom';
+import '../../styles/admin.css';
 
 const statCardAccents = [
   'linear-gradient(90deg,#34d399,#10b981)',
   'linear-gradient(90deg,#a3e635,#facc15)',
   'linear-gradient(90deg,#fcd34d,#f97316)',
-]
+];
 
-const goals = ['Reduce grid load by 25%', 'Add 1,000 solar stations', 'Plant 10k new trees']
+const goals = ['Reduce grid load by 25%', 'Add 1,000 solar stations', 'Plant 10k new trees'];
 
 const insightStats = [
   { label: 'User Signups', value: 68 },
   { label: 'Stations Verified', value: 24 },
   { label: 'Reviews Submitted', value: 130 },
-]
+];
 
 function AdminDashboard() {
-  const { user, token, logout } = useAuth()
-  const navigate = useNavigate()
-  const [stats, setStats] = useState({ totalUsers: 0, totalStations: 0, totalReviews: 0 })
-  const [statsLoading, setStatsLoading] = useState(true)
-  const [statsError, setStatsError] = useState('')
+  const { user, token, logout } = useAuth();
+  const navigate = useNavigate();
+  const [stats, setStats] = useState({ totalUsers: 0, totalStations: 0, totalReviews: 0 });
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [statsError, setStatsError] = useState('');
 
   useEffect(() => {
     const fetchStats = async () => {
       if (!token) {
-        setStatsLoading(false)
-        return
+        setStatsLoading(false);
+        return;
       }
       try {
-        setStatsLoading(true)
+        setStatsLoading(true);
         const { data } = await axios.get('/api/admin/stats', {
           headers: { Authorization: `Bearer ${token}` },
-        })
-        setStats(data?.data ?? { totalUsers: 0, totalStations: 0, totalReviews: 0 })
-        setStatsError('')
+        });
+        setStats(data?.data ?? { totalUsers: 0, totalStations: 0, totalReviews: 0 });
+        setStatsError('');
       } catch (err) {
-        console.error('Failed to load dashboard stats', err)
-        setStatsError('Unable to load stats')
+        console.error('Failed to load dashboard stats', err);
+        setStatsError('Unable to load stats');
       } finally {
-        setStatsLoading(false)
+        setStatsLoading(false);
       }
-    }
-    fetchStats()
-  }, [token])
+    };
+    fetchStats();
+  }, [token]);
 
   const handleLogout = () => {
-    logout()
-    navigate('/auth')
-  }
+    logout();
+    navigate('/auth');
+  };
 
   const statCards = [
     { title: 'Total Users', value: stats.totalUsers.toLocaleString(), accent: statCardAccents[0] },
-    { title: 'Total Stations', value: stats.totalStations.toLocaleString(), accent: statCardAccents[1] },
-    { title: 'Total Reviews', value: stats.totalReviews.toLocaleString(), accent: statCardAccents[2] },
-  ]
+    {
+      title: 'Total Stations',
+      value: stats.totalStations.toLocaleString(),
+      accent: statCardAccents[1],
+    },
+    {
+      title: 'Total Reviews',
+      value: stats.totalReviews.toLocaleString(),
+      accent: statCardAccents[2],
+    },
+  ];
 
   return (
     <div className="admin-layout">
@@ -87,19 +95,21 @@ function AdminDashboard() {
           </div>
         </header>
 
-        {statsError && <p className="admin-card__change" style={{ color: '#ef4444' }}>{statsError}</p>}
+        {statsError && (
+          <p className="admin-card__change" style={{ color: '#ef4444' }}>
+            {statsError}
+          </p>
+        )}
         <section className="admin-card-grid">
           {statsLoading
-            ? (
-                statCards.map((card) => (
-                  <article key={card.title} className="admin-card">
-                    <p className="admin-card__title">{card.title}</p>
-                    <p className="admin-card__value">—</p>
-                    <div className="admin-card__accent" style={{ background: card.accent }}></div>
-                  </article>
-                ))
-              )
-            : statCards.map((card) => (
+            ? statCards.map(card => (
+                <article key={card.title} className="admin-card">
+                  <p className="admin-card__title">{card.title}</p>
+                  <p className="admin-card__value">—</p>
+                  <div className="admin-card__accent" style={{ background: card.accent }}></div>
+                </article>
+              ))
+            : statCards.map(card => (
                 <article key={card.title} className="admin-card">
                   <p className="admin-card__title">{card.title}</p>
                   <p className="admin-card__value">{card.value}</p>
@@ -115,7 +125,7 @@ function AdminDashboard() {
               Tracking the growth of solar-powered charging infrastructure nationwide.
             </p>
             <ul className="admin-goal-list">
-              {goals.map((goal) => (
+              {goals.map(goal => (
                 <li key={goal} className="admin-goal">
                   {goal}
                   <span>In progress</span>
@@ -129,7 +139,7 @@ function AdminDashboard() {
               Community engagement for solar adoption
             </p>
             <div className="admin-card-list" style={{ marginTop: '1.5rem' }}>
-              {insightStats.map((item) => (
+              {insightStats.map(item => (
                 <div key={item.label} className="admin-progress">
                   <div className="admin-progress__meta">
                     <span>{item.label}</span>
@@ -148,7 +158,7 @@ function AdminDashboard() {
         </section>
       </main>
     </div>
-  )
+  );
 }
 
-export default AdminDashboard
+export default AdminDashboard;

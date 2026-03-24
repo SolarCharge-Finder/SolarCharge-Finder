@@ -1,48 +1,48 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { MemoryRouter } from "react-router-dom";
-import SearchPage from "../SearchPage";
-import { searchStations, searchStationsByDistance } from "../../services/stationService";
-import useGeolocation from "../../hooks/useGeoLocation";
+import { MemoryRouter } from 'react-router-dom';
+import SearchPage from '../SearchPage';
+import { searchStations, searchStationsByDistance } from '../../services/stationService';
+import useGeolocation from '../../hooks/useGeoLocation';
 
 // Mock API
-vi.mock("../../services/stationService");
+vi.mock('../../services/stationService');
 
 // Mock geolocation hook
-vi.mock("../../hooks/useGeoLocation");
+vi.mock('../../hooks/useGeoLocation');
 
-// Mock child components 
-vi.mock("../../components/SearchBar/SearchBar", () => ({
+// Mock child components
+vi.mock('../../components/SearchBar/SearchBar', () => ({
   default: () => <div>SearchBar Component</div>,
 }));
 
 //loading location handling
-vi.mock("../../components/SearchBar/SearchResults", () => ({
+vi.mock('../../components/SearchBar/SearchResults', () => ({
   default: ({ stations, loadingLocation }) => (
     <div>
       {loadingLocation && <p>Calculating...</p>}
-      {stations?.map((s) => (
+      {stations?.map(s => (
         <p key={s._id}>{s.name}</p>
       ))}
     </div>
   ),
 }));
 
-vi.mock("../../components/map/MapView", () => ({
+vi.mock('../../components/map/MapView', () => ({
   default: () => <div>MapView Component</div>,
 }));
 
-vi.mock("../../components/Navbar/Navbar", () => ({
+vi.mock('../../components/Navbar/Navbar', () => ({
   default: () => <div>Navbar</div>,
 }));
 
-vi.mock("../../components/Footer/Footer", () => ({
+vi.mock('../../components/Footer/Footer', () => ({
   default: () => <div>Footer</div>,
 }));
 
 const renderWithRouter = (ui, { route = '/' } = {}) => {
   return render(
-    <MemoryRouter 
+    <MemoryRouter
       initialEntries={[route]}
       future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
     >
@@ -51,7 +51,7 @@ const renderWithRouter = (ui, { route = '/' } = {}) => {
   );
 };
 
-describe("SearchPage", () => {
+describe('SearchPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Silence console.error for clean output in called error checks
@@ -70,53 +70,53 @@ describe("SearchPage", () => {
     vi.restoreAllMocks();
   });
 
-  it("calls searchStationsByDistance when geolocation is available", async () => {
-    const mockData = [{ _id: "1", name: "Station X" }];
+  it('calls searchStationsByDistance when geolocation is available', async () => {
+    const mockData = [{ _id: '1', name: 'Station X' }];
     vi.mocked(searchStationsByDistance).mockResolvedValue(mockData);
 
     renderWithRouter(<SearchPage />);
-    
+
     await waitFor(() => {
       expect(searchStationsByDistance).toHaveBeenCalledWith(
-        expect.objectContaining({ search: "" }),
+        expect.objectContaining({ search: '' }),
         { latitude: 6.9, longitude: 79.8 }
       );
-      expect(screen.getByText("Station X")).toBeInTheDocument();
+      expect(screen.getByText('Station X')).toBeInTheDocument();
     });
   });
 
-  it("calls searchStations when geolocation is null", async () => {
+  it('calls searchStations when geolocation is null', async () => {
     useGeolocation.mockReturnValue({
       geolocation: null,
       error: null,
       loading: false,
       getLocation: vi.fn(),
     });
-    
-    const mockData = [{ _id: "2", name: "Station Y" }];
+
+    const mockData = [{ _id: '2', name: 'Station Y' }];
     vi.mocked(searchStations).mockResolvedValue(mockData);
 
     renderWithRouter(<SearchPage />);
-    
+
     await waitFor(() => {
       expect(searchStations).toHaveBeenCalled();
-      expect(screen.getByText("Station Y")).toBeInTheDocument();
+      expect(screen.getByText('Station Y')).toBeInTheDocument();
     });
   });
 
-  it("shows loading state if geolocation is loading", () => {
+  it('shows loading state if geolocation is loading', () => {
     useGeolocation.mockReturnValue({
       geolocation: null,
       error: null,
-      loading: true, 
+      loading: true,
       getLocation: vi.fn(),
     });
 
     renderWithRouter(<SearchPage />);
-    expect(screen.getByText("Calculating...")).toBeInTheDocument();
+    expect(screen.getByText('Calculating...')).toBeInTheDocument();
   });
 
-  it("renders stations when API returns data", async () => {
+  it('renders stations when API returns data', async () => {
     useGeolocation.mockReturnValue({
       geolocation: null,
       error: null,
@@ -125,17 +125,17 @@ describe("SearchPage", () => {
     });
 
     vi.mocked(searchStations).mockResolvedValue([
-      { _id: "1", name: "Station A" },
-      { _id: "2", name: "Station B" },
+      { _id: '1', name: 'Station A' },
+      { _id: '2', name: 'Station B' },
     ]);
 
     renderWithRouter(<SearchPage />);
-      
-    expect(await screen.findByText("Station A")).toBeInTheDocument();
-    expect(screen.getByText("Station B")).toBeInTheDocument();
+
+    expect(await screen.findByText('Station A')).toBeInTheDocument();
+    expect(screen.getByText('Station B')).toBeInTheDocument();
   });
 
-  it("displays error message when API fails", async () => {
+  it('displays error message when API fails', async () => {
     // Force the "else" branch in handleSearch by making geolocation null
     useGeolocation.mockReturnValue({
       geolocation: null,
@@ -144,15 +144,15 @@ describe("SearchPage", () => {
       getLocation: vi.fn(),
     });
 
-    vi.mocked(searchStations).mockRejectedValue(new Error("API failure"));
+    vi.mocked(searchStations).mockRejectedValue(new Error('API failure'));
 
     renderWithRouter(<SearchPage />);
 
-    const errorElement = await screen.findByText("Error fetching stations");
+    const errorElement = await screen.findByText('Error fetching stations');
     expect(errorElement).toBeInTheDocument();
   });
 
-  it("calls getLocation on mount", () => {
+  it('calls getLocation on mount', () => {
     const mockGetLocation = vi.fn();
     useGeolocation.mockReturnValue({
       geolocation: null,
@@ -162,7 +162,7 @@ describe("SearchPage", () => {
     });
 
     renderWithRouter(<SearchPage />);
-    
+
     expect(mockGetLocation).toHaveBeenCalledTimes(1);
   });
 });

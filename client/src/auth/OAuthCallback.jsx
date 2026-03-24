@@ -1,34 +1,34 @@
-import { useEffect } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import useAuth from '../context/useAuth'
-import './AuthPage.css'
+import { useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import useAuth from '../context/useAuth';
+import './AuthPage.css';
 
 function OAuthCallback() {
-  const { login } = useAuth()
-  const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const token = searchParams.get('token')
-    const error = searchParams.get('error')
+    const token = searchParams.get('token');
+    const error = searchParams.get('error');
 
     if (token) {
       // Get user data from URL if available
-      const userData = searchParams.get('user')
-      const parsedUser = userData ? JSON.parse(decodeURIComponent(userData)) : null
-      
-      console.log('OAuthCallback: Logging in with token', token)
-      console.log('OAuthCallback: User data', parsedUser)
-      
-      login(token, parsedUser)
-      navigate('/admin')
+      const userData = searchParams.get('user');
+      const parsedUser = userData ? JSON.parse(decodeURIComponent(userData)) : null;
+
+      console.log('OAuthCallback: Logging in with token', token);
+      console.log('OAuthCallback: User data', parsedUser);
+
+      login(token, parsedUser);
+      navigate('/admin');
     } else if (error) {
-      console.error('OAuthCallback: Authentication error', error)
-      navigate('/auth')
+      console.error('OAuthCallback: Authentication error', error);
+      navigate('/auth');
     } else {
-      navigate('/auth')
+      navigate('/auth');
     }
-  }, [searchParams, login, navigate])
+  }, [searchParams, login, navigate]);
 
   return (
     <div className="auth-page">
@@ -41,7 +41,7 @@ function OAuthCallback() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default OAuthCallback
+export default OAuthCallback;

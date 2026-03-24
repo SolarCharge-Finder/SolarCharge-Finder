@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import useAuth from '../../context/useAuth'
-import SellRequestPage from '../../components/SellRequest/SellRequest'
-import '../../styles/user-dashboard.css'
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import useAuth from '../../context/useAuth';
+import SellRequestPage from '../../components/SellRequest/SellRequest';
+import '../../styles/user-dashboard.css';
 
 const FALLBACK_STATIONS = [
   {
@@ -39,17 +39,35 @@ const FALLBACK_STATIONS = [
       { type: 'TYPE1', availableSlots: 1, totalSlots: 2 },
     ],
   },
-]
+];
 
 const FALLBACK_ACTIVITY = [
-  { id: 'session', icon: '⚡', title: 'Session complete', meta: '38 kWh delivered', timeAgo: '2 hours ago' },
-  { id: 'favorite', icon: '📌', title: 'Saved a favorite', meta: 'Sunset Mall Solar Deck', timeAgo: 'Yesterday' },
-  { id: 'review', icon: '⭐', title: 'Left feedback', meta: 'Rated Redwood Plaza 5★', timeAgo: '3 days ago' },
-]
+  {
+    id: 'session',
+    icon: '⚡',
+    title: 'Session complete',
+    meta: '38 kWh delivered',
+    timeAgo: '2 hours ago',
+  },
+  {
+    id: 'favorite',
+    icon: '📌',
+    title: 'Saved a favorite',
+    meta: 'Sunset Mall Solar Deck',
+    timeAgo: 'Yesterday',
+  },
+  {
+    id: 'review',
+    icon: '⭐',
+    title: 'Left feedback',
+    meta: 'Rated Redwood Plaza 5★',
+    timeAgo: '3 days ago',
+  },
+];
 
 const formatSlots = (connectors = []) => {
   if (!Array.isArray(connectors) || !connectors.length) {
-    return 'Slots TBD'
+    return 'Slots TBD';
   }
 
   const { available, total } = connectors.reduce(
@@ -57,202 +75,208 @@ const formatSlots = (connectors = []) => {
       return {
         available: acc.available + Number(connector.availableSlots ?? 0),
         total: acc.total + Number(connector.totalSlots ?? 0),
-      }
+      };
     },
-    { available: 0, total: 0 },
-  )
+    { available: 0, total: 0 }
+  );
 
-  if (!total) return 'Slots TBD'
-  return `${available}/${total} slots open`
-}
+  if (!total) return 'Slots TBD';
+  return `${available}/${total} slots open`;
+};
 
 const getConnectorTypes = (connectors = []) => {
-  if (!Array.isArray(connectors) || !connectors.length) return []
+  if (!Array.isArray(connectors) || !connectors.length) return [];
   const uniqueTypes = new Set(
-    connectors.map((connector) => {
-      if (typeof connector === 'string') return connector
-      return connector.type || 'Connector'
-    }),
-  )
-  return Array.from(uniqueTypes)
-}
+    connectors.map(connector => {
+      if (typeof connector === 'string') return connector;
+      return connector.type || 'Connector';
+    })
+  );
+  return Array.from(uniqueTypes);
+};
 
 function UserDashboard() {
-  const { user, token, loading: authLoading, logout } = useAuth()
-  const navigate = useNavigate()
-  const [profile, setProfile] = useState(null)
-  const [profileLoading, setProfileLoading] = useState(true)
-  const [profileError, setProfileError] = useState('')
-  const [topStations, setTopStations] = useState([])
-  const [stationLoading, setStationLoading] = useState(true)
-  const [stationError, setStationError] = useState('')
-  const [myReviews, setMyReviews] = useState([])
-  const [myReviewsLoading, setMyReviewsLoading] = useState(false)
-  const [myReviewsError, setMyReviewsError] = useState('')
-  const [editingReviewId, setEditingReviewId] = useState(null)
-  const [editRating, setEditRating] = useState(0)
-  const [editComment, setEditComment] = useState('')
-  const [activeTab, setActiveTab] = useState('dashboard')
+  const { user, token, loading: authLoading, logout } = useAuth();
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [profileError, setProfileError] = useState('');
+  const [topStations, setTopStations] = useState([]);
+  const [stationLoading, setStationLoading] = useState(true);
+  const [stationError, setStationError] = useState('');
+  const [myReviews, setMyReviews] = useState([]);
+  const [myReviewsLoading, setMyReviewsLoading] = useState(false);
+  const [myReviewsError, setMyReviewsError] = useState('');
+  const [editingReviewId, setEditingReviewId] = useState(null);
+  const [editRating, setEditRating] = useState(0);
+  const [editComment, setEditComment] = useState('');
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   const handleLogout = () => {
-    logout()
-    navigate('/auth')
-  }
+    logout();
+    navigate('/auth');
+  };
 
   useEffect(() => {
-    let isMounted = true
+    let isMounted = true;
 
     const fetchProfile = async () => {
       if (!token) {
         if (isMounted) {
-          setProfile(user ?? null)
-          setProfileError('')
-          setProfileLoading(false)
+          setProfile(user ?? null);
+          setProfileError('');
+          setProfileLoading(false);
         }
-        return
+        return;
       }
 
       try {
-        setProfileLoading(true)
+        setProfileLoading(true);
         const { data } = await axios.get('/api/users/profile', {
           headers: { Authorization: `Bearer ${token}` },
-        })
-        if (!isMounted) return
-        const payload = data?.user ?? data
+        });
+        if (!isMounted) return;
+        const payload = data?.user ?? data;
         setProfile({
           ...payload,
           name: payload?.name ?? user?.name,
           isEmailVerified: payload?.isEmailVerified ?? user?.isEmailVerified,
-        })
-        setProfileError('')
+        });
+        setProfileError('');
       } catch (error) {
-        if (!isMounted) return
-        console.error('Failed to load profile', error)
-        setProfileError('Unable to load your profile details right now.')
-        setProfile((prev) => prev ?? user ?? null)
+        if (!isMounted) return;
+        console.error('Failed to load profile', error);
+        setProfileError('Unable to load your profile details right now.');
+        setProfile(prev => prev ?? user ?? null);
       } finally {
         if (isMounted) {
-          setProfileLoading(false)
+          setProfileLoading(false);
         }
       }
-    }
+    };
 
-    fetchProfile()
+    fetchProfile();
     return () => {
-      isMounted = false
-    }
-  }, [token, user])
+      isMounted = false;
+    };
+  }, [token, user]);
 
   useEffect(() => {
-    let isMounted = true
+    let isMounted = true;
 
     const fetchStations = async () => {
       try {
-        setStationLoading(true)
-        const { data } = await axios.get('/api/stations/top-rated')
-        if (!isMounted) return
-        const list = Array.isArray(data) ? data : data?.data ?? []
-        setTopStations(list)
-        setStationError('')
+        setStationLoading(true);
+        const { data } = await axios.get('/api/stations/top-rated');
+        if (!isMounted) return;
+        const list = Array.isArray(data) ? data : (data?.data ?? []);
+        setTopStations(list);
+        setStationError('');
       } catch (error) {
-        if (!isMounted) return
-        console.error('Failed to load recommended stations', error)
-        setStationError('Unable to fetch recommended stations right now.')
+        if (!isMounted) return;
+        console.error('Failed to load recommended stations', error);
+        setStationError('Unable to fetch recommended stations right now.');
       } finally {
         if (isMounted) {
-          setStationLoading(false)
+          setStationLoading(false);
         }
       }
-    }
+    };
 
-    fetchStations()
+    fetchStations();
     return () => {
-      isMounted = false
-    }
-  }, [])
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
-    let isMounted = true
+    let isMounted = true;
     const fetchMyReviews = async () => {
       if (!token) {
-        setMyReviews([])
-        return
+        setMyReviews([]);
+        return;
       }
       try {
-        setMyReviewsLoading(true)
+        setMyReviewsLoading(true);
         const { data } = await axios.get('/api/reviews/me', {
           headers: { Authorization: `Bearer ${token}` },
-        })
-        if (!isMounted) return
-        setMyReviews(data?.data ?? [])
-        setMyReviewsError('')
+        });
+        if (!isMounted) return;
+        setMyReviews(data?.data ?? []);
+        setMyReviewsError('');
       } catch (err) {
-        if (!isMounted) return
-        console.error('Failed to load my reviews', err)
-        setMyReviewsError('Unable to load your reviews.')
-        setMyReviews([])
+        if (!isMounted) return;
+        console.error('Failed to load my reviews', err);
+        setMyReviewsError('Unable to load your reviews.');
+        setMyReviews([]);
       } finally {
-        if (isMounted) setMyReviewsLoading(false)
+        if (isMounted) setMyReviewsLoading(false);
       }
-    }
-    fetchMyReviews()
-    return () => { isMounted = false }
-  }, [token])
+    };
+    fetchMyReviews();
+    return () => {
+      isMounted = false;
+    };
+  }, [token]);
 
   const authConfig = useMemo(
     () => (token ? { headers: { Authorization: `Bearer ${token}` } } : null),
-    [token],
-  )
+    [token]
+  );
 
-  const handleDeleteReview = async (reviewId) => {
-    if (!window.confirm('Delete this review?')) return
-    if (!authConfig) return
+  const handleDeleteReview = async reviewId => {
+    if (!window.confirm('Delete this review?')) return;
+    if (!authConfig) return;
     try {
-      await axios.delete(`/api/reviews/${reviewId}`, authConfig)
-      setMyReviews((prev) => prev.filter((r) => (r._id ?? r.id) !== reviewId))
+      await axios.delete(`/api/reviews/${reviewId}`, authConfig);
+      setMyReviews(prev => prev.filter(r => (r._id ?? r.id) !== reviewId));
     } catch (err) {
-      console.error('Delete review failed', err)
-      alert(err?.response?.data?.message ?? 'Could not delete review.')
+      console.error('Delete review failed', err);
+      alert(err?.response?.data?.message ?? 'Could not delete review.');
     }
-  }
+  };
 
-  const handleStartEdit = (review) => {
-    setEditingReviewId(review._id ?? review.id)
-    setEditRating(Number(review.rating) || 0)
-    setEditComment(review.comment ?? '')
-  }
+  const handleStartEdit = review => {
+    setEditingReviewId(review._id ?? review.id);
+    setEditRating(Number(review.rating) || 0);
+    setEditComment(review.comment ?? '');
+  };
 
   const handleCancelEdit = () => {
-    setEditingReviewId(null)
-    setEditRating(0)
-    setEditComment('')
-  }
+    setEditingReviewId(null);
+    setEditRating(0);
+    setEditComment('');
+  };
 
   const handleSaveEdit = async () => {
-    if (!editingReviewId || !authConfig) return
+    if (!editingReviewId || !authConfig) return;
     if (editRating < 1 || editRating > 5) {
-      alert('Please select a rating between 1 and 5.')
-      return
+      alert('Please select a rating between 1 and 5.');
+      return;
     }
     try {
       const { data } = await axios.put(
         `/api/reviews/${editingReviewId}`,
         { rating: editRating, comment: editComment },
-        authConfig,
-      )
-      setMyReviews((prev) =>
-        prev.map((r) => ((r._id ?? r.id) === editingReviewId ? { ...r, ...data?.data, rating: editRating, comment: editComment } : r)),
-      )
-      handleCancelEdit()
+        authConfig
+      );
+      setMyReviews(prev =>
+        prev.map(r =>
+          (r._id ?? r.id) === editingReviewId
+            ? { ...r, ...data?.data, rating: editRating, comment: editComment }
+            : r
+        )
+      );
+      handleCancelEdit();
     } catch (err) {
-      console.error('Update review failed', err)
-      alert(err?.response?.data?.message ?? 'Could not update review.')
+      console.error('Update review failed', err);
+      alert(err?.response?.data?.message ?? 'Could not update review.');
     }
-  }
+  };
 
   const renderStars = (rating, interactive = false, onRate) => {
     return Array.from({ length: 5 }, (_, idx) => {
-      const filled = idx < Math.round(rating)
+      const filled = idx < Math.round(rating);
       return (
         <span
           key={idx}
@@ -260,13 +284,15 @@ function UserDashboard() {
           tabIndex={interactive ? 0 : undefined}
           className={`user-review-star ${filled ? 'user-review-star--filled' : ''} ${interactive ? 'user-review-star--interactive' : ''}`}
           onClick={() => interactive && onRate && onRate(idx + 1)}
-          onKeyDown={(e) => interactive && onRate && (e.key === 'Enter' || e.key === ' ') && onRate(idx + 1)}
+          onKeyDown={e =>
+            interactive && onRate && (e.key === 'Enter' || e.key === ' ') && onRate(idx + 1)
+          }
         >
           ★
         </span>
-      )
-    })
-  }
+      );
+    });
+  };
 
   const derivedProfile = useMemo(() => {
     if (profile && user) {
@@ -277,25 +303,28 @@ function UserDashboard() {
         role: profile.role ?? user.role,
         isEmailVerified: profile.isEmailVerified ?? user.isEmailVerified,
         createdAt: profile.createdAt ?? user.createdAt,
-      }
+      };
     }
-    return profile ?? user ?? null
-  }, [profile, user])
+    return profile ?? user ?? null;
+  }, [profile, user]);
 
-  const createdAt = derivedProfile?.createdAt ? new Date(derivedProfile.createdAt) : null
-  const createdAtTimestamp = createdAt?.getTime()
+  const createdAt = derivedProfile?.createdAt ? new Date(derivedProfile.createdAt) : null;
+  const createdAtTimestamp = createdAt?.getTime();
 
   const membershipStats = useMemo(() => {
     // Estimate personal metrics so the dashboard stays informative until deeper APIs land
-    const referenceTimestamp = createdAtTimestamp ?? Date.now() - 45 * 24 * 60 * 60 * 1000
-    const daysActive = Math.max(1, Math.round((Date.now() - referenceTimestamp) / (24 * 60 * 60 * 1000)))
-    const sessions = Math.min(60, Math.max(6, Math.round(daysActive / 3)))
-    const carbonSaved = Number((sessions * 2.8).toFixed(1))
-    const contributions = Math.max(1, Math.round(daysActive / 50))
-    const favorites = Math.max(4, (topStations.length || 2) + 4)
-    const streak = Math.min(21, Math.max(3, Math.round(sessions / 2)))
-    return { daysActive, sessions, carbonSaved, contributions, favorites, streak }
-  }, [createdAtTimestamp, topStations.length])
+    const referenceTimestamp = createdAtTimestamp ?? Date.now() - 45 * 24 * 60 * 60 * 1000;
+    const daysActive = Math.max(
+      1,
+      Math.round((Date.now() - referenceTimestamp) / (24 * 60 * 60 * 1000))
+    );
+    const sessions = Math.min(60, Math.max(6, Math.round(daysActive / 3)));
+    const carbonSaved = Number((sessions * 2.8).toFixed(1));
+    const contributions = Math.max(1, Math.round(daysActive / 50));
+    const favorites = Math.max(4, (topStations.length || 2) + 4);
+    const streak = Math.min(21, Math.max(3, Math.round(sessions / 2)));
+    return { daysActive, sessions, carbonSaved, contributions, favorites, streak };
+  }, [createdAtTimestamp, topStations.length]);
 
   const statCards = useMemo(() => {
     return [
@@ -323,8 +352,8 @@ function UserDashboard() {
         value: membershipStats.contributions,
         helper: 'Reports & edits shared',
       },
-    ]
-  }, [membershipStats, topStations.length])
+    ];
+  }, [membershipStats, topStations.length]);
 
   const ecoGoals = useMemo(() => {
     return [
@@ -346,14 +375,14 @@ function UserDashboard() {
         target: `${membershipStats.carbonSaved} / 150 kg`,
         progress: Math.min(100, Math.round((membershipStats.carbonSaved / 150) * 100)),
       },
-    ]
-  }, [membershipStats])
+    ];
+  }, [membershipStats]);
 
   const activityFeed = useMemo(() => {
-    if (!topStations.length) return FALLBACK_ACTIVITY
-    const firstStation = topStations[0]
-    const secondStation = topStations[1] ?? topStations[0]
-    const lastStation = topStations[topStations.length - 1]
+    if (!topStations.length) return FALLBACK_ACTIVITY;
+    const firstStation = topStations[0];
+    const secondStation = topStations[1] ?? topStations[0];
+    const lastStation = topStations[topStations.length - 1];
     return [
       {
         id: 'session',
@@ -376,23 +405,23 @@ function UserDashboard() {
         meta: `Rated ${lastStation.name} ${Number(lastStation.rating ?? 4.8).toFixed(1)}★`,
         timeAgo: '3 days ago',
       },
-    ]
-  }, [topStations, membershipStats.sessions])
+    ];
+  }, [topStations, membershipStats.sessions]);
 
-  const displayName = derivedProfile?.name || derivedProfile?.email?.split('@')[0] || 'Explorer'
+  const displayName = derivedProfile?.name || derivedProfile?.email?.split('@')[0] || 'Explorer';
   const memberSince = createdAt
     ? createdAt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-    : 'New member'
-  const isVerified = Boolean(derivedProfile?.isEmailVerified)
-  const firstName = displayName?.split(' ')[0] || displayName || 'Your'
+    : 'New member';
+  const isVerified = Boolean(derivedProfile?.isEmailVerified);
+  const firstName = displayName?.split(' ')[0] || displayName || 'Your';
   const tabItems = useMemo(
     () => [
       { id: 'dashboard', label: 'Dashboard', helper: 'Sessions, goals, quick actions' },
       { id: 'insights', label: `${firstName}'s Insights`, helper: 'Recommendations & reviews' },
       { id: 'sell', label: 'Sell Requests', helper: 'Manage energy sharing' },
     ],
-    [firstName],
-  )
+    [firstName]
+  );
 
   const quickActions = [
     {
@@ -420,13 +449,13 @@ function UserDashboard() {
       onClick: () => {
         if (typeof window !== 'undefined') {
           window.location.href =
-            'mailto:team@solarcharge.com?subject=Station%20update&body=Hi%20SolarCharge%20team,%0D%0A%0D%0AI spotted an update at...'
+            'mailto:team@solarcharge.com?subject=Station%20update&body=Hi%20SolarCharge%20team,%0D%0A%0D%0AI spotted an update at...';
         }
       },
     },
-  ]
+  ];
 
-  const recommendedStations = topStations.length ? topStations : FALLBACK_STATIONS
+  const recommendedStations = topStations.length ? topStations : FALLBACK_STATIONS;
 
   if ((authLoading || profileLoading) && !derivedProfile) {
     return (
@@ -436,7 +465,7 @@ function UserDashboard() {
           <p className="user-dashboard__helper">Preparing your personalized dashboard...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!authLoading && !derivedProfile) {
@@ -444,30 +473,30 @@ function UserDashboard() {
       <div className="user-dashboard user-dashboard--center">
         <div className="user-dashboard__card">
           <h1>Sign in to see your dashboard</h1>
-          <p>Track charging sessions, eco goals, and personalized station picks once you authenticate.</p>
+          <p>
+            Track charging sessions, eco goals, and personalized station picks once you
+            authenticate.
+          </p>
           <button className="user-button" onClick={() => navigate('/auth')}>
             Go to sign in
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="user-dashboard">
       <div className="user-dashboard__container">
-        
         <section className="user-panel">
           <div className="user-panel__info">
             <Link to="/" className="user-hero__back" aria-label="Back to home">
-                  ←
-                </Link>
+              ←
+            </Link>
             <p className="user-panel__eyebrow">Control center</p>
-            
-    
           </div>
           <div className="user-panel__tabs">
-            {tabItems.map((tab) => (
+            {tabItems.map(tab => (
               <button
                 key={tab.id}
                 type="button"
@@ -481,21 +510,25 @@ function UserDashboard() {
           </div>
         </section>
 
-        {profileError && <div className="user-dashboard__alert user-dashboard__alert--error">{profileError}</div>}
+        {profileError && (
+          <div className="user-dashboard__alert user-dashboard__alert--error">{profileError}</div>
+        )}
 
         {activeTab === 'dashboard' && (
           <>
             <section className="user-hero">
               <div>
-                
                 <p className="user-hero__eyebrow">Personal dashboard</p>
                 <h1>Welcome back, {displayName}</h1>
                 <p className="user-hero__subtitle">
-                  Surface your latest sessions, eco goals, and recommended solar-first charging stops.
+                  Surface your latest sessions, eco goals, and recommended solar-first charging
+                  stops.
                 </p>
                 <div className="user-hero__meta">
                   <span className="user-chip user-chip--soft">Member since {memberSince}</span>
-                  <span className={`user-chip ${isVerified ? 'user-chip--success' : 'user-chip--ghost'}`}>
+                  <span
+                    className={`user-chip ${isVerified ? 'user-chip--success' : 'user-chip--ghost'}`}
+                  >
                     {isVerified ? '✅ Email verified' : '⏳ Verification pending'}
                   </span>
                 </div>
@@ -509,14 +542,17 @@ function UserDashboard() {
                 <p className="user-card__title">Clean-energy streak</p>
                 <p className="user-hero__streak">{membershipStats.streak} days</p>
                 <p className="user-hero__hint">Stay consistent to unlock new badges.</p>
-                <button className="user-button user-button--ghost" onClick={() => navigate('/search')}>
+                <button
+                  className="user-button user-button--ghost"
+                  onClick={() => navigate('/search')}
+                >
                   View session history
                 </button>
               </div>
             </section>
 
             <section className="user-grid user-grid--stats">
-              {statCards.map((card) => (
+              {statCards.map(card => (
                 <article key={card.id} className="user-stat-card">
                   <p className="user-card__title">{card.label}</p>
                   <p className="user-stat-card__value">{card.value}</p>
@@ -534,7 +570,7 @@ function UserDashboard() {
                   </div>
                 </div>
                 <div className="user-actions">
-                  {quickActions.map((action) => (
+                  {quickActions.map(action => (
                     <div key={action.id} className="user-action">
                       <span className="user-action__icon" aria-hidden="true">
                         {action.icon}
@@ -564,11 +600,13 @@ function UserDashboard() {
                   </div>
                 </div>
                 <ul className="user-trip-list">
-                  {recommendedStations.slice(0, 3).map((station) => (
+                  {recommendedStations.slice(0, 3).map(station => (
                     <li key={station._id ?? station.id}>
                       <div>
                         <p className="user-trip__title">{station.name}</p>
-                        <p className="user-trip__meta">{station.city || station.district || 'Location TBA'}</p>
+                        <p className="user-trip__meta">
+                          {station.city || station.district || 'Location TBA'}
+                        </p>
                       </div>
                       <span className="user-chip user-chip--soft">
                         ⭐ {Number(station.rating ?? station.averageRating ?? 4.8).toFixed(1)}
@@ -591,7 +629,7 @@ function UserDashboard() {
                   </div>
                 </div>
                 <div className="user-activity">
-                  {activityFeed.map((item) => (
+                  {activityFeed.map(item => (
                     <div key={item.id} className="user-activity__item">
                       <span className="user-activity__icon" aria-hidden="true">
                         {item.icon}
@@ -614,14 +652,17 @@ function UserDashboard() {
                   </div>
                 </div>
                 <div className="user-goals">
-                  {ecoGoals.map((goal) => (
+                  {ecoGoals.map(goal => (
                     <div key={goal.id} className="user-progress">
                       <div className="user-progress__meta">
                         <p>{goal.label}</p>
                         <span>{goal.target}</span>
                       </div>
                       <div className="user-progress__bar" aria-hidden="true">
-                        <div className="user-progress__fill" style={{ width: `${goal.progress}%` }}></div>
+                        <div
+                          className="user-progress__fill"
+                          style={{ width: `${goal.progress}%` }}
+                        ></div>
                       </div>
                       <span className="sr-only">{goal.progress}% complete</span>
                     </div>
@@ -641,7 +682,11 @@ function UserDashboard() {
                   <p className="user-card__subtitle">Top-rated solar hubs nearby</p>
                 </div>
               </div>
-              {stationError && <div className="user-dashboard__alert user-dashboard__alert--muted">{stationError}</div>}
+              {stationError && (
+                <div className="user-dashboard__alert user-dashboard__alert--muted">
+                  {stationError}
+                </div>
+              )}
               {stationLoading && (
                 <div className="user-dashboard__state user-dashboard__state--inline">
                   <span className="user-dashboard__loader" aria-hidden="true"></span>
@@ -649,18 +694,25 @@ function UserDashboard() {
                 </div>
               )}
               <div className="user-stations">
-                {recommendedStations.map((station) => {
-                  const connectors = getConnectorTypes(station.connectors)
+                {recommendedStations.map(station => {
+                  const connectors = getConnectorTypes(station.connectors);
                   return (
                     <article key={station._id ?? station.id} className="user-station">
                       <header className="user-station__header">
                         <div>
                           <h3>{station.name}</h3>
-                          <p>{station.city || station.district || station.address || 'Location coming soon'}</p>
+                          <p>
+                            {station.city ||
+                              station.district ||
+                              station.address ||
+                              'Location coming soon'}
+                          </p>
                         </div>
                         <span
                           className={`user-chip ${
-                            (station.status || '').toLowerCase() === 'open' ? 'user-chip--success' : 'user-chip--ghost'
+                            (station.status || '').toLowerCase() === 'open'
+                              ? 'user-chip--success'
+                              : 'user-chip--ghost'
                           }`}
                         >
                           {station.status || 'Open'}
@@ -670,11 +722,13 @@ function UserDashboard() {
                         <span className="user-chip user-chip--soft">
                           ⭐ {Number(station.rating ?? station.averageRating ?? 4.8).toFixed(1)}
                         </span>
-                        <span className="user-chip user-chip--ghost">{formatSlots(station.connectors)}</span>
+                        <span className="user-chip user-chip--ghost">
+                          {formatSlots(station.connectors)}
+                        </span>
                       </div>
                       <div className="user-station__connectors">
                         {connectors.length ? (
-                          connectors.map((connector) => (
+                          connectors.map(connector => (
                             <span key={connector} className="user-chip user-chip--outline">
                               {connector}
                             </span>
@@ -684,7 +738,10 @@ function UserDashboard() {
                         )}
                       </div>
                       <div className="user-card__actions">
-                        <button className="user-button user-button--ghost" onClick={() => navigate('/search')}>
+                        <button
+                          className="user-button user-button--ghost"
+                          onClick={() => navigate('/search')}
+                        >
                           View details
                         </button>
                         <button className="user-button" onClick={() => navigate('/search')}>
@@ -692,7 +749,7 @@ function UserDashboard() {
                         </button>
                       </div>
                     </article>
-                  )
+                  );
                 })}
               </div>
             </article>
@@ -701,75 +758,109 @@ function UserDashboard() {
               <div className="user-card__header">
                 <div>
                   <h2>My Reviews</h2>
-                  <p className="user-card__subtitle">Reviews you added to stations — edit or delete anytime</p>
+                  <p className="user-card__subtitle">
+                    Reviews you added to stations — edit or delete anytime
+                  </p>
                 </div>
               </div>
-              {myReviewsError && <p className="user-card__subtitle" style={{ color: '#ef4444' }}>{myReviewsError}</p>}
+              {myReviewsError && (
+                <p className="user-card__subtitle" style={{ color: '#ef4444' }}>
+                  {myReviewsError}
+                </p>
+              )}
               {myReviewsLoading && <p className="user-card__subtitle">Loading your reviews…</p>}
               {!myReviewsLoading && !myReviewsError && (
                 <div className="user-my-reviews">
-                {myReviews.length === 0 ? (
-                  <p className="user-my-reviews__empty">You haven&apos;t left any reviews yet. Visit a station page to add one.</p>
-                ) : (
-                  myReviews.map((review) => {
-                    const rid = review._id ?? review.id
-                    const stationId = review.station?._id ?? review.station
-                    const stationName = review.station?.name ?? 'Unknown station'
-                    const isEditing = editingReviewId === rid
-                    return (
-                      <div key={rid} className="user-review-item">
-                        {!isEditing ? (
-                          <>
-                            <div className="user-review-item__main">
-                              <Link to={`/stations/${stationId}`} className="user-review-item__station">
+                  {myReviews.length === 0 ? (
+                    <p className="user-my-reviews__empty">
+                      You haven&apos;t left any reviews yet. Visit a station page to add one.
+                    </p>
+                  ) : (
+                    myReviews.map(review => {
+                      const rid = review._id ?? review.id;
+                      const stationId = review.station?._id ?? review.station;
+                      const stationName = review.station?.name ?? 'Unknown station';
+                      const isEditing = editingReviewId === rid;
+                      return (
+                        <div key={rid} className="user-review-item">
+                          {!isEditing ? (
+                            <>
+                              <div className="user-review-item__main">
+                                <Link
+                                  to={`/stations/${stationId}`}
+                                  className="user-review-item__station"
+                                >
+                                  {stationName}
+                                </Link>
+                                <span className="user-review-item__stars">
+                                  {renderStars(review.rating)}
+                                </span>
+                              </div>
+                              {review.comment && (
+                                <p className="user-review-item__comment">{review.comment}</p>
+                              )}
+                              <div className="user-review-item__actions">
+                                <button
+                                  type="button"
+                                  className="user-button user-button--ghost"
+                                  onClick={() => handleStartEdit(review)}
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  type="button"
+                                  className="user-button user-button--danger"
+                                  onClick={() => handleDeleteReview(rid)}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </>
+                          ) : (
+                            <div className="user-review-item__edit">
+                              <Link
+                                to={`/stations/${stationId}`}
+                                className="user-card__title user-review-item__station"
+                              >
                                 {stationName}
                               </Link>
-                              <span className="user-review-item__stars">{renderStars(review.rating)}</span>
+                              <div className="user-review-edit-stars">
+                                <span className="user-review-edit-label">Rating:</span>
+                                {renderStars(editRating, true, setEditRating)}
+                              </div>
+                              <textarea
+                                className="user-review-edit-comment"
+                                placeholder="Comment (optional)"
+                                value={editComment}
+                                onChange={e => setEditComment(e.target.value)}
+                                rows={3}
+                              />
+                              <div className="user-review-item__actions">
+                                <button
+                                  type="button"
+                                  className="user-button"
+                                  onClick={handleSaveEdit}
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  type="button"
+                                  className="user-button user-button--ghost"
+                                  onClick={handleCancelEdit}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
                             </div>
-                            {review.comment && <p className="user-review-item__comment">{review.comment}</p>}
-                            <div className="user-review-item__actions">
-                              <button type="button" className="user-button user-button--ghost" onClick={() => handleStartEdit(review)}>
-                                Edit
-                              </button>
-                              <button type="button" className="user-button user-button--danger" onClick={() => handleDeleteReview(rid)}>
-                                Delete
-                              </button>
-                            </div>
-                          </>
-                        ) : (
-                          <div className="user-review-item__edit">
-                            <Link to={`/stations/${stationId}`} className="user-card__title user-review-item__station">
-                              {stationName}
-                            </Link>
-                            <div className="user-review-edit-stars">
-                              <span className="user-review-edit-label">Rating:</span>
-                              {renderStars(editRating, true, setEditRating)}
-                            </div>
-                            <textarea
-                              className="user-review-edit-comment"
-                              placeholder="Comment (optional)"
-                              value={editComment}
-                              onChange={(e) => setEditComment(e.target.value)}
-                              rows={3}
-                            />
-                            <div className="user-review-item__actions">
-                              <button type="button" className="user-button" onClick={handleSaveEdit}>
-                                Save
-                              </button>
-                              <button type="button" className="user-button user-button--ghost" onClick={handleCancelEdit}>
-                                Cancel
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })
-                )}
-              </div>
-            )}
-          </article>
-        </section>
+                          )}
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              )}
+            </article>
+          </section>
         )}
 
         {activeTab === 'sell' && (
@@ -787,7 +878,7 @@ function UserDashboard() {
         )}
       </div>
     </div>
-  )
+  );
 }
 
-export default UserDashboard
+export default UserDashboard;

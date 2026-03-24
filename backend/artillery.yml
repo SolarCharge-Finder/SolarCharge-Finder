@@ -1,5 +1,5 @@
 config:
-  target: "http://localhost:5001"
+  target: 'http://localhost:5001'
   phases:
     - duration: 60
       arrivalRate: 10
@@ -9,5 +9,5 @@ config:
 
 scenarios:
   - flow:
-    - get:
-        url: "/api/stations"
+      - get:
+          url: '/api/stations'

@@ -8,9 +8,10 @@ function Terms() {
       <main className="info-page__main">
         <div className="info-page__container">
           <h1 className="page-title">Terms and Conditions</h1>
-          
+
           <p className="page-intro">
-            By accessing or using our website and services, you agree to comply with the following Terms and Conditions. Please read them carefully.
+            By accessing or using our website and services, you agree to comply with the following
+            Terms and Conditions. Please read them carefully.
           </p>
 
           <section>
@@ -30,9 +31,7 @@ function Terms() {
               <span className="section-icon">⚡</span>
               Services
             </h2>
-            <p className="content-text">
-              Our platform allows users to:
-            </p>
+            <p className="content-text">Our platform allows users to:</p>
             <ul className="content-list">
               <li>Search for nearby solar-powered charging stations</li>
               <li>View availability and pricing</li>
@@ -51,7 +50,8 @@ function Terms() {
               Payments
             </h2>
             <p className="content-text">
-              All payments are processed through secure third-party payment providers. We are not responsible for issues caused by external payment gateways.
+              All payments are processed through secure third-party payment providers. We are not
+              responsible for issues caused by external payment gateways.
             </p>
           </section>
 
@@ -61,7 +61,9 @@ function Terms() {
               User Content
             </h2>
             <p className="content-text">
-              By submitting reviews, ratings, or other content, you grant us permission to display and use this content on our platform. Content must not be abusive, misleading, or violate any laws.
+              By submitting reviews, ratings, or other content, you grant us permission to display
+              and use this content on our platform. Content must not be abusive, misleading, or
+              violate any laws.
             </p>
           </section>
 
@@ -84,7 +86,8 @@ function Terms() {
               Modifications
             </h2>
             <p className="content-text">
-              We reserve the right to update these Terms at any time. Continued use of the platform means you accept the revised terms.
+              We reserve the right to update these Terms at any time. Continued use of the platform
+              means you accept the revised terms.
             </p>
           </section>
         </div>

@@ -2,10 +2,14 @@ import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import User from '../models/User.js';
 import { validationResult } from 'express-validator';
-import { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail } from '../utils/emailService.js';
+import {
+  sendVerificationEmail,
+  sendWelcomeEmail,
+  sendPasswordResetEmail,
+} from '../utils/emailService.js';
 import { success, fail } from '../utils/responseHelper.js';
 
-const logInfo = (message) => {
+const logInfo = message => {
   if (process.env.NODE_ENV === 'development') {
     process.stdout.write(`${message}\n`);
   }
@@ -17,11 +21,11 @@ const logError = (message, error) => {
 };
 
 // Generate JWT token
-const generateToken = (id) => {
+const generateToken = id => {
   const secret = process.env.JWT_SECRET || 'fallback_secret';
   // @ts-ignore
   return jwt.sign({ id }, secret, {
-    expiresIn: process.env.JWT_EXPIRE || '30d'
+    expiresIn: process.env.JWT_EXPIRE || '30d',
   });
 };
 
@@ -32,13 +36,16 @@ export const register = async (req, res) => {
   try {
     // Check if MongoDB is connected
     if (mongoose.connection.readyState !== 1) {
-      return fail(res, { message: 'Database is not available. Please try again later.', status: 503 })
+      return fail(res, {
+        message: 'Database is not available. Please try again later.',
+        status: 503,
+      });
     }
 
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return fail(res, { message: 'Validation errors', status: 400, errors: errors.array() })
+      return fail(res, { message: 'Validation errors', status: 400, errors: errors.array() });
     }
 
     const { email, password, role } = req.body;
@@ -46,14 +53,14 @@ export const register = async (req, res) => {
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return fail(res, { message: 'User already exists with this email', status: 400 })
+      return fail(res, { message: 'User already exists with this email', status: 400 });
     }
 
     // Create new user
     const user = await User.create({
       email,
       password,
-      role: role || 'user'
+      role: role || 'user',
     });
 
     // Send verification email
@@ -64,10 +71,21 @@ export const register = async (req, res) => {
       // Don't fail registration if email fails, but log it
     }
 
-    return success(res, { status: 201, message: 'User registered successfully. Please check your email to verify your account.', data: { user: { id: user._id, email: user.email, role: user.role, isEmailVerified: user.isEmailVerified } } })
+    return success(res, {
+      status: 201,
+      message: 'User registered successfully. Please check your email to verify your account.',
+      data: {
+        user: {
+          id: user._id,
+          email: user.email,
+          role: user.role,
+          isEmailVerified: user.isEmailVerified,
+        },
+      },
+    });
   } catch (error) {
     logError('Registration error', error);
-    return fail(res, { message: 'Server error during registration', status: 500 })
+    return fail(res, { message: 'Server error during registration', status: 500 });
   }
 };
 
@@ -78,13 +96,16 @@ export const login = async (req, res) => {
   try {
     // Check if MongoDB is connected
     if (mongoose.connection.readyState !== 1) {
-      return fail(res, { message: 'Database is not available. Please try again later.', status: 503 })
+      return fail(res, {
+        message: 'Database is not available. Please try again later.',
+        status: 503,
+      });
     }
 
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return fail(res, { message: 'Validation errors', status: 400, errors: errors.array() })
+      return fail(res, { message: 'Validation errors', status: 400, errors: errors.array() });
     }
 
     const { email, password } = req.body;
@@ -92,27 +113,43 @@ export const login = async (req, res) => {
     // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
-      return fail(res, { message: 'Invalid email or password', status: 401 })
+      return fail(res, { message: 'Invalid email or password', status: 401 });
     }
 
     // Check if password matches
     const isPasswordValid = await User.prototype.comparePassword.call(user, password);
     if (!isPasswordValid) {
-      return fail(res, { message: 'Invalid email or password', status: 401 })
+      return fail(res, { message: 'Invalid email or password', status: 401 });
     }
 
     // Check if email is verified
     if (!user.isEmailVerified) {
-      return fail(res, { message: 'Please verify your email before logging in. Check your inbox for the verification link.', status: 401 })
+      return fail(res, {
+        message:
+          'Please verify your email before logging in. Check your inbox for the verification link.',
+        status: 401,
+      });
     }
 
     // Generate token
     const token = generateToken(user._id);
 
-    return success(res, { status: 200, message: 'Login successful', data: { user: { id: user._id, email: user.email, role: user.role, isEmailVerified: user.isEmailVerified }, token } })
+    return success(res, {
+      status: 200,
+      message: 'Login successful',
+      data: {
+        user: {
+          id: user._id,
+          email: user.email,
+          role: user.role,
+          isEmailVerified: user.isEmailVerified,
+        },
+        token,
+      },
+    });
   } catch (error) {
     logError('Login error', error);
-    return fail(res, { message: 'Server error during login', status: 500 })
+    return fail(res, { message: 'Server error during login', status: 500 });
   }
 };
 
@@ -124,16 +161,28 @@ export const getProfile = async (req, res) => {
     const user = await User.findById(req.user._id);
 
     if (!user) {
-      return fail(res, { message: 'User not found', status: 404 })
+      return fail(res, { message: 'User not found', status: 404 });
     }
 
-    return success(res, { status: 200, message: 'Profile retrieved successfully', data: { user: { id: user._id, email: user.email, role: user.role, createdAt: user.createdAt, updatedAt: user.updatedAt } } })
+    return success(res, {
+      status: 200,
+      message: 'Profile retrieved successfully',
+      data: {
+        user: {
+          id: user._id,
+          email: user.email,
+          role: user.role,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        },
+      },
+    });
   } catch (error) {
     logError('Get profile error', error);
     res.status(500).json({
       success: false,
       message: 'Server error while fetching profile',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
@@ -145,10 +194,15 @@ export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find({}).select('-password').sort({ createdAt: -1 });
 
-    return success(res, { status: 200, message: 'Users retrieved successfully', data: { users }, count: users.length })
+    return success(res, {
+      status: 200,
+      message: 'Users retrieved successfully',
+      data: { users },
+      count: users.length,
+    });
   } catch (error) {
     logError('Get all users error', error);
-    return fail(res, { message: 'Server error while fetching users', status: 500 })
+    return fail(res, { message: 'Server error while fetching users', status: 500 });
   }
 };
 
@@ -164,17 +218,19 @@ export const verifyEmail = async (req, res) => {
     // Find user with verification token
     const user = await User.findOne({
       emailVerificationToken: token,
-      emailVerificationExpires: { $gt: Date.now() }
+      emailVerificationExpires: { $gt: Date.now() },
     });
 
     logInfo(`Found user: ${user ? user.email : 'No user found'}`);
     logInfo(`User token: ${user ? user.emailVerificationToken : 'No token'}`);
-    logInfo(`Token expires: ${user ? new Date(user.emailVerificationExpires).toISOString() : 'No expires'}`);
+    logInfo(
+      `Token expires: ${user ? new Date(user.emailVerificationExpires).toISOString() : 'No expires'}`
+    );
 
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid or expired verification token'
+        message: 'Invalid or expired verification token',
       });
     }
 
@@ -203,16 +259,16 @@ export const verifyEmail = async (req, res) => {
           id: user._id,
           email: user.email,
           role: user.role,
-          isEmailVerified: user.isEmailVerified
-        }
-      }
+          isEmailVerified: user.isEmailVerified,
+        },
+      },
     });
   } catch (error) {
     logError('Email verification error', error);
     res.status(500).json({
       success: false,
       message: 'Server error during email verification',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
@@ -227,7 +283,7 @@ export const resendVerificationEmail = async (req, res) => {
     if (!email) {
       return res.status(400).json({
         success: false,
-        message: 'Email is required'
+        message: 'Email is required',
       });
     }
 
@@ -236,14 +292,14 @@ export const resendVerificationEmail = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'User not found'
+        message: 'User not found',
       });
     }
 
     if (user.isEmailVerified) {
       return res.status(400).json({
         success: false,
-        message: 'Email is already verified'
+        message: 'Email is already verified',
       });
     }
 
@@ -252,14 +308,14 @@ export const resendVerificationEmail = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Verification email sent successfully. Please check your inbox.'
+      message: 'Verification email sent successfully. Please check your inbox.',
     });
   } catch (error) {
     logError('Resend verification error', error);
     res.status(500).json({
       success: false,
       message: 'Server error while resending verification email',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
@@ -273,7 +329,7 @@ export const forgotPassword = async (req, res) => {
     if (mongoose.connection.readyState !== 1) {
       return res.status(503).json({
         success: false,
-        message: 'Database is not available. Please try again later.'
+        message: 'Database is not available. Please try again later.',
       });
     }
 
@@ -282,7 +338,7 @@ export const forgotPassword = async (req, res) => {
     if (!email) {
       return res.status(400).json({
         success: false,
-        message: 'Email is required'
+        message: 'Email is required',
       });
     }
 
@@ -292,7 +348,7 @@ export const forgotPassword = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'No user found with this email address'
+        message: 'No user found with this email address',
       });
     }
 
@@ -311,20 +367,20 @@ export const forgotPassword = async (req, res) => {
       logError('Failed to send password reset email', emailError);
       return res.status(500).json({
         success: false,
-        message: 'Failed to send reset email. Please try again.'
+        message: 'Failed to send reset email. Please try again.',
       });
     }
 
     res.status(200).json({
       success: true,
-      message: 'Password reset code sent to your email. Please check your inbox.'
+      message: 'Password reset code sent to your email. Please check your inbox.',
     });
   } catch (error) {
     logError('Forgot password error', error);
     res.status(500).json({
       success: false,
       message: 'Server error during password reset request',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
@@ -338,7 +394,7 @@ export const resetPassword = async (req, res) => {
     if (mongoose.connection.readyState !== 1) {
       return res.status(503).json({
         success: false,
-        message: 'Database is not available. Please try again later.'
+        message: 'Database is not available. Please try again later.',
       });
     }
 
@@ -347,14 +403,14 @@ export const resetPassword = async (req, res) => {
     if (!email || !resetCode || !newPassword) {
       return res.status(400).json({
         success: false,
-        message: 'Email, reset code, and new password are required'
+        message: 'Email, reset code, and new password are required',
       });
     }
 
     if (newPassword.length < 6) {
       return res.status(400).json({
         success: false,
-        message: 'Password must be at least 6 characters long'
+        message: 'Password must be at least 6 characters long',
       });
     }
 
@@ -362,13 +418,13 @@ export const resetPassword = async (req, res) => {
     const user = await User.findOne({
       email,
       passwordResetToken: resetCode,
-      passwordResetExpires: { $gt: Date.now() }
+      passwordResetExpires: { $gt: Date.now() },
     });
 
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid or expired reset code'
+        message: 'Invalid or expired reset code',
       });
     }
 
@@ -380,14 +436,14 @@ export const resetPassword = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Password reset successfully. You can now login with your new password.'
+      message: 'Password reset successfully. You can now login with your new password.',
     });
   } catch (error) {
     logError('Reset password error', error);
     res.status(500).json({
       success: false,
       message: 'Server error during password reset',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
@@ -414,11 +470,17 @@ export const promoteUser = async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'User promoted to admin',
-      data: { user: { id: user._id, email: user.email, role: user.role } }
+      data: { user: { id: user._id, email: user.email, role: user.role } },
     });
   } catch (error) {
     logError('Promote user error', error);
-    res.status(500).json({ success: false, message: 'Server error while promoting user', error: process.env.NODE_ENV === 'development' ? error.message : undefined });
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: 'Server error while promoting user',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      });
   }
 };
 
@@ -427,32 +489,38 @@ export const promoteUser = async (req, res) => {
 // @access  Private (Admin only)
 export const updateUserRole = async (req, res) => {
   try {
-    const { id } = req.params
-    const { role } = req.body
+    const { id } = req.params;
+    const { role } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: 'Invalid user id' })
+      return res.status(400).json({ success: false, message: 'Invalid user id' });
     }
 
     if (!role || (role !== 'admin' && role !== 'user')) {
-      return res.status(400).json({ success: false, message: 'Role must be "admin" or "user"' })
+      return res.status(400).json({ success: false, message: 'Role must be "admin" or "user"' });
     }
 
-    const user = await User.findById(id)
+    const user = await User.findById(id);
     if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' })
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    user.role = role
-    await user.save()
+    user.role = role;
+    await user.save();
 
     res.status(200).json({
       success: true,
       message: `User role updated to ${role}`,
       data: { user: { id: user._id, email: user.email, role: user.role } },
-    })
+    });
   } catch (error) {
-    logError('Update user role error', error)
-    res.status(500).json({ success: false, message: 'Server error while updating user role', error: process.env.NODE_ENV === 'development' ? error.message : undefined })
+    logError('Update user role error', error);
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: 'Server error while updating user role',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      });
   }
-}
+};

@@ -13,9 +13,9 @@ export const protect = async (req, res, next) => {
 
     // Check if token exists
     if (!token) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Access denied. No token provided.' 
+      return res.status(401).json({
+        success: false,
+        message: 'Access denied. No token provided.',
       });
     }
 
@@ -27,9 +27,9 @@ export const protect = async (req, res, next) => {
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'User not found.' 
+      return res.status(401).json({
+        success: false,
+        message: 'User not found.',
       });
     }
 
@@ -38,41 +38,41 @@ export const protect = async (req, res, next) => {
     next();
   } catch (error) {
     if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Invalid token.' 
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid token.',
       });
     }
     if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Token expired.' 
+      return res.status(401).json({
+        success: false,
+        message: 'Token expired.',
       });
     }
-    return res.status(500).json({ 
-      success: false, 
-      message: 'Server error in authentication.' 
+    return res.status(500).json({
+      success: false,
+      message: 'Server error in authentication.',
     });
   }
 };
 
 // Grant access to specific roles
 export const authorize = (...roles) => {
-  const normalizedRoles = roles.map(role => role?.toString().toLowerCase())
+  const normalizedRoles = roles.map(role => role?.toString().toLowerCase());
   return (req, res, next) => {
     if (!req.user) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Access denied. User not authenticated.' 
+      return res.status(401).json({
+        success: false,
+        message: 'Access denied. User not authenticated.',
       });
     }
 
-    const userRole = req.user.role?.toLowerCase()
+    const userRole = req.user.role?.toLowerCase();
 
     if (!normalizedRoles.includes(userRole)) {
-      return res.status(403).json({ 
-        success: false, 
-        message: `Access denied. User role ${req.user.role} is not authorized.` 
+      return res.status(403).json({
+        success: false,
+        message: `Access denied. User role ${req.user.role} is not authorized.`,
       });
     }
 

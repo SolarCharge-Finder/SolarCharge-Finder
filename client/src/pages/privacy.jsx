@@ -8,9 +8,11 @@ function Privacy() {
       <main className="info-page__main">
         <div className="info-page__container">
           <h1 className="page-title">Privacy Policy</h1>
-          
+
           <p className="page-intro">
-            We value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our website and services.
+            We value your privacy and are committed to protecting your personal information. This
+            Privacy Policy explains how we collect, use, and safeguard your data when you use our
+            website and services.
           </p>
 
           <section>
@@ -50,10 +52,15 @@ function Privacy() {
               Data Security
             </h2>
             <p className="content-text">
-              We implement appropriate technical and organizational measures to protect your data. Sensitive information such as payment details is encrypted and handled by secure third-party providers.
+              We implement appropriate technical and organizational measures to protect your data.
+              Sensitive information such as payment details is encrypted and handled by secure
+              third-party providers.
             </p>
             <div className="highlight-box">
-              <p>Your data is encrypted using industry-standard SSL/TLS technology to ensure maximum security.</p>
+              <p>
+                Your data is encrypted using industry-standard SSL/TLS technology to ensure maximum
+                security.
+              </p>
             </div>
           </section>
 
@@ -63,7 +70,9 @@ function Privacy() {
               Sharing of Information
             </h2>
             <p className="content-text">
-              We do not sell or rent your personal data. Information may only be shared with trusted service providers when necessary to deliver our services or comply with legal requirements.
+              We do not sell or rent your personal data. Information may only be shared with trusted
+              service providers when necessary to deliver our services or comply with legal
+              requirements.
             </p>
           </section>
 
@@ -73,7 +82,8 @@ function Privacy() {
               Your Rights
             </h2>
             <p className="content-text">
-              You have the right to access, update, or request deletion of your personal data. You may also opt out of non-essential communications at any time.
+              You have the right to access, update, or request deletion of your personal data. You
+              may also opt out of non-essential communications at any time.
             </p>
             <ul className="content-list">
               <li>Access your personal information</li>
@@ -89,7 +99,8 @@ function Privacy() {
               Changes to This Policy
             </h2>
             <p className="content-text">
-              We may update this Privacy Policy occasionally. Any changes will be posted on this page with an updated revision date.
+              We may update this Privacy Policy occasionally. Any changes will be posted on this
+              page with an updated revision date.
             </p>
           </section>
         </div>

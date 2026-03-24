@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 
-const logInfo = (message) => {
+const logInfo = message => {
   if (process.env.NODE_ENV === 'development') {
     process.stdout.write(`${message}\n`);
   }
@@ -18,10 +18,10 @@ const createTransporter = () => {
     service: 'gmail',
     auth: {
       user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
+      pass: process.env.EMAIL_PASS,
     },
     debug: true, // Show debug output
-    logger: true  // Log activity
+    logger: true, // Log activity
   });
 };
 
@@ -31,24 +31,24 @@ const generateVerificationToken = () => {
 };
 
 // Send verification email
-export const sendVerificationEmail = async (user) => {
+export const sendVerificationEmail = async user => {
   try {
     // Use hardcoded credentials for now (in production, use .env)
     const emailUser = 'nadeesf23@gmail.com';
     const emailPass = 'nictbifwbraxhvcn';
-    
+
     logInfo(`Attempting to send email to: ${user.email}`);
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: emailUser,
-        pass: emailPass
+        pass: emailPass,
       },
       debug: false,
-      logger: false
+      logger: false,
     });
-    
+
     // Verify transporter configuration
     await transporter.verify();
     logInfo('Transporter verified successfully');
@@ -88,7 +88,7 @@ export const sendVerificationEmail = async (user) => {
             If you didn't create an account, please ignore this email.
           </p>
         </div>
-      `
+      `,
     };
 
     logInfo('Sending verification email...');
@@ -103,7 +103,7 @@ export const sendVerificationEmail = async (user) => {
 };
 
 // Send welcome email after verification
-export const sendWelcomeEmail = async (user) => {
+export const sendWelcomeEmail = async user => {
   try {
     // Check if email credentials are configured
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
@@ -145,7 +145,7 @@ export const sendWelcomeEmail = async (user) => {
             If you have any questions, feel free to contact our support team.
           </p>
         </div>
-      `
+      `,
     };
 
     await transporter.sendMail(mailOptions);
@@ -164,17 +164,17 @@ export const sendPasswordResetEmail = async (user, resetCode) => {
     // Use hardcoded credentials for now (in production, use .env)
     const emailUser = 'nadeesf23@gmail.com';
     const emailPass = 'nictbifwbraxhvcn';
-    
+
     logInfo(`Attempting to send password reset email to: ${user.email}`);
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: emailUser,
-        pass: emailPass
+        pass: emailPass,
       },
       debug: false,
-      logger: false
+      logger: false,
     });
 
     const mailOptions = {
@@ -206,7 +206,7 @@ export const sendPasswordResetEmail = async (user, resetCode) => {
             Please do not reply to this email.
           </p>
         </div>
-      `
+      `,
     };
 
     await transporter.sendMail(mailOptions);
