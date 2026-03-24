@@ -12,17 +12,17 @@ function SearchBar() {
   const navigate = useNavigate();
 
   //implemented search function in the new UI (adeesha)
-  const handleSearch = (e) => {
-        e.preventDefault();
+  const handleSearch = e => {
+    e.preventDefault();
 
-        const params = new URLSearchParams({
-          search: query || "",
-          district: district || "",
-          status: status || "",
-          connectorType: connectorType || ""
-        });
+    const params = new URLSearchParams({
+      search: query || '',
+      district: district || '',
+      status: status || '',
+      connectorType: connectorType || '',
+    });
 
-        navigate(`/search?${params.toString()}`);
+    navigate(`/search?${params.toString()}`);
   };
 
   return (
@@ -30,7 +30,16 @@ function SearchBar() {
       <div className="search-container">
         <form className="search-bar" onSubmit={handleSearch}>
           <div className="search-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#94a3b8"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <circle cx="11" cy="11" r="8" />
               <path d="M21 21l-4.35-4.35" />
             </svg>
@@ -40,15 +49,18 @@ function SearchBar() {
             className="search-input"
             placeholder="Search by city, zip code, or address..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={e => setQuery(e.target.value)}
           />
-          <button
-            type="button"
-            className="filter-btn"
-            onClick={() => setShowFilters(!showFilters)}
-          >
+          <button type="button" className="filter-btn" onClick={() => setShowFilters(!showFilters)}>
             {/* filter icon */}
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#64748b"
+              strokeWidth="2"
+            >
               <path d="M3 4h18l-7 8v6l-4 2v-8L3 4z" />
             </svg>
           </button>
@@ -56,7 +68,7 @@ function SearchBar() {
           <button type="submit" className="search-btn">
             Search Stations
           </button>
-        </form> 
+        </form>
 
         {showFilters && (
           <FilterDropdown
@@ -68,14 +80,22 @@ function SearchBar() {
             setConnectorType={setConnectorType}
             onClose={() => setShowFilters(false)}
           />
-        )}   
+        )}
 
         <div className="search-tags">
           <span className="tag-label">Popular:</span>
-          <button className="search-tag" onClick={() => setQuery('Colombo')}>Colombo</button>
-          <button className="search-tag" onClick={() => setQuery('Jaffna')}>Jaffna</button>
-          <button className="search-tag" onClick={() => setQuery('Kandy')}>Kandy</button>
-          <button className="search-tag" onClick={() => setQuery('Galle')}>Galle</button>
+          <button className="search-tag" onClick={() => setQuery('Colombo')}>
+            Colombo
+          </button>
+          <button className="search-tag" onClick={() => setQuery('Jaffna')}>
+            Jaffna
+          </button>
+          <button className="search-tag" onClick={() => setQuery('Kandy')}>
+            Kandy
+          </button>
+          <button className="search-tag" onClick={() => setQuery('Galle')}>
+            Galle
+          </button>
         </div>
       </div>
     </section>

@@ -8,9 +8,11 @@ function AboutUs() {
       <main className="info-page__main">
         <div className="info-page__container">
           <h1 className="page-title">About Us</h1>
-          
+
           <p className="page-intro">
-            We are a technology-driven platform dedicated to promoting clean energy and sustainable transportation. Our mission is to make solar-powered vehicle charging simple, accessible, and reliable for everyone.
+            We are a technology-driven platform dedicated to promoting clean energy and sustainable
+            transportation. Our mission is to make solar-powered vehicle charging simple,
+            accessible, and reliable for everyone.
           </p>
 
           <section>
@@ -19,7 +21,9 @@ function AboutUs() {
               Our Mission
             </h2>
             <p className="content-text">
-              By combining smart location-based services with secure online payments, we help users easily find and utilize solar-powered charging infrastructure. We believe sustainability should be easy, transparent, and user-friendly.
+              By combining smart location-based services with secure online payments, we help users
+              easily find and utilize solar-powered charging infrastructure. We believe
+              sustainability should be easy, transparent, and user-friendly.
             </p>
             <div className="highlight-box">
               <p>Together, we&#39;re powering the future—cleanly and efficiently ⚡🌍</p>
@@ -46,15 +50,24 @@ function AboutUs() {
               <span className="section-icon">🌱</span>
               Our Values
             </h2>
-            <p className="content-text">
-              Our platform is built with a focus on:
-            </p>
+            <p className="content-text">Our platform is built with a focus on:</p>
             <ul className="content-list">
-              <li><strong>Innovation</strong> - Leveraging technology for sustainable solutions</li>
-              <li><strong>Environmental Responsibility</strong> - Promoting clean energy adoption</li>
-              <li><strong>Customer Satisfaction</strong> - Delivering reliable and user-friendly services</li>
-              <li><strong>Community</strong> - Building a network of eco-conscious users</li>
-              <li><strong>Transparency</strong> - Open and honest communication</li>
+              <li>
+                <strong>Innovation</strong> - Leveraging technology for sustainable solutions
+              </li>
+              <li>
+                <strong>Environmental Responsibility</strong> - Promoting clean energy adoption
+              </li>
+              <li>
+                <strong>Customer Satisfaction</strong> - Delivering reliable and user-friendly
+                services
+              </li>
+              <li>
+                <strong>Community</strong> - Building a network of eco-conscious users
+              </li>
+              <li>
+                <strong>Transparency</strong> - Open and honest communication
+              </li>
             </ul>
           </section>
 
@@ -64,7 +77,10 @@ function AboutUs() {
               Why Choose Us
             </h2>
             <p className="content-text">
-              We&#39;re more than just a charging station finder. We&#39;re a community of environmentally conscious individuals working together to make clean energy accessible to everyone. Our platform combines cutting-edge technology with a passion for sustainability to create a seamless user experience.
+              We&#39;re more than just a charging station finder. We&#39;re a community of
+              environmentally conscious individuals working together to make clean energy accessible
+              to everyone. Our platform combines cutting-edge technology with a passion for
+              sustainability to create a seamless user experience.
             </p>
           </section>
 
@@ -74,7 +90,9 @@ function AboutUs() {
               Join Our Mission
             </h2>
             <p className="content-text">
-              Whether you&#39;re an EV owner, a student, a traveler, or simply someone who cares about the environment, you&#39;re welcome to join our growing community. Help us build a sustainable future, one charge at a time.
+              Whether you&#39;re an EV owner, a student, a traveler, or simply someone who cares
+              about the environment, you&#39;re welcome to join our growing community. Help us build
+              a sustainable future, one charge at a time.
             </p>
           </section>
         </div>

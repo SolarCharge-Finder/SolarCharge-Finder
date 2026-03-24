@@ -4,28 +4,24 @@ import { FiShare2 } from 'react-icons/fi';
 import { calculateDistance } from '../../utils/distance';
 
 const renderStars = (rating = 0) => {
-    return Array.from({ length: 5 }, (_, idx) => {
-    const filled = idx < Math.round(rating)
+  return Array.from({ length: 5 }, (_, idx) => {
+    const filled = idx < Math.round(rating);
     return (
-        <span key={idx} className={filled ? 'star-filled' : 'star-muted'}>
+      <span key={idx} className={filled ? 'star-filled' : 'star-muted'}>
         ★
-        </span>
-    )
-    })
-}
+      </span>
+    );
+  });
+};
 
 const SearchResults = ({ stations, error, userLocation = null, loadingLocation = false }) => {
   const navigate = useNavigate();
 
   if (stations.length === 0 && !error) {
-    return (
-      <p className="no-results">
-        No stations found. Try adjusting your search criteria.
-      </p>
-    );
+    return <p className="no-results">No stations found. Try adjusting your search criteria.</p>;
   }
 
-  const handleCardClick = (stationId) => {
+  const handleCardClick = stationId => {
     navigate(`/stations/${stationId}`);
   };
 
@@ -36,10 +32,7 @@ const SearchResults = ({ stations, error, userLocation = null, loadingLocation =
       return;
     }
     const [lng, lat] = station.location.coordinates;
-    window.open(
-      `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`,
-      '_blank'
-    );
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
   };
 
   const handleShare = async (e, station) => {
@@ -70,27 +63,28 @@ const SearchResults = ({ stations, error, userLocation = null, loadingLocation =
 
   return (
     <div className="stations-grid">
-      {stations.map((station) => {
+      {stations.map(station => {
         let distance = station.distance;
 
         if (!distance) {
           if (loadingLocation) {
-            distance = "Calculating...";
+            distance = 'Calculating...';
           } else if (userLocation && station.location) {
             distance = calculateDistance(
               [userLocation.longitude, userLocation.latitude],
               station.location.coordinates
             );
           } else {
-            distance = "N/A"; //fallback value 
+            distance = 'N/A'; //fallback value
           }
         }
 
-        const distanceDisplay = typeof distance === 'number' ? `${distance.toFixed(1)} km` : distance;
+        const distanceDisplay =
+          typeof distance === 'number' ? `${distance.toFixed(1)} km` : distance;
 
         return (
-          <div 
-            key={station._id} 
+          <div
+            key={station._id}
             className="station-card"
             onClick={() => handleCardClick(station._id)}
             style={{ cursor: 'pointer' }}
@@ -102,27 +96,20 @@ const SearchResults = ({ stations, error, userLocation = null, loadingLocation =
 
             <p className="station-card__address">{station.address}</p>
 
-            <p
-              className={`station-status ${station.status
-                .toLowerCase()
-                .replace(/\s+/g, "-")}`}
-            >
+            <p className={`station-status ${station.status.toLowerCase().replace(/\s+/g, '-')}`}>
               {station.status}
             </p>
 
             <p className="station-card__distance"> {distanceDisplay} away</p>
 
             <div className="station-card__actions">
-              <button 
-                className="station-card__cta"
-                onClick={(e) => handleGetDirections(e, station)}
-              >
+              <button className="station-card__cta" onClick={e => handleGetDirections(e, station)}>
                 Get Directions
               </button>
               <button
                 type="button"
                 className="station-card__share"
-                onClick={(e) => handleShare(e, station)}
+                onClick={e => handleShare(e, station)}
               >
                 <FiShare2 aria-hidden="true" />
                 Share
@@ -135,7 +122,6 @@ const SearchResults = ({ stations, error, userLocation = null, loadingLocation =
   );
 };
 
-
 // PropTypes for type checking & final validation
 SearchResults.propTypes = {
   stations: PropTypes.arrayOf(
@@ -145,21 +131,18 @@ SearchResults.propTypes = {
       address: PropTypes.string,
       status: PropTypes.string,
       rating: PropTypes.number,
-      distance: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number
-      ]),
+      distance: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       location: PropTypes.shape({
-        coordinates: PropTypes.arrayOf(PropTypes.number)
-      })
+        coordinates: PropTypes.arrayOf(PropTypes.number),
+      }),
     })
   ).isRequired,
   error: PropTypes.string,
   userLocation: PropTypes.shape({
     latitude: PropTypes.number,
-    longitude: PropTypes.number
+    longitude: PropTypes.number,
   }),
-  loadingLocation: PropTypes.bool
+  loadingLocation: PropTypes.bool,
 };
 
 export default SearchResults;

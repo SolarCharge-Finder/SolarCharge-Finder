@@ -18,11 +18,18 @@ vi.mock('../../../hooks/useGeoLocation', () => ({
   }),
 }));
 
-const renderWithRouter = (ui) => render(<MemoryRouter>{ui}</MemoryRouter>);
+const renderWithRouter = ui => render(<MemoryRouter>{ui}</MemoryRouter>);
 
 describe('MapSection Component', () => {
   const mockStations = [
-    { _id: '1', name: 'Station 1', rating: 5, address: 'Colombo', status: 'Open', location: { coordinates: [79.8271, 6.9151] } },
+    {
+      _id: '1',
+      name: 'Station 1',
+      rating: 5,
+      address: 'Colombo',
+      status: 'Open',
+      location: { coordinates: [79.8271, 6.9151] },
+    },
   ];
 
   beforeEach(() => {
@@ -33,7 +40,7 @@ describe('MapSection Component', () => {
 
   it('renders stations sorted by distance by default', async () => {
     vi.mocked(stationService.nearbyStations).mockResolvedValue(mockStations);
-    
+
     renderWithRouter(<MapSection />);
 
     await waitFor(() => {
@@ -44,7 +51,9 @@ describe('MapSection Component', () => {
 
   it('switches to top rated stations when dropdown changes', async () => {
     vi.mocked(stationService.nearbyStations).mockResolvedValue(mockStations);
-    vi.mocked(stationService.getTopRatedStations).mockResolvedValue([{ ...mockStations[0], name: 'Top Station' }]);
+    vi.mocked(stationService.getTopRatedStations).mockResolvedValue([
+      { ...mockStations[0], name: 'Top Station' },
+    ]);
 
     renderWithRouter(<MapSection />);
 

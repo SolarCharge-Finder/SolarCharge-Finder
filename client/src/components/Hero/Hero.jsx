@@ -1,13 +1,13 @@
-import { useEffect, useState, useRef } from "react";
-import PropTypes from "prop-types";
-import { FiSun, FiMap, FiMapPin } from "react-icons/fi";
+import { useEffect, useState, useRef } from 'react';
+import PropTypes from 'prop-types';
+import { FiSun, FiMap, FiMapPin } from 'react-icons/fi';
 
 const heroSlides = [
-  "/herosection/1.jpeg",
-  "/herosection/2.jpeg",
-  "/herosection/3.jpg",
-  "/herosection/4.jpeg",
-  "/herosection/5.jpg",
+  '/herosection/1.jpeg',
+  '/herosection/2.jpeg',
+  '/herosection/3.jpg',
+  '/herosection/4.jpeg',
+  '/herosection/5.jpg',
 ];
 
 // Animated count-up hook
@@ -17,10 +17,10 @@ function useCountUp(target, duration = 1800) {
   useEffect(() => {
     if (started.current) return;
     started.current = true;
-    const numericTarget = parseFloat(target.replace(/[^0-9.]/g, ""));
-    const suffix = target.replace(/[0-9.,]/g, "");
+    const numericTarget = parseFloat(target.replace(/[^0-9.]/g, ''));
+    const suffix = target.replace(/[0-9.,]/g, '');
     let start = null;
-    const step = (timestamp) => {
+    const step = timestamp => {
       if (!start) start = timestamp;
       const progress = Math.min((timestamp - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
@@ -29,7 +29,7 @@ function useCountUp(target, duration = 1800) {
     };
     requestAnimationFrame(step);
   }, [target, duration]);
-  return value || "0";
+  return value || '0';
 }
 
 function StatItem({ number, label }) {
@@ -54,7 +54,7 @@ function Hero() {
   useEffect(() => {
     if (totalSlides === 0) return undefined;
     const slideInterval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % totalSlides);
+      setCurrentSlide(prev => (prev + 1) % totalSlides);
     }, 5000);
     return () => clearInterval(slideInterval);
   }, [totalSlides]);
@@ -76,7 +76,7 @@ function Hero() {
         {heroSlides.map((image, index) => (
           <div
             key={image}
-            className={`hero-slide ${index === currentSlide ? "active" : ""}`}
+            className={`hero-slide ${index === currentSlide ? 'active' : ''}`}
             style={{ backgroundImage: `url(${image})` }}
           />
         ))}
@@ -85,13 +85,13 @@ function Hero() {
 
       {/* Floating particles */}
       <div className="hero-particles" aria-hidden="true">
-        {particles.map((p) => (
+        {particles.map(p => (
           <div
             key={p.id}
             className="hero-particle"
             style={{
               left: p.left,
-              bottom: "-10px",
+              bottom: '-10px',
               width: p.width,
               height: p.height,
               opacity: p.opacity,
@@ -115,8 +115,8 @@ function Hero() {
         </h1>
 
         <p className="hero-subtitle">
-          Discover affordable, eco-friendly charging stations powered by the sun.
-          Join our community of environmentally conscious users sharing clean energy solutions.
+          Discover affordable, eco-friendly charging stations powered by the sun. Join our community
+          of environmentally conscious users sharing clean energy solutions.
         </p>
 
         <div className="hero-stats">

@@ -1,91 +1,96 @@
-import { useEffect, useMemo, useState } from 'react'
-import axios from 'axios'
-import AdminSidebar from '../../components/admin/AdminSidebar'
-import '../../styles/admin.css'
-import useAuth from '../../context/useAuth'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react';
+import axios from 'axios';
+import AdminSidebar from '../../components/admin/AdminSidebar';
+import '../../styles/admin.css';
+import useAuth from '../../context/useAuth';
+import { Link } from 'react-router-dom';
 
 // Requires Admin Role
 function ManageUsers() {
-  const { token } = useAuth()
+  const { token } = useAuth();
   const authConfig = useMemo(() => {
-    if (!token) return null
+    if (!token) return null;
     return {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }
-  }, [token])
+    };
+  }, [token]);
 
-  const [users, setUsers] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchUsers = async () => {
       if (!authConfig) {
-        setLoading(false)
-        return
+        setLoading(false);
+        return;
       }
       try {
-        setLoading(true)
-        const response = await axios.get('/api/users', authConfig)
-        const userList = response.data?.data?.users ?? response.data?.users ?? response.data ?? []
-        setUsers(userList)
-        setError('')
+        setLoading(true);
+        const response = await axios.get('/api/users', authConfig);
+        const userList = response.data?.data?.users ?? response.data?.users ?? response.data ?? [];
+        setUsers(userList);
+        setError('');
       } catch (err) {
-        console.error('Failed to load users', err)
-        setError('Unable to load users. Please try again later.')
+        console.error('Failed to load users', err);
+        setError('Unable to load users. Please try again later.');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchUsers()
-  }, [authConfig])
+    fetchUsers();
+  }, [authConfig]);
 
-  const handlePromote = async (userId) => {
+  const handlePromote = async userId => {
     if (!authConfig) {
-      alert('Admin authentication required.')
-      return
+      alert('Admin authentication required.');
+      return;
     }
 
-    const targetUser = users.find((u) => (u.id ?? u._id) === userId)
-    const currentRole = (targetUser?.role || '').toLowerCase()
-    const newRole = currentRole === 'admin' ? 'user' : 'admin'
-    const confirmMsg = newRole === 'admin' ? 'Promote this user to Admin?' : 'Demote this user to regular user?'
-    if (!window.confirm(confirmMsg)) return
+    const targetUser = users.find(u => (u.id ?? u._id) === userId);
+    const currentRole = (targetUser?.role || '').toLowerCase();
+    const newRole = currentRole === 'admin' ? 'user' : 'admin';
+    const confirmMsg =
+      newRole === 'admin' ? 'Promote this user to Admin?' : 'Demote this user to regular user?';
+    if (!window.confirm(confirmMsg)) return;
 
     try {
-      const { data } = await axios.patch(`/api/users/${userId}/role`, { role: newRole }, authConfig)
-      setUsers((prev) =>
-        prev.map((user) => {
-          const currentId = user.id ?? user._id
-          return currentId === userId ? { ...user, role: data?.data?.user?.role ?? newRole } : user
-        }),
-      )
+      const { data } = await axios.patch(
+        `/api/users/${userId}/role`,
+        { role: newRole },
+        authConfig
+      );
+      setUsers(prev =>
+        prev.map(user => {
+          const currentId = user.id ?? user._id;
+          return currentId === userId ? { ...user, role: data?.data?.user?.role ?? newRole } : user;
+        })
+      );
     } catch (err) {
-      console.error('Update role failed', err)
-      alert('Could not update user role. Please retry.')
+      console.error('Update role failed', err);
+      alert('Could not update user role. Please retry.');
     }
-  }
+  };
 
-  const handleDelete = async (userId) => {
-    if (!window.confirm('Delete this user? This cannot be undone.')) return
+  const handleDelete = async userId => {
+    if (!window.confirm('Delete this user? This cannot be undone.')) return;
 
     if (!authConfig) {
-      alert('Admin authentication required.')
-      return
+      alert('Admin authentication required.');
+      return;
     }
 
     try {
-      await axios.delete(`/api/users/${userId}`, authConfig)
-      setUsers((prev) => prev.filter((user) => (user.id ?? user._id) !== userId))
+      await axios.delete(`/api/users/${userId}`, authConfig);
+      setUsers(prev => prev.filter(user => (user.id ?? user._id) !== userId));
     } catch (err) {
-      console.error('Delete failed', err)
-      alert('Unable to delete user right now.')
+      console.error('Delete failed', err);
+      alert('Unable to delete user right now.');
     }
-  }
+  };
 
   return (
     <div className="admin-layout">
@@ -102,7 +107,11 @@ function ManageUsers() {
         </header>
 
         {loading && <p className="admin-card__title">Loading users...</p>}
-        {error && !loading && <p className="admin-card__change" style={{ color: '#ef4444' }}>{error}</p>}
+        {error && !loading && (
+          <p className="admin-card__change" style={{ color: '#ef4444' }}>
+            {error}
+          </p>
+        )}
 
         {!loading && !error && (
           <div className="admin-table-wrapper">
@@ -116,8 +125,8 @@ function ManageUsers() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => {
-                  const userId = user.id ?? user._id
+                {users.map(user => {
+                  const userId = user.id ?? user._id;
                   return (
                     <tr key={userId}>
                       <td>{user.name}</td>
@@ -131,7 +140,9 @@ function ManageUsers() {
                             onClick={() => handlePromote(userId)}
                             className="admin-button admin-button--ghost"
                           >
-                            {((user.role || '').toString().toLowerCase() === 'admin') ? 'Promote to user' : 'Promote to Admin'}
+                            {(user.role || '').toString().toLowerCase() === 'admin'
+                              ? 'Promote to user'
+                              : 'Promote to Admin'}
                           </button>
                           <button
                             onClick={() => handleDelete(userId)}
@@ -142,7 +153,7 @@ function ManageUsers() {
                         </div>
                       </td>
                     </tr>
-                  )
+                  );
                 })}
                 {!users.length && (
                   <tr>
@@ -157,7 +168,7 @@ function ManageUsers() {
         )}
       </main>
     </div>
-  )
+  );
 }
 
-export default ManageUsers
+export default ManageUsers;

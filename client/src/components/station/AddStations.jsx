@@ -1,6 +1,6 @@
-import PropTypes from "prop-types"
-import { useState, useEffect } from "react"
-import LocationPickerMap from "../map/LocationPickerMap"
+import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
+import LocationPickerMap from '../map/LocationPickerMap';
 
 export default function AddStations({
   open,
@@ -13,239 +13,239 @@ export default function AddStations({
   saving,
   isEditMode = false,
 }) {
-  const [photoPreview, setPhotoPreview] = useState([])
-  const [searchAddress, setSearchAddress] = useState("")
-  const [dragActive, setDragActive] = useState(false)
+  const [photoPreview, setPhotoPreview] = useState([]);
+  const [searchAddress, setSearchAddress] = useState('');
+  const [dragActive, setDragActive] = useState(false);
 
   // Clear photo previews when modal closes
   useEffect(() => {
     if (!open) {
-      setPhotoPreview([])
+      setPhotoPreview([]);
     }
-  }, [open])
+  }, [open]);
 
   // Load existing photos when modal opens in edit mode
   useEffect(() => {
     if (open && isEditMode && formData.photos && formData.photos.length > 0) {
-      setPhotoPreview(formData.photos)
+      setPhotoPreview(formData.photos);
     }
-  }, [open, isEditMode, formData.photos])
+  }, [open, isEditMode, formData.photos]);
 
-  if (!open) return null
+  if (!open) return null;
 
   // Reverse geocoding to get address from coordinates
   const reverseGeocode = async (lat, lng) => {
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`
-      )
-      const data = await response.json()
-      
+      );
+      const data = await response.json();
+
       if (data && data.address) {
-        const address = data.address
-        
+        const address = data.address;
+
         // Extract city (try multiple possible fields)
-        const city = address.city || address.town || address.village || address.municipality || ""
-        
+        const city = address.city || address.town || address.village || address.municipality || '';
+
         // Extract district/county
-        const district = address.county || address.state_district || address.district || ""
-        
+        const district = address.county || address.state_district || address.district || '';
+
         // Build full address
-        const road = address.road || ""
-        const suburb = address.suburb || ""
-        const fullAddress = [road, suburb, city].filter(Boolean).join(", ")
-        
+        const road = address.road || '';
+        const suburb = address.suburb || '';
+        const fullAddress = [road, suburb, city].filter(Boolean).join(', ');
+
         // Update form data
         setFormData(p => ({
           ...p,
           city: city,
           district: district,
-          address: fullAddress || data.display_name
-        }))
+          address: fullAddress || data.display_name,
+        }));
       }
     } catch (error) {
-      console.error("Reverse geocoding failed:", error)
+      console.error('Reverse geocoding failed:', error);
     }
-  }
+  };
 
   const handleSearchAddress = async () => {
-    if (!searchAddress.trim()) return
-    
+    if (!searchAddress.trim()) return;
+
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchAddress + ", Sri Lanka")}&limit=1`
-      )
-      const data = await response.json()
-      
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchAddress + ', Sri Lanka')}&limit=1`
+      );
+      const data = await response.json();
+
       if (data && data.length > 0) {
-        const location = data[0]
-        const lat = parseFloat(location.lat)
-        const lng = parseFloat(location.lon)
-        
+        const location = data[0];
+        const lat = parseFloat(location.lat);
+        const lng = parseFloat(location.lon);
+
         // Check if location is in Sri Lanka (approximate bounds)
         if (lat >= 5.9 && lat <= 9.9 && lng >= 79.5 && lng <= 82.0) {
-          const pos = [lat, lng]
-          setMarker(pos)
-          setFormData((p) => ({
+          const pos = [lat, lng];
+          setMarker(pos);
+          setFormData(p => ({
             ...p,
             latitude: lat.toFixed(6),
             longitude: lng.toFixed(6),
-          }))
-          
+          }));
+
           // Get detailed address info
-          await reverseGeocode(lat, lng)
+          await reverseGeocode(lat, lng);
         } else {
-          alert("Location not found in Sri Lanka. Please try again.")
+          alert('Location not found in Sri Lanka. Please try again.');
         }
       } else {
-        alert("Location not found. Please try a different search term.")
+        alert('Location not found. Please try a different search term.');
       }
     } catch (error) {
-      console.error("Geocoding failed:", error)
-      alert("Failed to search location. Please try again.")
+      console.error('Geocoding failed:', error);
+      alert('Failed to search location. Please try again.');
     }
-  }
+  };
 
   const handleUseGPS = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const pos = [position.coords.latitude, position.coords.longitude]
-          setMarker(pos)
-          setFormData((p) => ({
+        async position => {
+          const pos = [position.coords.latitude, position.coords.longitude];
+          setMarker(pos);
+          setFormData(p => ({
             ...p,
             latitude: pos[0].toFixed(6),
             longitude: pos[1].toFixed(6),
-          }))
-          
+          }));
+
           // Get address details from coordinates
-          await reverseGeocode(pos[0], pos[1])
+          await reverseGeocode(pos[0], pos[1]);
         },
         () => {
-          alert("Unable to get your location")
+          alert('Unable to get your location');
         }
-      )
+      );
     } else {
-      alert("Geolocation is not supported by your browser")
+      alert('Geolocation is not supported by your browser');
     }
-  }
+  };
 
-  const handlePhotoChange = (e) => {
-    const files = Array.from(e.target.files)
+  const handlePhotoChange = e => {
+    const files = Array.from(e.target.files);
     if (files.length + photoPreview.length > 10) {
-      alert("Maximum 10 photos allowed")
-      return
+      alert('Maximum 10 photos allowed');
+      return;
     }
 
     // Validate file size (5MB max each)
     const validFiles = files.filter(file => {
       if (file.size > 5 * 1024 * 1024) {
-        alert(`${file.name} is too large. Max 5MB per file.`)
-        return false
+        alert(`${file.name} is too large. Max 5MB per file.`);
+        return false;
       }
-      return true
-    })
+      return true;
+    });
 
     // Convert files to data URLs
     validFiles.forEach(file => {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onloadend = () => {
-        const dataUrl = reader.result
-        setPhotoPreview(prev => [...prev, dataUrl])
-        setFormData(p => ({ ...p, photos: [...p.photos, dataUrl] }))
-      }
-      reader.readAsDataURL(file)
-    })
-  }
+        const dataUrl = reader.result;
+        setPhotoPreview(prev => [...prev, dataUrl]);
+        setFormData(p => ({ ...p, photos: [...p.photos, dataUrl] }));
+      };
+      reader.readAsDataURL(file);
+    });
+  };
 
-  const handleDrag = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true)
-    } else if (e.type === "dragleave") {
-      setDragActive(false)
+  const handleDrag = e => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
     }
-  }
+  };
 
-  const handleDrop = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragActive(false)
-    
+  const handleDrop = e => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const files = Array.from(e.dataTransfer.files)
+      const files = Array.from(e.dataTransfer.files);
       if (files.length + photoPreview.length > 10) {
-        alert("Maximum 10 photos allowed")
-        return
+        alert('Maximum 10 photos allowed');
+        return;
       }
 
       const validFiles = files.filter(file => {
         if (!file.type.startsWith('image/')) {
-          alert(`${file.name} is not an image file`)
-          return false
+          alert(`${file.name} is not an image file`);
+          return false;
         }
         if (file.size > 5 * 1024 * 1024) {
-          alert(`${file.name} is too large. Max 5MB per file.`)
-          return false
+          alert(`${file.name} is too large. Max 5MB per file.`);
+          return false;
         }
-        return true
-      })
+        return true;
+      });
 
       // Convert files to data URLs
       validFiles.forEach(file => {
-        const reader = new FileReader()
+        const reader = new FileReader();
         reader.onloadend = () => {
-          const dataUrl = reader.result
-          setPhotoPreview(prev => [...prev, dataUrl])
-          setFormData(p => ({ ...p, photos: [...p.photos, dataUrl] }))
-        }
-        reader.readAsDataURL(file)
-      })
+          const dataUrl = reader.result;
+          setPhotoPreview(prev => [...prev, dataUrl]);
+          setFormData(p => ({ ...p, photos: [...p.photos, dataUrl] }));
+        };
+        reader.readAsDataURL(file);
+      });
     }
-  }
+  };
 
-  const removePhoto = (index) => {
-    setPhotoPreview(prev => prev.filter((_, i) => i !== index))
-    setFormData(p => ({ ...p, photos: p.photos.filter((_, i) => i !== index) }))
-  }
+  const removePhoto = index => {
+    setPhotoPreview(prev => prev.filter((_, i) => i !== index));
+    setFormData(p => ({ ...p, photos: p.photos.filter((_, i) => i !== index) }));
+  };
 
   const addConnector = () => {
     setFormData(p => ({
       ...p,
       connectors: [
         ...p.connectors,
-        { type: "TYPE2", powerKW: 22, totalSlots: 1, availableSlots: 1 }
-      ]
-    }))
-  }
+        { type: 'TYPE2', powerKW: 22, totalSlots: 1, availableSlots: 1 },
+      ],
+    }));
+  };
 
-  const removeConnector = (index) => {
+  const removeConnector = index => {
     if (formData.connectors.length === 1) {
-      alert("At least one connector is required")
-      return
+      alert('At least one connector is required');
+      return;
     }
     setFormData(p => ({
       ...p,
-      connectors: p.connectors.filter((_, i) => i !== index)
-    }))
-  }
+      connectors: p.connectors.filter((_, i) => i !== index),
+    }));
+  };
 
   const updateConnector = (index, field, value) => {
     setFormData(p => ({
       ...p,
-      connectors: p.connectors.map((c, i) => 
-        i === index ? { ...c, [field]: value } : c
-      )
-    }))
-  }
+      connectors: p.connectors.map((c, i) => (i === index ? { ...c, [field]: value } : c)),
+    }));
+  };
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal station-modal modern-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal station-modal modern-modal" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <h2>{isEditMode ? 'Edit Station' : 'Add New Station'}</h2>
-          <button className="modal-close" onClick={onClose}>&times;</button>
+          <button className="modal-close" onClick={onClose}>
+            &times;
+          </button>
         </div>
 
         <div className="modal-body">
@@ -258,7 +258,7 @@ export default function AddStations({
                 <label>Station Name *</label>
                 <input
                   value={formData.name}
-                  onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
+                  onChange={e => setFormData(p => ({ ...p, name: e.target.value }))}
                   placeholder="Enter station name"
                   className="modern-input"
                 />
@@ -268,7 +268,7 @@ export default function AddStations({
                 <label>Description</label>
                 <textarea
                   value={formData.description}
-                  onChange={(e) => setFormData((p) => ({ ...p, description: e.target.value }))}
+                  onChange={e => setFormData(p => ({ ...p, description: e.target.value }))}
                   placeholder="Enter description"
                   rows={3}
                   className="modern-input"
@@ -279,7 +279,7 @@ export default function AddStations({
                 <label>Status</label>
                 <select
                   value={formData.status}
-                  onChange={(e) => setFormData((p) => ({ ...p, status: e.target.value }))}
+                  onChange={e => setFormData(p => ({ ...p, status: e.target.value }))}
                   className="modern-input"
                 >
                   <option value="Open">Open</option>
@@ -293,7 +293,7 @@ export default function AddStations({
                   <label>City</label>
                   <input
                     value={formData.city}
-                    onChange={(e) => setFormData((p) => ({ ...p, city: e.target.value }))}
+                    onChange={e => setFormData(p => ({ ...p, city: e.target.value }))}
                     placeholder="City"
                     className="modern-input"
                   />
@@ -302,7 +302,7 @@ export default function AddStations({
                   <label>District</label>
                   <input
                     value={formData.district}
-                    onChange={(e) => setFormData((p) => ({ ...p, district: e.target.value }))}
+                    onChange={e => setFormData(p => ({ ...p, district: e.target.value }))}
                     placeholder="District"
                     className="modern-input"
                   />
@@ -313,7 +313,7 @@ export default function AddStations({
                 <label>Address</label>
                 <input
                   value={formData.address}
-                  onChange={(e) => setFormData((p) => ({ ...p, address: e.target.value }))}
+                  onChange={e => setFormData(p => ({ ...p, address: e.target.value }))}
                   placeholder="Full address"
                   className="modern-input"
                 />
@@ -328,40 +328,32 @@ export default function AddStations({
                 <input
                   type="text"
                   value={searchAddress}
-                  onChange={(e) => setSearchAddress(e.target.value)}
+                  onChange={e => setSearchAddress(e.target.value)}
                   placeholder="Search address in Sri Lanka..."
                   className="search-input"
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearchAddress()}
+                  onKeyPress={e => e.key === 'Enter' && handleSearchAddress()}
                 />
-                <button
-                  type="button"
-                  onClick={handleSearchAddress}
-                  className="search-btn"
-                >
+                <button type="button" onClick={handleSearchAddress} className="search-btn">
                   Search
                 </button>
               </div>
 
-              <button
-                type="button"
-                onClick={handleUseGPS}
-                className="gps-btn"
-              >
+              <button type="button" onClick={handleUseGPS} className="gps-btn">
                 📍 Use GPS
               </button>
 
               <LocationPickerMap
                 value={marker}
-                onChange={async (pos) => {
-                  setMarker(pos)
-                  setFormData((p) => ({
+                onChange={async pos => {
+                  setMarker(pos);
+                  setFormData(p => ({
                     ...p,
                     latitude: pos[0].toFixed(6),
                     longitude: pos[1].toFixed(6),
-                  }))
-                  
+                  }));
+
                   // Get address details from coordinates
-                  await reverseGeocode(pos[0], pos[1])
+                  await reverseGeocode(pos[0], pos[1]);
                 }}
               />
 
@@ -394,11 +386,7 @@ export default function AddStations({
           <div className="form-section full-width-section">
             <div className="section-header">
               <h3 className="form-section-title">CONNECTORS</h3>
-              <button
-                type="button"
-                onClick={addConnector}
-                className="add-connector-btn"
-              >
+              <button type="button" onClick={addConnector} className="add-connector-btn">
                 + Add Connector
               </button>
             </div>
@@ -418,13 +406,13 @@ export default function AddStations({
                       </button>
                     )}
                   </div>
-                  
+
                   <div className="connector-fields-row">
                     <div className="form-group">
                       <label>Type</label>
                       <select
                         value={connector.type}
-                        onChange={(e) => updateConnector(index, "type", e.target.value)}
+                        onChange={e => updateConnector(index, 'type', e.target.value)}
                         className="modern-input"
                       >
                         <option value="TYPE2">TYPE2</option>
@@ -441,7 +429,7 @@ export default function AddStations({
                       <input
                         type="number"
                         value={connector.powerKW}
-                        onChange={(e) => updateConnector(index, "powerKW", Number(e.target.value))}
+                        onChange={e => updateConnector(index, 'powerKW', Number(e.target.value))}
                         min="0"
                         className="modern-input"
                       />
@@ -452,7 +440,7 @@ export default function AddStations({
                       <input
                         type="number"
                         value={connector.totalSlots}
-                        onChange={(e) => updateConnector(index, "totalSlots", Number(e.target.value))}
+                        onChange={e => updateConnector(index, 'totalSlots', Number(e.target.value))}
                         min="1"
                         className="modern-input"
                       />
@@ -463,7 +451,9 @@ export default function AddStations({
                       <input
                         type="number"
                         value={connector.availableSlots}
-                        onChange={(e) => updateConnector(index, "availableSlots", Number(e.target.value))}
+                        onChange={e =>
+                          updateConnector(index, 'availableSlots', Number(e.target.value))
+                        }
                         min="0"
                         max={connector.totalSlots}
                         className="modern-input"
@@ -522,24 +512,30 @@ export default function AddStations({
                 ))}
               </div>
             ) : (
-              <p className="no-photos-text">
-                No photos yet. Upload files above.
-              </p>
+              <p className="no-photos-text">No photos yet. Upload files above.</p>
             )}
           </div>
         </div>
 
         <div className="modal-footer">
-          <button className="admin-button admin-button--outline" onClick={onClose} disabled={saving}>
+          <button
+            className="admin-button admin-button--outline"
+            onClick={onClose}
+            disabled={saving}
+          >
             Cancel
           </button>
-          <button className="admin-button admin-button--primary" onClick={onSubmit} disabled={saving}>
-            {saving ? "Saving..." : (isEditMode ? "Update Station" : "Add Station")}
+          <button
+            className="admin-button admin-button--primary"
+            onClick={onSubmit}
+            disabled={saving}
+          >
+            {saving ? 'Saving...' : isEditMode ? 'Update Station' : 'Add Station'}
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 AddStations.propTypes = {
@@ -552,4 +548,4 @@ AddStations.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   saving: PropTypes.bool.isRequired,
   isEditMode: PropTypes.bool,
-}
+};

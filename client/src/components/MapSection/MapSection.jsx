@@ -1,44 +1,43 @@
 import { useEffect, useState, useCallback } from 'react';
 import { FiMapPin } from 'react-icons/fi';
 import SearchResults from '../SearchBar/SearchResults';
-import MapView from "../map/MapView";
+import MapView from '../map/MapView';
 import { getTopRatedStations, nearbyStations } from '../../services/stationService';
 import useGeolocation from '../../hooks/useGeoLocation';
 
 function MapSection() {
-
   const [stations, setStations] = useState([]);
   const [sortOption, setSortOption] = useState('distance');
   const [error, setError] = useState(null);
 
   const { geolocation, loading, getLocation } = useGeolocation();
 
-  //Fetch 5 highest rated stations - stations/top-rated api endpoint 
+  //Fetch 5 highest rated stations - stations/top-rated api endpoint
   const fetchTopRatedStations = useCallback(async () => {
     try {
       const data = await getTopRatedStations();
       setStations(data);
     } catch (err) {
-      console.error("Error fetching top rated stations:", err);
+      console.error('Error fetching top rated stations:', err);
       setError(err.message);
     }
   }, []);
 
   const fetchNearbyStations = useCallback(async () => {
     if (!geolocation) return;
-    try { 
+    try {
       const maxDistance = 50000; //in meters
-      const limit = 5; 
+      const limit = 5;
       const data = await nearbyStations(geolocation, maxDistance, limit);
       setStations(data);
     } catch (err) {
-      console.error("Error fetching neraby stations:", err);
+      console.error('Error fetching neraby stations:', err);
       setError(err.message);
     }
   }, [geolocation]);
 
   useEffect(() => {
-    getLocation(); //get the location on page mount 
+    getLocation(); //get the location on page mount
   }, [getLocation]);
 
   //handle sort options - rating, distance
@@ -65,13 +64,17 @@ function MapSection() {
         </div>
 
         <div className="map-content">
-          <div className='map-view'>
-            <MapView stations={stations} userLocation={geolocation} loadingLocation={loading}/>
+          <div className="map-view">
+            <MapView stations={stations} userLocation={geolocation} loadingLocation={loading} />
           </div>
           <div className="station-list">
             <div className="list-header">
               <h3>{stations.length} stations found</h3>
-              <select className="sort-select" value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
+              <select
+                className="sort-select"
+                value={sortOption}
+                onChange={e => setSortOption(e.target.value)}
+              >
                 <option value="distance">Sort by Distance</option>
                 <option value="rating">Sort by Rating</option>
               </select>
@@ -82,7 +85,12 @@ function MapSection() {
               ) : stations.length === 0 ? (
                 <p className="no-results">No stations found. Try adjusting your search criteria.</p>
               ) : (
-                <SearchResults stations={stations} error={error} userLocation={geolocation} loadingLocation={loading}/> 
+                <SearchResults
+                  stations={stations}
+                  error={error}
+                  userLocation={geolocation}
+                  loadingLocation={loading}
+                />
               )}
             </div>
           </div>

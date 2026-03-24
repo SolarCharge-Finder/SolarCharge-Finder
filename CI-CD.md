@@ -9,6 +9,7 @@ This project uses a comprehensive CI/CD pipeline with GitHub Actions, Docker, an
 ### 1. GitHub Actions Workflows
 
 #### CI Pipeline (`.github/workflows/ci.yml`)
+
 - **Triggers**: Push/PR to `main` and `develop` branches
 - **Backend CI**:
   - Tests on Node.js 18.x and 20.x
@@ -24,6 +25,7 @@ This project uses a comprehensive CI/CD pipeline with GitHub Actions, Docker, an
   - Fails on high severity vulnerabilities
 
 #### CD Pipeline (`.github/workflows/cd.yml`)
+
 - **Triggers**: Push to `main` branch or manual dispatch
 - **Actions**:
   - Deploys backend to production
@@ -31,6 +33,7 @@ This project uses a comprehensive CI/CD pipeline with GitHub Actions, Docker, an
   - Sends deployment notifications
 
 #### Code Quality (`.github/workflows/code-quality.yml`)
+
 - **Triggers**: Push/PR to `main` and `develop`
 - **Actions**:
   - Runs ESLint on backend and frontend
@@ -38,6 +41,7 @@ This project uses a comprehensive CI/CD pipeline with GitHub Actions, Docker, an
   - Optional SonarCloud integration
 
 #### Dependency Updates (`.github/workflows/dependency-update.yml`)
+
 - **Triggers**: Weekly on Mondays at 9 AM UTC
 - **Actions**:
   - Checks for outdated dependencies
@@ -46,6 +50,7 @@ This project uses a comprehensive CI/CD pipeline with GitHub Actions, Docker, an
 ### 2. Testing Infrastructure
 
 #### Backend Testing (Jest)
+
 - **Config**: `backend/jest.config.js`
 - **Test files**: `backend/__tests__/*.test.js`
 - **Commands**:
@@ -56,6 +61,7 @@ This project uses a comprehensive CI/CD pipeline with GitHub Actions, Docker, an
   ```
 
 #### Frontend Testing (Vitest + React Testing Library)
+
 - **Config**: `client/vitest.config.js`
 - **Test files**: `client/src/**/*.test.jsx`
 - **Commands**:
@@ -68,6 +74,7 @@ This project uses a comprehensive CI/CD pipeline with GitHub Actions, Docker, an
 ### 3. Docker Configuration
 
 #### Development Environment
+
 ```bash
 # Start all services (MongoDB + Backend + Frontend)
 docker-compose up
@@ -80,11 +87,13 @@ docker-compose down
 ```
 
 **Services**:
+
 - MongoDB: Port 27017
 - Backend: Port 5001
 - Frontend: Port 3000
 
 #### Production Environment
+
 ```bash
 # Start production services
 docker-compose -f docker-compose.prod.yml up
@@ -94,6 +103,7 @@ docker-compose -f docker-compose.prod.yml up --build
 ```
 
 **Features**:
+
 - Multi-stage builds for optimization
 - Non-root users for security
 - Health checks for all services
@@ -102,25 +112,30 @@ docker-compose -f docker-compose.prod.yml up --build
 ### 4. Pre-commit Hooks (Husky)
 
 Automatically runs before commits:
+
 - Lints staged files
 - Fixes auto-fixable issues
 - Prevents commits with errors
 
 Before push:
+
 - Runs all tests
 - Prevents push if tests fail
 
 ### 5. Code Quality Tools
 
 #### ESLint
+
 - Backend: `.eslintrc.cjs`
 - Frontend: `eslint.config.js`
 
 #### Prettier
+
 - Config: `.prettierrc`
 - Ignored files: `.prettierignore`
 
 #### EditorConfig
+
 - Config: `.editorconfig`
 - Ensures consistent formatting across editors
 
@@ -129,6 +144,7 @@ Before push:
 ### Initial Setup
 
 1. **Install dependencies**:
+
    ```bash
    npm run install:all
    # or
@@ -136,6 +152,7 @@ Before push:
    ```
 
 2. **Setup Git hooks**:
+
    ```bash
    npm run prepare
    ```
@@ -147,6 +164,7 @@ Before push:
 ### Development
 
 #### Local Development
+
 ```bash
 # Start both frontend and backend
 npm run dev
@@ -161,6 +179,7 @@ npm run dev:frontend
 ```
 
 #### Docker Development
+
 ```bash
 # Using npm
 npm run docker:dev
@@ -220,19 +239,23 @@ npm run build:frontend
 Set these in GitHub Settings → Secrets → Actions:
 
 **Backend**:
+
 - `MONGODB_PROD_URI`: Production MongoDB connection string
 - `JWT_SECRET`: JWT signing secret
 
 **Frontend**:
+
 - `VITE_API_URL`: Production API URL
 
 **Optional**:
+
 - `MONGODB_TEST_URI`: Test database URI for CI
 - `SONAR_TOKEN`: SonarCloud token (if using)
 
 ### Manual Deployment
 
 1. **Backend Deployment**:
+
    ```bash
    cd backend
    npm ci --production
@@ -264,33 +287,36 @@ docker-compose -f docker-compose.prod.yml down
 
 Quick reference for available make commands:
 
-| Command | Description |
-|---------|-------------|
-| `make help` | Show all available commands |
-| `make install` | Install all dependencies |
-| `make dev` | Start development servers |
-| `make build` | Build for production |
-| `make test` | Run all tests |
-| `make lint` | Run linters |
-| `make lint-fix` | Fix linting issues |
-| `make clean` | Clean node_modules and artifacts |
-| `make docker-dev` | Start Docker dev environment |
-| `make docker-prod` | Start Docker prod environment |
-| `make docker-down` | Stop Docker containers |
-| `make docker-clean` | Remove containers and volumes |
+| Command             | Description                      |
+| ------------------- | -------------------------------- |
+| `make help`         | Show all available commands      |
+| `make install`      | Install all dependencies         |
+| `make dev`          | Start development servers        |
+| `make build`        | Build for production             |
+| `make test`         | Run all tests                    |
+| `make lint`         | Run linters                      |
+| `make lint-fix`     | Fix linting issues               |
+| `make clean`        | Clean node_modules and artifacts |
+| `make docker-dev`   | Start Docker dev environment     |
+| `make docker-prod`  | Start Docker prod environment    |
+| `make docker-down`  | Stop Docker containers           |
+| `make docker-clean` | Remove containers and volumes    |
 
 ## 📊 Monitoring & Quality
 
 ### Code Coverage
+
 - Backend coverage reports: `backend/coverage/`
 - Frontend coverage reports: `client/coverage/`
 - Uploaded to Codecov in CI pipeline
 
 ### Bundle Analysis
+
 - Frontend bundle size checked in CI
 - View in build logs
 
 ### Security
+
 - npm audit runs automatically in CI
 - Fails build on high severity issues
 - Weekly dependency update checks
@@ -318,17 +344,20 @@ Quick reference for available make commands:
 ### CI Failing
 
 **Linting errors**:
+
 ```bash
 npm run lint:fix
 ```
 
 **Test failures**:
+
 ```bash
 npm test
 # Check logs and fix failing tests
 ```
 
 **Build errors**:
+
 ```bash
 npm run build
 # Check error messages
@@ -337,6 +366,7 @@ npm run build
 ### Docker Issues
 
 **Port already in use**:
+
 ```bash
 # Stop conflicting services
 lsof -ti:5001 | xargs kill -9
@@ -344,6 +374,7 @@ lsof -ti:3000 | xargs kill -9
 ```
 
 **Clean Docker state**:
+
 ```bash
 make docker-clean
 docker system prune -a

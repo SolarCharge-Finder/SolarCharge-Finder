@@ -30,18 +30,21 @@ SolarCharge-Finder/
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <your-repo-url>
 cd SolarCharge-Finder
 ```
 
 2. Install backend dependencies:
+
 ```bash
 cd backend
 npm install
 ```
 
 3. Install frontend dependencies:
+
 ```bash
 cd ../client
 npm install
@@ -60,33 +63,39 @@ npm install
 ### Running the Application
 
 1. Start MongoDB (if running locally):
+
 ```bash
 mongod
 ```
 
 2. Start the backend server:
+
 ```bash
 cd backend
 npm run dev
 ```
 
 3. Start the frontend development server:
+
 ```bash
 cd client
 npm run dev
 ```
 
 The application will be available at:
+
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:5000
 
 ## Available Scripts
 
 ### Backend
+
 - `npm start` - Start the production server
 - `npm run dev` - Start the development server with nodemon
 
 ### Frontend
+
 - `npm run dev` - Start the Vite dev server
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
@@ -95,6 +104,7 @@ The application will be available at:
 ## Tech Stack
 
 ### Backend
+
 - Express.js - Web framework
 - MongoDB - Database
 - Mongoose - ODM
@@ -103,6 +113,7 @@ The application will be available at:
 - dotenv - Environment variables
 
 ### Frontend
+
 - React 18 - UI library
 - Vite - Build tool
 - React Router DOM - Routing
@@ -112,10 +123,11 @@ The application will be available at:
 ## License
 
 ISC
-   ```
-   MONGO_URI=mongodb://localhost:27017/solarcharge-finder
-   PORT=5000
-   ```
+
+```
+MONGO_URI=mongodb://localhost:27017/solarcharge-finder
+PORT=5000
+```
 
 4. Start the server:
    ```bash
@@ -125,11 +137,13 @@ ISC
 ### Frontend Setup
 
 1. Navigate to the client directory:
+
    ```bash
    cd client
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```

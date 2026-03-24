@@ -1,5 +1,13 @@
 import { useEffect, useRef } from 'react';
-import { FiSun, FiUsers, FiClock, FiSmartphone, FiDollarSign, FiShield, FiZap } from 'react-icons/fi';
+import {
+  FiSun,
+  FiUsers,
+  FiClock,
+  FiSmartphone,
+  FiDollarSign,
+  FiShield,
+  FiZap,
+} from 'react-icons/fi';
 
 const features = [
   {
@@ -57,8 +65,8 @@ function Features() {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
             observer.unobserve(entry.target);
@@ -68,7 +76,7 @@ function Features() {
       { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
     );
 
-    cardRefs.current.forEach((card) => {
+    cardRefs.current.forEach(card => {
       if (card) observer.observe(card);
     });
 
@@ -96,7 +104,7 @@ function Features() {
               <div
                 className="feature-card"
                 key={feature.title}
-                ref={(el) => (cardRefs.current[index] = el)}
+                ref={el => (cardRefs.current[index] = el)}
                 style={{
                   transitionDelay: `${index * 80}ms`,
                   '--card-accent': feature.accentGradient,

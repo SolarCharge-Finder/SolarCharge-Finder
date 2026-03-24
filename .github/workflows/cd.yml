@@ -2,7 +2,7 @@ name: CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -10,16 +10,16 @@ jobs:
     name: Deploy to Production
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-      
+
       # Backend deployment
       - name: Deploy Backend
         working-directory: ./backend
@@ -35,7 +35,7 @@ jobs:
           NODE_ENV: production
           MONGODB_URI: ${{ secrets.MONGODB_PROD_URI }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      
+
       # Frontend deployment
       - name: Build and Deploy Frontend
         working-directory: ./client
@@ -51,7 +51,7 @@ jobs:
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           NPM_CONFIG_PRODUCTION: false
-      
+
       - name: Notify deployment
         run: |
           echo "Deployment completed successfully!"

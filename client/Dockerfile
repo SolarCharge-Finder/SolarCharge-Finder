@@ -6,7 +6,7 @@ FROM base AS deps
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 # Build stage
 FROM base AS builder

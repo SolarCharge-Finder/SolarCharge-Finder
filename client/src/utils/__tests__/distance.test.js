@@ -1,9 +1,8 @@
-import { describe, it, expect } from "vitest";
-import { calculateDistance } from "../distance";
+import { describe, it, expect } from 'vitest';
+import { calculateDistance } from '../distance';
 
-describe("calculateDistance", () => {
-
-  it("returns 0 for identical points", () => {
+describe('calculateDistance', () => {
+  it('returns 0 for identical points', () => {
     const point = [79.857, 6.915]; // [lng, lat]
 
     const result = calculateDistance(point, point);
@@ -11,7 +10,7 @@ describe("calculateDistance", () => {
     expect(result).toBeCloseTo(0, 5);
   });
 
-  it("calculates correct distance between two known points", () => {
+  it('calculates correct distance between two known points', () => {
     // Colombo
     const colombo = [79.8612, 6.9271];
 
@@ -25,7 +24,7 @@ describe("calculateDistance", () => {
     expect(distance).toBeLessThan(120);
   });
 
-  it("is symmetrical (A to B equals B to A)", () => {
+  it('is symmetrical (A to B equals B to A)', () => {
     const pointA = [79.8612, 6.9271];
     const pointB = [80.6337, 7.2906];
 
@@ -35,19 +34,16 @@ describe("calculateDistance", () => {
     expect(distanceAB).toBeCloseTo(distanceBA, 5);
   });
 
-  it("returns a number", () => {
-    const result = calculateDistance(
-      [79.8612, 6.9271],
-      [80.6337, 7.2906]
-    );
+  it('returns a number', () => {
+    const result = calculateDistance([79.8612, 6.9271], [80.6337, 7.2906]);
 
-    expect(typeof result).toBe("number");
+    expect(typeof result).toBe('number');
   });
 
-  it("handles negative coordinates correctly", () => {
+  it('handles negative coordinates correctly', () => {
     // Example: London to New York
     const london = [-0.1276, 51.5074];
-    const newYork = [-74.0060, 40.7128];
+    const newYork = [-74.006, 40.7128];
 
     const distance = calculateDistance(london, newYork);
 
@@ -55,5 +51,4 @@ describe("calculateDistance", () => {
     expect(distance).toBeGreaterThan(5000);
     expect(distance).toBeLessThan(6000);
   });
-
 });

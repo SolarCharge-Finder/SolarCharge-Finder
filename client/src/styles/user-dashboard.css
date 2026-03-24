@@ -14,7 +14,12 @@
   background: linear-gradient(150deg, #eff8f2 0%, #fdfdfd 55%, #eff1fb 100%);
   color: var(--user-text);
   padding: clamp(2rem, 4vw, 4rem);
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
 }
 
 .user-dashboard__container {
@@ -568,7 +573,9 @@
   background: var(--user-accent);
   color: #fff;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   box-shadow: 0 15px 30px rgba(16, 152, 103, 0.25);
 }
 

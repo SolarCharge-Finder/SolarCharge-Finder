@@ -13,7 +13,12 @@
   min-height: 100vh;
   display: flex;
   background: var(--admin-bg);
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   color: var(--admin-text);
 }
 
@@ -89,7 +94,9 @@
   color: var(--admin-muted);
   text-decoration: none;
   font-weight: 600;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .admin-sidebar__link:hover {
@@ -161,7 +168,9 @@
   padding: 0.65rem 1.5rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .admin-button:hover {
@@ -860,7 +869,7 @@
 }
 
 .map-hint::before {
-  content: "💡";
+  content: '💡';
 }
 
 /* Location Search Styles */
