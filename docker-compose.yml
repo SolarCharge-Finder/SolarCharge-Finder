@@ -13,7 +13,7 @@ services:
       - /app/node_modules
     networks:
       - solarcharge-network
-    command: sh -c "npm install && npm run dev"
+    command: sh -c "npm install && npx nodemon --legacy-watch server.js"
 
   frontend:
     image: node:20-alpine
@@ -22,6 +22,8 @@ services:
     restart: unless-stopped
     env_file:
       - ./client/.env
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
     ports:
       - '3000:3000'
     volumes:
@@ -31,7 +33,7 @@ services:
       - backend
     networks:
       - solarcharge-network
-    command: sh -c "npm install && npm run dev -- --host"
+    command: sh -c "npm install && npm run dev -- --host --port 3000"
 
 networks:
   solarcharge-network:
