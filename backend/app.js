@@ -25,14 +25,22 @@ const app = express();
 // Connect to MongoDB (uses process.env.MONGODB_URI)
 connectDB();
 
+// Allow configuring production/frontend origins via ALLOWED_ORIGINS env var (comma-separated)
+const defaultOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:5173',
+];
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
+const origins = allowedOrigins.length ? allowedOrigins : defaultOrigins;
+
 app.use(
   cors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:5173',
-      'http://127.0.0.1:3000',
-      'http://127.0.0.1:5173',
-    ],
+    origin: origins,
     credentials: true,
   })
 );

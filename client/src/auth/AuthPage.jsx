@@ -68,7 +68,8 @@ function AuthPage() {
     ));
 
   const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:5001/api/auth/google';
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+    window.location.href = `${API_BASE.replace(/\/$/, '')}/auth/google`;
   };
 
   const handleToggle = active => () => {
@@ -117,7 +118,7 @@ function AuthPage() {
     setMessage({ type: '', text: '' });
 
     try {
-      const API_BASE_URL = 'http://localhost:5001/api/users';
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
       if (form === 'signup') {
         const response = await fetch(`${API_BASE_URL}/register`, {
