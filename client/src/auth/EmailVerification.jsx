@@ -24,7 +24,8 @@ function EmailVerification() {
       try {
         console.log('Attempting to verify token:', token);
 
-        const response = await fetch(`http://localhost:5001/api/users/verify-email/${token}`);
+        const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+        const response = await fetch(`${API_BASE.replace(/\/$/, '')}/users/verify-email/${token}`);
         const data = await response.json();
 
         console.log('Verification response:', data);

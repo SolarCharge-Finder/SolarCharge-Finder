@@ -4,6 +4,7 @@
   "description": "SolarCharge Finder - MERN Stack Application",
   "private": true,
   "scripts": {
+    "start": "node backend/server.js",
     "install:all": "npm install && npm install --prefix backend && npm install --prefix client",
     "postinstall": "npm install --prefix backend && npm install --prefix client",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
