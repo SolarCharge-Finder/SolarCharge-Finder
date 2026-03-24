@@ -39,10 +39,15 @@
   },
   "lint-staged": {
     "backend/**/*.js": [
-      "npm run lint:fix --prefix backend"
+      "npm run lint:fix --prefix backend",
+      "prettier --write"
     ],
     "client/**/*.{js,jsx}": [
-      "npm run lint:fix --prefix client"
+      "npm run lint:fix --prefix client",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
     ]
   },
   "engines": {
