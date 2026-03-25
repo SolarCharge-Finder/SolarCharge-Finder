@@ -121,7 +121,7 @@ function AuthPage() {
       const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
       if (form === 'signup') {
-        const response = await fetch(`${API_BASE_URL}/register`, {
+        const response = await fetch(`${API_BASE_URL}/users/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -154,7 +154,7 @@ function AuthPage() {
           });
         }
       } else if (form === 'signin') {
-        const response = await fetch(`${API_BASE_URL}/login`, {
+        const response = await fetch(`${API_BASE_URL}/users/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
