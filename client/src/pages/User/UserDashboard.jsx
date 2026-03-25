@@ -202,7 +202,13 @@ function UserDashboard() {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!isMounted) return;
-        setMyReviews(data?.data ?? []);
+        // Normalize response to an array in case backend returns an object wrapper
+        let reviewsPayload = data?.data ?? data;
+        if (!Array.isArray(reviewsPayload)) {
+          // Common shapes: { reviews: [...] } or { data: [...] }
+          reviewsPayload = reviewsPayload?.reviews ?? reviewsPayload?.data ?? [];
+        }
+        setMyReviews(Array.isArray(reviewsPayload) ? reviewsPayload : []);
         setMyReviewsError('');
       } catch (err) {
         if (!isMounted) return;
