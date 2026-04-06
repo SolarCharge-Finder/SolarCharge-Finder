@@ -11,7 +11,7 @@ function AboutUs() {
 
           <p className="page-intro">
             We are a technology-driven platform dedicated to promoting clean energy and sustainable
-            transportation. Our mission is to make solar-powered vehicle charging simple,
+            transportation. Our mission is to make solar powered vehicle charging simple,
             accessible, and reliable for everyone.
           </p>
 
@@ -22,7 +22,7 @@ function AboutUs() {
             </h2>
             <p className="content-text">
               By combining smart location-based services with secure online payments, we help users
-              easily find and utilize solar-powered charging infrastructure. We believe
+              easily find and utilize solar powered charging infrastructure. We believe
               sustainability should be easy, transparent, and user-friendly.
             </p>
             <div className="highlight-box">

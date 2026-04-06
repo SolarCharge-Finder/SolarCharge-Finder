@@ -12,7 +12,7 @@ import {
 const features = [
   {
     Icon: FiSun,
-    title: 'Eco-Friendly Energy',
+    title: 'Eco Friendly Energy',
     desc: 'All listed stations are powered by solar panels, reducing your carbon footprint with every charge.',
     color: '#10b981',
     bg: 'rgba(16, 185, 129, 0.1)',
@@ -21,7 +21,7 @@ const features = [
   {
     Icon: FiUsers,
     title: 'Community Sharing',
-    desc: 'Users can add, review, and rate stations — building a trusted network of solar charging spots.',
+    desc: 'Users can add, review, and rate stations  building a trusted network of solar charging spots.',
     color: '#f59e0b',
     bg: 'rgba(245, 158, 11, 0.1)',
     accentGradient: 'linear-gradient(90deg, #fbbf24, #d97706)',
@@ -93,7 +93,7 @@ function Features() {
           </span>
           <h2 className="section-title">Built for a Sustainable Future</h2>
           <p className="section-desc">
-            Everything you need to find, use, and share solar-powered charging infrastructure.
+            Everything you need to find, use, and share solar powered charging infrastructure.
           </p>
         </div>
 

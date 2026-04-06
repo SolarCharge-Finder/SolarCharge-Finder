@@ -122,7 +122,7 @@ function AdminDashboard() {
           <div className="admin-panel">
             <h2>Sustainability Goals</h2>
             <p className="admin-card__title" style={{ marginTop: '0.5rem' }}>
-              Tracking the growth of solar-powered charging infrastructure nationwide.
+              Tracking the growth of solar powered charging infrastructure nationwide.
             </p>
             <ul className="admin-goal-list">
               {goals.map(goal => (

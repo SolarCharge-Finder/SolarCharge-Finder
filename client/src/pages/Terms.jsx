@@ -33,7 +33,7 @@ function Terms() {
             </h2>
             <p className="content-text">Our platform allows users to:</p>
             <ul className="content-list">
-              <li>Search for nearby solar-powered charging stations</li>
+              <li>Search for nearby solar powered charging stations</li>
               <li>View availability and pricing</li>
               <li>Make secure online payments</li>
               <li>Receive digital payment slips</li>

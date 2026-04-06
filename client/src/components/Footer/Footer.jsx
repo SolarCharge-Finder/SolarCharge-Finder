@@ -13,7 +13,7 @@ function Footer() {
               </span>
             </Link>
             <p className="footer-tagline">
-              Making solar-powered charging accessible for everyone. Find, rate, and share clean
+              Making solar powered charging accessible for everyone. Find, rate, and share clean
               energy stations worldwide.
             </p>
           </div>

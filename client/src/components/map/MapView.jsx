@@ -24,7 +24,20 @@ const redIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-const MapView = ({ stations = [], userLocation }) => {
+// custom marker for excess solar energy offers
+const greenIcon = new L.Icon({
+  iconUrl:
+    'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+  iconRetinaUrl:
+    'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+const MapView = ({ stations = [], sellRequests = [], userLocation }) => {
   // Default center (Sri Lanka fallback)
   const defaultCenter = [7.8731, 80.7718];
 
@@ -72,16 +85,52 @@ const MapView = ({ stations = [], userLocation }) => {
             </Marker>
           )
       )}
+
+      {/* Sell request markers */}
+      {sellRequests.map(
+        request =>
+          request.location?.coordinates?.[1] !== undefined &&
+          request.location?.coordinates?.[0] !== undefined && (
+            <Marker
+              key={`sell-${request._id}`}
+              position={[request.location.coordinates[1], request.location.coordinates[0]]}
+              icon={greenIcon}
+            >
+              <Popup>
+                <div>
+                  <strong>Excess Solar Energy Offer</strong>
+                  <br />
+                    Username: {request.username || 'User'}
+                    <br />
+                  Energy: {request.energyAmount} kWh
+                  <br />
+                  Status: {request.status}
+                  {request.comment ? (
+                    <>
+                      <br />
+                      Note: {request.comment}
+                    </>
+                  ) : null}
+                </div>
+              </Popup>
+            </Marker>
+          )
+      )}
     </MapContainer>
   );
 };
 
 MapView.propTypes = {
   stations: PropTypes.array.isRequired,
+  sellRequests: PropTypes.array,
   userLocation: PropTypes.shape({
     latitude: PropTypes.number,
     longitude: PropTypes.number,
   }),
+};
+
+MapView.defaultProps = {
+  sellRequests: [],
 };
 
 export default MapView;

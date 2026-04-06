@@ -9,14 +9,14 @@ describe('App', () => {
     // Check for the main heading
     expect(
       screen.getByRole('heading', {
-        name: /Find Solar-Powered Charging Stations Near You/i,
+        name: /Find Solar Powered Charging Stations Near You/i,
         level: 1,
       })
     ).toBeInTheDocument();
 
     // Check for the description
     expect(
-      screen.getByText(/Discover affordable, eco-friendly charging stations powered by the sun/i)
+      screen.getByText(/Discover affordable, eco friendly charging stations powered by the sun/i)
     ).toBeInTheDocument();
   });
 });
