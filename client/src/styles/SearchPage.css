@@ -261,6 +261,20 @@
   color: #ef4444;
 }
 
+.sell-requests-section {
+  margin-top: 1rem;
+}
+
+.sell-requests-section__title {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: var(--clr-text-primary);
+}
+
+.sell-request-card {
+  border-style: dashed;
+}
+
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 1024px) {
   .search-page-layout {

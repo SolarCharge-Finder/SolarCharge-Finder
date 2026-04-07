@@ -1,5 +1,6 @@
 import express from 'express';
 import {
+  getActiveSellRequests,
   createSellRequest,
   getUserSellRequests,
   updateSellRequest,
@@ -8,6 +9,9 @@ import {
 import { protect } from '../../middleware/auth.js';
 
 const router = express.Router();
+
+// get active sell requests for map
+router.get('/map', getActiveSellRequests);
 
 // create a sell request
 router.post('/', protect, createSellRequest);

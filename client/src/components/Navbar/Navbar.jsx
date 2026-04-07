@@ -8,6 +8,7 @@ function Navbar({ forceSolid = false }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(forceSolid);
   const { user } = useAuth();
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     if (forceSolid) {
@@ -20,6 +21,29 @@ function Navbar({ forceSolid = false }) {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, [forceSolid]);
+
+  useEffect(() => {
+    const readCartCount = () => {
+      try {
+        const raw = localStorage.getItem('solarMarketplaceCart');
+        const items = raw ? JSON.parse(raw) : [];
+        const count = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+        setCartCount(count);
+      } catch (error) {
+        console.error('Failed to read cart count:', error);
+        setCartCount(0);
+      }
+    };
+
+    readCartCount();
+    window.addEventListener('cart:updated', readCartCount);
+    window.addEventListener('storage', readCartCount);
+
+    return () => {
+      window.removeEventListener('cart:updated', readCartCount);
+      window.removeEventListener('storage', readCartCount);
+    };
+  }, []);
 
   const userMeta = useMemo(() => {
     if (!user) return null;
@@ -61,9 +85,9 @@ function Navbar({ forceSolid = false }) {
             </a>
           </li>
           <li>
-            <a href="#sell-energy" onClick={() => setMenuOpen(false)}>
+            <Link to="/shop" onClick={() => setMenuOpen(false)}>
               Shop
-            </a>
+            </Link>
           </li>
           <li>
             <a href="#features" onClick={() => setMenuOpen(false)}>
@@ -78,6 +102,25 @@ function Navbar({ forceSolid = false }) {
         </ul>
 
         <div className="navbar-actions">
+          <Link to="/shop?cart=open" className="navbar-cart" onClick={() => setMenuOpen(false)}>
+            <span className="navbar-cart__icon" aria-hidden="true">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.6 13.5a2 2 0 0 0 2 1.5h9.7a2 2 0 0 0 2-1.5L23 6H6" />
+              </svg>
+            </span>
+            <span className="navbar-cart__badge">{cartCount}</span>
+          </Link>
           {userMeta ? (
             <Link
               to={userMeta.target}

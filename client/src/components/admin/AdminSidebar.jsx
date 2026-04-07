@@ -5,6 +5,7 @@ const navItems = [
   { to: '/admin/users', label: 'Manage Users' },
   { to: '/admin/stations', label: 'Manage Stations' },
   { to: '/admin/reviews', label: 'Manage Reviews' },
+  { to: '/admin/sell-requests', label: 'Manage Sell Requests' },
 ];
 
 function AdminSidebar() {

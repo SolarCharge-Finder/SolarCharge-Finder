@@ -109,13 +109,13 @@ function Hero() {
         </div>
 
         <h1 className="hero-title">
-          Find <span className="highlight-green">Solar-Powered</span> Charging
+          Find <span className="highlight-green">Solar Powered</span> Charging
           <br />
           Stations Near You
         </h1>
 
         <p className="hero-subtitle">
-          Discover affordable, eco-friendly charging stations powered by the sun. Join our community
+          Discover affordable, eco friendly charging stations powered by the sun. Join our community
           of environmentally conscious users sharing clean energy solutions.
         </p>
 

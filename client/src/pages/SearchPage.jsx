@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 import { searchStations, searchStationsByDistance } from '../services/stationService';
 import useGeolocation from '../hooks/useGeoLocation';
 import SearchBar from '../components/SearchBar/SearchBar';
@@ -12,6 +13,7 @@ import '../styles/SearchPage.css';
 const SearchPage = () => {
   const [query, setQuery] = useState('');
   const [stations, setStations] = useState([]); //results from search
+  const [sellRequests, setSellRequests] = useState([]);
   const [district, setDistrict] = useState('');
   const [status, setStatus] = useState('');
   const [connectorType, setConnectorType] = useState('');
@@ -74,6 +76,20 @@ const SearchPage = () => {
     handleSearch(filters);
   }, [location.search, handleSearch]);
 
+  useEffect(() => {
+    const fetchSellRequests = async () => {
+      try {
+        const { data } = await axios.get('/api/sell-request/map');
+        setSellRequests(data?.requests ?? []);
+      } catch (err) {
+        console.error('Failed to load sell requests for map:', err);
+        setSellRequests([]);
+      }
+    };
+
+    fetchSellRequests();
+  }, []);
+
   return (
     <div className="page-layout search-page">
       <Navbar forceSolid />
@@ -81,9 +97,9 @@ const SearchPage = () => {
         <div className="searchpage-container">
           <div className="searchpage-hero">
             <span className="section-tag">Live Solar Charging Map</span>
-            <h1 className="page-title">Search Solar-Friendly Stations</h1>
+            <h1 className="page-title">Search Solar Friendly Stations</h1>
             <p className="page-subtitle">
-              Use smart filters, view live availability, and share stations with friends — all in
+              Use smart filters, view live availability, and share stations with friends  all in
               the same polished experience as the homepage.
             </p>
           </div>
@@ -103,11 +119,14 @@ const SearchPage = () => {
                   <h2>Stations Nearby</h2>
                   <p>Browse curated cards or jump into the interactive map.</p>
                 </div>
-                <span className="results-count">{stations.length} results</span>
+                <span className="results-count">
+                  {stations.length + sellRequests.length} results
+                </span>
               </div>
               <SearchResults
                 stations={stations}
                 error={error}
+                sellRequests={sellRequests}
                 userLocation={geolocation}
                 loadingLocation={loading}
               />
@@ -115,7 +134,12 @@ const SearchPage = () => {
 
             {/* Map preview on the right side */}
             <div className="map-preview-panel">
-              <MapView stations={stations} userLocation={geolocation} loadingLocation={loading} />
+              <MapView
+                stations={stations}
+                sellRequests={sellRequests}
+                userLocation={geolocation}
+                loadingLocation={loading}
+              />
             </div>
           </div>
         </div>

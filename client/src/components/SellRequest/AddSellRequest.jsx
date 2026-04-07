@@ -15,7 +15,7 @@ export default function AddSellRequest() {
     e.preventDefault();
 
     if (!user) {
-      alert('Please login to submit a review');
+      alert('Please login to submit a sell request');
       return;
     }
 

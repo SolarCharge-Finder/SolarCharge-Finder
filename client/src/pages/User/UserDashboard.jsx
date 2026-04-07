@@ -424,7 +424,7 @@ function UserDashboard() {
     () => [
       { id: 'dashboard', label: 'Dashboard', helper: 'Sessions, goals, quick actions' },
       { id: 'insights', label: `${firstName}'s Insights`, helper: 'Recommendations & reviews' },
-      { id: 'sell', label: 'Sell Requests', helper: 'Manage energy sharing' },
+      { id: 'sell-energy', label: 'Sell Energy', helper: 'Manage excess energy offers' },
     ],
     [firstName]
   );
@@ -869,13 +869,15 @@ function UserDashboard() {
           </section>
         )}
 
-        {activeTab === 'sell' && (
+        {activeTab === 'sell-energy' && (
           <section className="user-grid user-grid--two">
             <article className="user-card">
               <div className="user-card__header">
                 <div>
-                  <h2>My Sell Requests</h2>
-                  <p className="user-card__subtitle">View, edit, or delete your sell requests</p>
+                  <h2>My Sell Energy Requests</h2>
+                  <p className="user-card__subtitle">
+                    View, edit, or delete your excess solar energy offers
+                  </p>
                 </div>
               </div>
               <SellRequestPage />

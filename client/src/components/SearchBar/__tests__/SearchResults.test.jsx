@@ -14,7 +14,7 @@ it('shows no results message when stations array is empty', () => {
   renderWithRouter(<SearchResults stations={[]} error="" />);
 
   expect(
-    screen.getByText('No stations found. Try adjusting your search criteria.')
+    screen.getByText('No results found. Try adjusting your search criteria.')
   ).toBeInTheDocument();
 });
 

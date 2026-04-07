@@ -1,5 +1,40 @@
 import SellRequest from '../models/SellRequest.js';
 
+// Public list for map display (active offers only)
+export const getActiveSellRequests = async (req, res) => {
+  try {
+    const rawRequests = await SellRequest.find({ status: 'Pending' })
+      .sort({ createdAt: -1 })
+      .select('resident energyAmount location comment status createdAt')
+      .populate('resident', 'name email');
+
+    const requests = rawRequests.map(request => {
+      const residentName = request.resident?.name?.trim();
+      const residentEmail = request.resident?.email || '';
+      const username = residentName || residentEmail.split('@')[0] || 'User';
+
+      return {
+        _id: request._id,
+        username,
+        resident: request.resident,
+        energyAmount: request.energyAmount,
+        location: request.location,
+        comment: request.comment,
+        status: request.status,
+        createdAt: request.createdAt,
+      };
+    });
+
+    res.status(200).json({
+      message: 'Active sell requests retrieved successfully',
+      requests,
+    });
+  } catch (error) {
+    console.error('Get active sell requests error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 export const createSellRequest = async (req, res) => {
   try {
     const { energyAmount, location, comment } = req.body;

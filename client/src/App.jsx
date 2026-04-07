@@ -7,11 +7,13 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageUsers from './pages/admin/ManageUsers';
 import ManageStations from './pages/admin/ManageStations';
 import ManageReviews from './pages/admin/ManageReviews';
+import ManageSellRequests from './pages/admin/ManageSellRequests';
 import ProtectedRoute from './components/routing/ProtectedRoute';
 import UserDashboard from './pages/User/UserDashboard';
 import SearchPage from './pages/SearchPage'; //new search page with filters (adeesha)
 import StationDetails from './pages/StationDetails';
-import AddSellRequest from './components/SellRequest/AddSellRequest'; //modal for excess energy sell requests, details on user page
+import SolarMarketplace from './pages/SolarMarketplace';
+import AddSellRequest from './components/SellRequest/AddSellRequest';
 import AuthPage from './auth';
 import EmailVerification from './auth/EmailVerification';
 import ForgotPassword from './auth/ForgotPassword';
@@ -36,12 +38,14 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/oauth/callback" element={<OAuthCallback />} />
             <Route path="/search" element={<SearchPage />} />
+            <Route path="/shop" element={<SolarMarketplace />} />
             <Route path="/stations/:id" element={<StationDetails />} />
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<ManageUsers />} />
               <Route path="/admin/stations" element={<ManageStations />} />
               <Route path="/admin/reviews" element={<ManageReviews />} />
+              <Route path="/admin/sell-requests" element={<ManageSellRequests />} />
             </Route>
             <Route element={<ProtectedRoute allowedRoles={['user']} />}>
               <Route path="/user" element={<UserDashboard />} />
