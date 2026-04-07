@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "target": "ES2022",
+    "checkJs": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*"]
+    }
+  },
+  "typeAcquisition": {
+    "include": ["jest"]
+  },
+  "exclude": ["node_modules", "dist"]
+}
